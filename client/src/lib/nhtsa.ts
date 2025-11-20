@@ -28,16 +28,25 @@ export const CANADIAN_TRIMS = Array.from(
 ).sort();
 
 export function getTrimsForMake(make: string): string[] {
-    // Try to find exact match
+    if (!make) return CANADIAN_TRIMS_BY_MAKE["Other"];
+
+    // 1. Try exact match
     if (CANADIAN_TRIMS_BY_MAKE[make]) {
         return CANADIAN_TRIMS_BY_MAKE[make];
     }
     
-    // Try partial match (e.g. "Ford Motor Company" -> "Ford")
+    // 2. Try case-insensitive match
     const keys = Object.keys(CANADIAN_TRIMS_BY_MAKE);
-    const match = keys.find(k => make.includes(k));
-    if (match) {
-        return CANADIAN_TRIMS_BY_MAKE[match];
+    const exactCaseMatch = keys.find(k => k.toLowerCase() === make.toLowerCase());
+    if (exactCaseMatch) {
+        return CANADIAN_TRIMS_BY_MAKE[exactCaseMatch];
+    }
+
+    // 3. Try partial match (e.g. "Ford Motor Company" -> "Ford")
+    // Check if any key is contained in the make string (case-insensitive)
+    const partialMatch = keys.find(k => make.toLowerCase().includes(k.toLowerCase()));
+    if (partialMatch) {
+        return CANADIAN_TRIMS_BY_MAKE[partialMatch];
     }
 
     return CANADIAN_TRIMS_BY_MAKE["Other"];
