@@ -1,0 +1,3309 @@
+{
+  "metadata": {
+    "project": "Canada Automotive Historical Database",
+    "country": "Canada",
+    "years_covered": "1995-2025",
+    "total_brands": 30,
+    "last_updated": "2025-11-20",
+    "description": "Complete historical database of all major car brands and models sold in Canada"
+  },
+  "brands_history": [
+    {
+      "brand_id": 1,
+      "brand_name": "Ford",
+      "type": "Domestic",
+      "country": "USA",
+      "models_by_year": {
+        "1995": [
+          {
+            "model_name": "F-150",
+            "category": "Pickup",
+            "trims": [
+              "Regular",
+              "SuperCab",
+              "XL",
+              "XLT"
+            ]
+          },
+          {
+            "model_name": "Mustang",
+            "category": "Coupe",
+            "trims": [
+              "Base",
+              "GT",
+              "Cobra"
+            ]
+          },
+          {
+            "model_name": "Taurus",
+            "category": "Sedan",
+            "trims": [
+              "GL",
+              "SE",
+              "SHO"
+            ]
+          },
+          {
+            "model_name": "Windstar",
+            "category": "Minivan",
+            "trims": [
+              "Base",
+              "GL",
+              "LX"
+            ]
+          },
+          {
+            "model_name": "Explorer",
+            "category": "SUV",
+            "trims": [
+              "Base",
+              "XLT",
+              "Eddie Bauer"
+            ]
+          }
+        ],
+        "2000": [
+          {
+            "model_name": "F-150",
+            "category": "Pickup",
+            "trims": [
+              "Regular",
+              "SuperCrew",
+              "XL",
+              "XLT",
+              "Lariat"
+            ]
+          },
+          {
+            "model_name": "Mustang",
+            "category": "Coupe",
+            "trims": [
+              "Base",
+              "GT",
+              "SVT Cobra"
+            ]
+          },
+          {
+            "model_name": "Taurus",
+            "category": "Sedan",
+            "trims": [
+              "SE",
+              "SHO",
+              "Wagon"
+            ]
+          },
+          {
+            "model_name": "Focus",
+            "category": "Compact",
+            "trims": [
+              "Base",
+              "LX",
+              "SE",
+              "ZX3"
+            ]
+          },
+          {
+            "model_name": "Explorer",
+            "category": "SUV",
+            "trims": [
+              "Base",
+              "XLT",
+              "Eddie Bauer",
+              "Limited"
+            ]
+          }
+        ],
+        "2005": [
+          {
+            "model_name": "F-150",
+            "category": "Pickup",
+            "trims": [
+              "Regular",
+              "SuperCrew",
+              "FX4",
+              "Lariat",
+              "King Ranch"
+            ]
+          },
+          {
+            "model_name": "Mustang",
+            "category": "Coupe",
+            "trims": [
+              "Base",
+              "GT",
+              "Shelby GT500"
+            ]
+          },
+          {
+            "model_name": "Focus",
+            "category": "Compact",
+            "trims": [
+              "SE",
+              "ZX4",
+              "ST",
+              "SES"
+            ]
+          },
+          {
+            "model_name": "Fusion",
+            "category": "Midsize",
+            "trims": [
+              "S",
+              "SE",
+              "SEL",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "Explorer",
+            "category": "SUV",
+            "trims": [
+              "Base",
+              "XLT",
+              "Limited",
+              "Eddie Bauer"
+            ]
+          },
+          {
+            "model_name": "Escape",
+            "category": "Compact SUV",
+            "trims": [
+              "XLS",
+              "XLT",
+              "Limited"
+            ]
+          }
+        ],
+        "2010": [
+          {
+            "model_name": "F-150",
+            "category": "Pickup",
+            "trims": [
+              "Regular",
+              "SuperCrew",
+              "XL",
+              "XLT",
+              "Lariat",
+              "King Ranch"
+            ]
+          },
+          {
+            "model_name": "Mustang",
+            "category": "Coupe",
+            "trims": [
+              "Base",
+              "GT",
+              "Shelby",
+              "Boss"
+            ]
+          },
+          {
+            "model_name": "Focus",
+            "category": "Compact",
+            "trims": [
+              "S",
+              "SE",
+              "SES",
+              "ST"
+            ]
+          },
+          {
+            "model_name": "Fusion",
+            "category": "Midsize",
+            "trims": [
+              "S",
+              "SE",
+              "SEL",
+              "Limited",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Edge",
+            "category": "Midsize SUV",
+            "trims": [
+              "SE",
+              "SEL",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "Escape",
+            "category": "Compact SUV",
+            "trims": [
+              "S",
+              "XLS",
+              "XLT",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "Explorer",
+            "category": "SUV",
+            "trims": [
+              "Base",
+              "XLT",
+              "Limited",
+              "Eddie Bauer"
+            ]
+          }
+        ],
+        "2015": [
+          {
+            "model_name": "F-150",
+            "category": "Pickup",
+            "trims": [
+              "Regular",
+              "SuperCrew",
+              "XL",
+              "XLT",
+              "Lariat",
+              "King Ranch",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "Mustang",
+            "category": "Coupe",
+            "trims": [
+              "Base",
+              "EcoBoost",
+              "GT",
+              "Shelby",
+              "Boss"
+            ]
+          },
+          {
+            "model_name": "Focus",
+            "category": "Compact",
+            "trims": [
+              "S",
+              "SE",
+              "ST",
+              "RS"
+            ]
+          },
+          {
+            "model_name": "Fusion",
+            "category": "Midsize",
+            "trims": [
+              "S",
+              "SE",
+              "Titanium",
+              "Hybrid",
+              "Energi"
+            ]
+          },
+          {
+            "model_name": "Edge",
+            "category": "Midsize SUV",
+            "trims": [
+              "S",
+              "SE",
+              "Titanium",
+              "Sport"
+            ]
+          },
+          {
+            "model_name": "Escape",
+            "category": "Compact SUV",
+            "trims": [
+              "S",
+              "SE",
+              "Titanium",
+              "4WD"
+            ]
+          },
+          {
+            "model_name": "Explorer",
+            "category": "SUV",
+            "trims": [
+              "Base",
+              "XLT",
+              "Limited",
+              "Sport"
+            ]
+          }
+        ],
+        "2020": [
+          {
+            "model_name": "F-150",
+            "category": "Pickup",
+            "trims": [
+              "Regular",
+              "SuperCrew",
+              "XL",
+              "XLT",
+              "Lariat",
+              "King Ranch",
+              "Platinum",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "Mustang",
+            "category": "Coupe",
+            "trims": [
+              "EcoBoost",
+              "GT",
+              "Shelby",
+              "Mach 1"
+            ]
+          },
+          {
+            "model_name": "Focus",
+            "category": "Compact",
+            "trims": [
+              "S",
+              "SE",
+              "ST"
+            ]
+          },
+          {
+            "model_name": "Fusion",
+            "category": "Midsize",
+            "trims": [
+              "S",
+              "SE",
+              "Titanium",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Edge",
+            "category": "Midsize SUV",
+            "trims": [
+              "S",
+              "SE",
+              "Titanium",
+              "ST"
+            ]
+          },
+          {
+            "model_name": "Escape",
+            "category": "Compact SUV",
+            "trims": [
+              "S",
+              "SE",
+              "Titanium",
+              "4WD"
+            ]
+          },
+          {
+            "model_name": "Explorer",
+            "category": "SUV",
+            "trims": [
+              "Base",
+              "XLT",
+              "Limited",
+              "ST",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "Expedition",
+            "category": "Full-Size SUV",
+            "trims": [
+              "Base",
+              "XLT",
+              "Limited",
+              "King Ranch",
+              "Platinum"
+            ]
+          }
+        ],
+        "2025": [
+          {
+            "model_name": "F-150",
+            "category": "Pickup",
+            "trims": [
+              "Regular Cab",
+              "SuperCrew",
+              "XL",
+              "XLT",
+              "Lariat",
+              "King Ranch",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "Mustang",
+            "category": "Coupe",
+            "trims": [
+              "EcoBoost",
+              "GT",
+              "Dark Horse",
+              "Mach-E"
+            ]
+          },
+          {
+            "model_name": "Explorer",
+            "category": "SUV",
+            "trims": [
+              "Base",
+              "XLT",
+              "Limited",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "Expedition",
+            "category": "Full-Size SUV",
+            "trims": [
+              "Base",
+              "XLT",
+              "Limited",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "Bronco",
+            "category": "SUV",
+            "trims": [
+              "Big Bend",
+              "Black Diamond",
+              "Wildtrak",
+              "Raptor"
+            ]
+          },
+          {
+            "model_name": "EcoSport",
+            "category": "Compact SUV",
+            "trims": [
+              "S",
+              "SE",
+              "Titanium"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "brand_id": 2,
+      "brand_name": "Toyota",
+      "type": "Japanese",
+      "country": "Japan",
+      "models_by_year": {
+        "1995": [
+          {
+            "model_name": "Corolla",
+            "category": "Sedan",
+            "trims": [
+              "Deluxe",
+              "LE",
+              "CE"
+            ]
+          },
+          {
+            "model_name": "Camry",
+            "category": "Midsize Sedan",
+            "trims": [
+              "LE",
+              "XLE",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "4Runner",
+            "category": "SUV",
+            "trims": [
+              "Base",
+              "DX",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "Pickup",
+            "category": "Pickup",
+            "trims": [
+              "Deluxe",
+              "LE",
+              "SR5"
+            ]
+          },
+          {
+            "model_name": "Tercel",
+            "category": "Compact",
+            "trims": [
+              "Base",
+              "CE",
+              "DX"
+            ]
+          }
+        ],
+        "2000": [
+          {
+            "model_name": "Corolla",
+            "category": "Sedan",
+            "trims": [
+              "CE",
+              "LE",
+              "S"
+            ]
+          },
+          {
+            "model_name": "Camry",
+            "category": "Midsize Sedan",
+            "trims": [
+              "CE",
+              "LE",
+              "XLE",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "RAV4",
+            "category": "Compact SUV",
+            "trims": [
+              "Base",
+              "L",
+              "4WD"
+            ]
+          },
+          {
+            "model_name": "4Runner",
+            "category": "SUV",
+            "trims": [
+              "SR5",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "Tacoma",
+            "category": "Pickup",
+            "trims": [
+              "Base",
+              "Xtracab",
+              "PreRunner"
+            ]
+          },
+          {
+            "model_name": "Tundra",
+            "category": "Full-Size Truck",
+            "trims": [
+              "Base",
+              "Limited"
+            ]
+          }
+        ],
+        "2005": [
+          {
+            "model_name": "Corolla",
+            "category": "Sedan",
+            "trims": [
+              "CE",
+              "LE",
+              "S",
+              "XLE"
+            ]
+          },
+          {
+            "model_name": "Camry",
+            "category": "Midsize Sedan",
+            "trims": [
+              "LE",
+              "XLE",
+              "SE",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "RAV4",
+            "category": "Compact SUV",
+            "trims": [
+              "LE",
+              "XLE",
+              "Limited",
+              "4WD"
+            ]
+          },
+          {
+            "model_name": "Highlander",
+            "category": "Midsize SUV",
+            "trims": [
+              "Base",
+              "LE",
+              "Limited",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "4Runner",
+            "category": "SUV",
+            "trims": [
+              "SR5",
+              "Limited",
+              "V8"
+            ]
+          },
+          {
+            "model_name": "Tacoma",
+            "category": "Pickup",
+            "trims": [
+              "Base",
+              "PreRunner",
+              "SR5"
+            ]
+          },
+          {
+            "model_name": "Tundra",
+            "category": "Full-Size Truck",
+            "trims": [
+              "SR5",
+              "Limited"
+            ]
+          }
+        ],
+        "2010": [
+          {
+            "model_name": "Corolla",
+            "category": "Sedan",
+            "trims": [
+              "Base",
+              "CE",
+              "LE",
+              "XLE",
+              "S"
+            ]
+          },
+          {
+            "model_name": "Camry",
+            "category": "Midsize Sedan",
+            "trims": [
+              "LE",
+              "SE",
+              "XLE",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Prius",
+            "category": "Hybrid",
+            "trims": [
+              "I",
+              "II",
+              "III",
+              "IV"
+            ]
+          },
+          {
+            "model_name": "RAV4",
+            "category": "Compact SUV",
+            "trims": [
+              "Base",
+              "LE",
+              "Limited",
+              "4WD"
+            ]
+          },
+          {
+            "model_name": "Highlander",
+            "category": "Midsize SUV",
+            "trims": [
+              "Base",
+              "LE",
+              "Limited",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "4Runner",
+            "category": "SUV",
+            "trims": [
+              "SR5",
+              "Limited",
+              "V8"
+            ]
+          },
+          {
+            "model_name": "Tacoma",
+            "category": "Pickup",
+            "trims": [
+              "Base",
+              "PreRunner",
+              "TRD"
+            ]
+          },
+          {
+            "model_name": "Tundra",
+            "category": "Full-Size Truck",
+            "trims": [
+              "SR5",
+              "Limited",
+              "Platinum"
+            ]
+          }
+        ],
+        "2015": [
+          {
+            "model_name": "Corolla",
+            "category": "Sedan",
+            "trims": [
+              "L",
+              "LE",
+              "S",
+              "XLE"
+            ]
+          },
+          {
+            "model_name": "Camry",
+            "category": "Midsize Sedan",
+            "trims": [
+              "LE",
+              "SE",
+              "XLE",
+              "Hybrid",
+              "XSE"
+            ]
+          },
+          {
+            "model_name": "Prius",
+            "category": "Hybrid",
+            "trims": [
+              "Two",
+              "Three",
+              "Four",
+              "Five"
+            ]
+          },
+          {
+            "model_name": "RAV4",
+            "category": "Compact SUV",
+            "trims": [
+              "LE",
+              "XLE",
+              "Limited",
+              "AWD"
+            ]
+          },
+          {
+            "model_name": "Highlander",
+            "category": "Midsize SUV",
+            "trims": [
+              "LE",
+              "XLE",
+              "Limited",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "4Runner",
+            "category": "SUV",
+            "trims": [
+              "SR5",
+              "Limited",
+              "TRD"
+            ]
+          },
+          {
+            "model_name": "Tacoma",
+            "category": "Pickup",
+            "trims": [
+              "Access",
+              "Double Cab",
+              "PreRunner"
+            ]
+          },
+          {
+            "model_name": "Tundra",
+            "category": "Full-Size Truck",
+            "trims": [
+              "SR5",
+              "SR5 Plus",
+              "Limited",
+              "Platinum"
+            ]
+          }
+        ],
+        "2020": [
+          {
+            "model_name": "Corolla",
+            "category": "Sedan",
+            "trims": [
+              "L",
+              "LE",
+              "SE",
+              "XLE",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Camry",
+            "category": "Midsize Sedan",
+            "trims": [
+              "L",
+              "LE",
+              "SE",
+              "XLE",
+              "Limited",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Prius",
+            "category": "Hybrid",
+            "trims": [
+              "L Eco",
+              "LE",
+              "XLE",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "RAV4",
+            "category": "Compact SUV",
+            "trims": [
+              "LE",
+              "XLE",
+              "Adventure",
+              "Limited",
+              "Prime",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Highlander",
+            "category": "Midsize SUV",
+            "trims": [
+              "L",
+              "LE",
+              "XLE",
+              "Limited",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "4Runner",
+            "category": "SUV",
+            "trims": [
+              "SR5",
+              "SR5 Plus",
+              "TRD",
+              "Limited",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "Tacoma",
+            "category": "Pickup",
+            "trims": [
+              "Access Cab",
+              "Double Cab",
+              "CrewMax"
+            ]
+          },
+          {
+            "model_name": "Tundra",
+            "category": "Full-Size Truck",
+            "trims": [
+              "SR5",
+              "SR5 Plus",
+              "Limited",
+              "Platinum",
+              "1794 Edition"
+            ]
+          }
+        ],
+        "2025": [
+          {
+            "model_name": "Corolla",
+            "category": "Sedan",
+            "trims": [
+              "L",
+              "LE",
+              "SE",
+              "XLE",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Camry",
+            "category": "Midsize Sedan",
+            "trims": [
+              "LE",
+              "SE",
+              "XLE",
+              "Limited",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "RAV4",
+            "category": "Compact SUV",
+            "trims": [
+              "LE",
+              "XLE",
+              "Adventure",
+              "Prime",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Highlander",
+            "category": "Midsize SUV",
+            "trims": [
+              "L",
+              "LE",
+              "XLE",
+              "Limited",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "4Runner",
+            "category": "Full-Size SUV",
+            "trims": [
+              "SR5",
+              "TRD Off-Road",
+              "Limited",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "Tacoma",
+            "category": "Pickup",
+            "trims": [
+              "Access Cab",
+              "Double Cab",
+              "CrewMax"
+            ]
+          },
+          {
+            "model_name": "Tundra",
+            "category": "Full-Size Truck",
+            "trims": [
+              "SR",
+              "SR5",
+              "Limited",
+              "Platinum",
+              "1794"
+            ]
+          },
+          {
+            "model_name": "Prius",
+            "category": "Hybrid Sedan",
+            "trims": [
+              "LE",
+              "XLE",
+              "Limited",
+              "Prime"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "brand_id": 3,
+      "brand_name": "Honda",
+      "type": "Japanese",
+      "country": "Japan",
+      "models_by_year": {
+        "1995": [
+          {
+            "model_name": "Civic",
+            "category": "Compact",
+            "trims": [
+              "DX",
+              "LX",
+              "EX",
+              "Si"
+            ]
+          },
+          {
+            "model_name": "Accord",
+            "category": "Midsize",
+            "trims": [
+              "LX",
+              "EX",
+              "SE",
+              "DX"
+            ]
+          },
+          {
+            "model_name": "CR-V",
+            "category": "Compact SUV",
+            "trims": [
+              "LX",
+              "EX"
+            ]
+          },
+          {
+            "model_name": "Odyssey",
+            "category": "Minivan",
+            "trims": [
+              "LX",
+              "EX"
+            ]
+          }
+        ],
+        "2000": [
+          {
+            "model_name": "Civic",
+            "category": "Compact",
+            "trims": [
+              "DX",
+              "LX",
+              "EX",
+              "Si"
+            ]
+          },
+          {
+            "model_name": "Accord",
+            "category": "Midsize",
+            "trims": [
+              "LX",
+              "EX",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "CR-V",
+            "category": "Compact SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "Odyssey",
+            "category": "Minivan",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L"
+            ]
+          },
+          {
+            "model_name": "Insight",
+            "category": "Hybrid",
+            "trims": [
+              "Base",
+              "SE"
+            ]
+          }
+        ],
+        "2005": [
+          {
+            "model_name": "Civic",
+            "category": "Compact",
+            "trims": [
+              "DX",
+              "LX",
+              "EX",
+              "Si",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Accord",
+            "category": "Midsize",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "CR-V",
+            "category": "Compact SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "SE",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Odyssey",
+            "category": "Minivan",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring"
+            ]
+          },
+          {
+            "model_name": "Ridgeline",
+            "category": "Pickup",
+            "trims": [
+              "RT",
+              "RTX",
+              "RTS"
+            ]
+          },
+          {
+            "model_name": "Pilot",
+            "category": "Midsize SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L"
+            ]
+          }
+        ],
+        "2010": [
+          {
+            "model_name": "Civic",
+            "category": "Compact",
+            "trims": [
+              "DX",
+              "LX",
+              "EX",
+              "EX-L",
+              "Si",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Accord",
+            "category": "Midsize",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "CR-V",
+            "category": "Compact SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Odyssey",
+            "category": "Minivan",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring"
+            ]
+          },
+          {
+            "model_name": "Ridgeline",
+            "category": "Pickup",
+            "trims": [
+              "RT",
+              "RTL",
+              "RTX",
+              "RTS"
+            ]
+          },
+          {
+            "model_name": "Pilot",
+            "category": "Midsize SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring"
+            ]
+          }
+        ],
+        "2015": [
+          {
+            "model_name": "Civic",
+            "category": "Compact",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-T",
+              "Si",
+              "Type R"
+            ]
+          },
+          {
+            "model_name": "Accord",
+            "category": "Midsize",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "CR-V",
+            "category": "Compact SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Odyssey",
+            "category": "Minivan",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring"
+            ]
+          },
+          {
+            "model_name": "Ridgeline",
+            "category": "Pickup",
+            "trims": [
+              "RT",
+              "RTL",
+              "RTL-T",
+              "Black Edition"
+            ]
+          },
+          {
+            "model_name": "Pilot",
+            "category": "Midsize SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring",
+              "Elite"
+            ]
+          }
+        ],
+        "2020": [
+          {
+            "model_name": "Civic",
+            "category": "Compact",
+            "trims": [
+              "LX",
+              "Sport",
+              "EX",
+              "EX-T",
+              "Touring",
+              "Si",
+              "Type R",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Accord",
+            "category": "Midsize",
+            "trims": [
+              "Sport",
+              "EX",
+              "EX-L",
+              "Touring",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "CR-V",
+            "category": "Compact SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Odyssey",
+            "category": "Minivan",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring"
+            ]
+          },
+          {
+            "model_name": "Ridgeline",
+            "category": "Pickup",
+            "trims": [
+              "RT",
+              "RTL",
+              "RTL-E",
+              "Black Edition"
+            ]
+          },
+          {
+            "model_name": "Pilot",
+            "category": "Midsize SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring",
+              "Elite"
+            ]
+          }
+        ],
+        "2025": [
+          {
+            "model_name": "Civic",
+            "category": "Compact Sedan",
+            "trims": [
+              "LX",
+              "Sport",
+              "EX",
+              "Touring",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Accord",
+            "category": "Midsize Sedan",
+            "trims": [
+              "LX",
+              "Sport",
+              "EX",
+              "Touring"
+            ]
+          },
+          {
+            "model_name": "CR-V",
+            "category": "Compact SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Pilot",
+            "category": "Midsize SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring",
+              "Elite"
+            ]
+          },
+          {
+            "model_name": "Odyssey",
+            "category": "Minivan",
+            "trims": [
+              "LX",
+              "EX",
+              "EX-L",
+              "Touring"
+            ]
+          },
+          {
+            "model_name": "Ridgeline",
+            "category": "Pickup Truck",
+            "trims": [
+              "RT",
+              "RTL",
+              "RTL-T",
+              "Black Edition"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "brand_id": 4,
+      "brand_name": "Chevrolet",
+      "type": "Domestic",
+      "country": "USA",
+      "models_by_year": {
+        "1995": [
+          {
+            "model_name": "Silverado",
+            "category": "Pickup",
+            "trims": [
+              "Base",
+              "C1500",
+              "K1500",
+              "Suburban"
+            ]
+          },
+          {
+            "model_name": "Cavalier",
+            "category": "Compact",
+            "trims": [
+              "Base",
+              "RS",
+              "Z24"
+            ]
+          },
+          {
+            "model_name": "Lumina",
+            "category": "Midsize",
+            "trims": [
+              "Base",
+              "LS",
+              "Z34"
+            ]
+          },
+          {
+            "model_name": "Tahoe",
+            "category": "SUV",
+            "trims": [
+              "Base",
+              "LS",
+              "LT"
+            ]
+          },
+          {
+            "model_name": "S-10",
+            "category": "Pickup",
+            "trims": [
+              "Base",
+              "Regular",
+              "Extended"
+            ]
+          }
+        ],
+        "2005": [
+          {
+            "model_name": "Silverado",
+            "category": "Pickup",
+            "trims": [
+              "Regular",
+              "Extended",
+              "Crew Cab",
+              "Z71"
+            ]
+          },
+          {
+            "model_name": "Cobalt",
+            "category": "Compact",
+            "trims": [
+              "LS",
+              "LT",
+              "SS"
+            ]
+          },
+          {
+            "model_name": "Malibu",
+            "category": "Midsize",
+            "trims": [
+              "LS",
+              "LT",
+              "Maxx"
+            ]
+          },
+          {
+            "model_name": "Tahoe",
+            "category": "SUV",
+            "trims": [
+              "LS",
+              "LT",
+              "LTZ"
+            ]
+          },
+          {
+            "model_name": "TrailBlazer",
+            "category": "SUV",
+            "trims": [
+              "Base",
+              "LS",
+              "LT",
+              "SS"
+            ]
+          },
+          {
+            "model_name": "Equinox",
+            "category": "Compact SUV",
+            "trims": [
+              "Base",
+              "LS",
+              "LT"
+            ]
+          }
+        ],
+        "2015": [
+          {
+            "model_name": "Silverado",
+            "category": "Pickup",
+            "trims": [
+              "Work Truck",
+              "LS",
+              "LT",
+              "LTZ",
+              "High Country"
+            ]
+          },
+          {
+            "model_name": "Cruze",
+            "category": "Compact",
+            "trims": [
+              "LS",
+              "LT",
+              "LTZ",
+              "Diesel"
+            ]
+          },
+          {
+            "model_name": "Malibu",
+            "category": "Midsize",
+            "trims": [
+              "LS",
+              "LT",
+              "LTZ",
+              "Premier"
+            ]
+          },
+          {
+            "model_name": "Tahoe",
+            "category": "SUV",
+            "trims": [
+              "LS",
+              "LT",
+              "LTZ",
+              "High Country"
+            ]
+          },
+          {
+            "model_name": "Suburban",
+            "category": "SUV",
+            "trims": [
+              "LS",
+              "LT",
+              "LTZ",
+              "High Country"
+            ]
+          },
+          {
+            "model_name": "Equinox",
+            "category": "Compact SUV",
+            "trims": [
+              "LS",
+              "LT",
+              "LTZ"
+            ]
+          },
+          {
+            "model_name": "Traverse",
+            "category": "Midsize SUV",
+            "trims": [
+              "LS",
+              "LT",
+              "LTZ"
+            ]
+          }
+        ],
+        "2025": [
+          {
+            "model_name": "Silverado",
+            "category": "Pickup Truck",
+            "trims": [
+              "RST",
+              "LTZ",
+              "High Country",
+              "ZR2"
+            ]
+          },
+          {
+            "model_name": "Colorado",
+            "category": "Midsize Truck",
+            "trims": [
+              "Base",
+              "Work Truck",
+              "LT",
+              "Z71",
+              "ZR2"
+            ]
+          },
+          {
+            "model_name": "Equinox",
+            "category": "Compact SUV",
+            "trims": [
+              "L",
+              "LT",
+              "Premier",
+              "RS"
+            ]
+          },
+          {
+            "model_name": "Blazer",
+            "category": "Midsize SUV",
+            "trims": [
+              "L",
+              "LT",
+              "RS",
+              "SS"
+            ]
+          },
+          {
+            "model_name": "Tahoe",
+            "category": "Full-Size SUV",
+            "trims": [
+              "LS",
+              "LT",
+              "Premier",
+              "High Country"
+            ]
+          },
+          {
+            "model_name": "Malibu",
+            "category": "Midsize Sedan",
+            "trims": [
+              "L",
+              "LT",
+              "Premier"
+            ]
+          },
+          {
+            "model_name": "Bolt EV",
+            "category": "Electric Hatchback",
+            "trims": [
+              "LT",
+              "EUV LT",
+              "EUV Premier"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "brand_id": 5,
+      "brand_name": "Nissan",
+      "type": "Japanese",
+      "country": "Japan",
+      "models_by_year": {
+        "1995": [
+          {
+            "model_name": "Sentra",
+            "category": "Compact",
+            "trims": [
+              "Base",
+              "XE",
+              "GXE",
+              "SE-R"
+            ]
+          },
+          {
+            "model_name": "Altima",
+            "category": "Midsize",
+            "trims": [
+              "XE",
+              "GXE",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "Maxima",
+            "category": "Luxury",
+            "trims": [
+              "SE",
+              "GLE"
+            ]
+          },
+          {
+            "model_name": "Pathfinder",
+            "category": "SUV",
+            "trims": [
+              "Base",
+              "SE",
+              "XE"
+            ]
+          },
+          {
+            "model_name": "Pickup",
+            "category": "Pickup",
+            "trims": [
+              "Base",
+              "SE",
+              "XE"
+            ]
+          }
+        ],
+        "2005": [
+          {
+            "model_name": "Sentra",
+            "category": "Compact",
+            "trims": [
+              "Base",
+              "S",
+              "SE",
+              "SE-R"
+            ]
+          },
+          {
+            "model_name": "Altima",
+            "category": "Midsize",
+            "trims": [
+              "Base",
+              "S",
+              "SE",
+              "SL"
+            ]
+          },
+          {
+            "model_name": "Maxima",
+            "category": "Luxury",
+            "trims": [
+              "Base",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "Rogue",
+            "category": "Compact SUV",
+            "trims": [
+              "Base",
+              "S",
+              "SL"
+            ]
+          },
+          {
+            "model_name": "Pathfinder",
+            "category": "SUV",
+            "trims": [
+              "S",
+              "SE",
+              "LE"
+            ]
+          },
+          {
+            "model_name": "Frontier",
+            "category": "Pickup",
+            "trims": [
+              "Base",
+              "XE",
+              "SE"
+            ]
+          }
+        ],
+        "2015": [
+          {
+            "model_name": "Sentra",
+            "category": "Compact",
+            "trims": [
+              "S",
+              "SV",
+              "SR",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Altima",
+            "category": "Midsize",
+            "trims": [
+              "S",
+              "SV",
+              "SL",
+              "SR",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Rogue",
+            "category": "Compact SUV",
+            "trims": [
+              "S",
+              "SV",
+              "SL",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Pathfinder",
+            "category": "SUV",
+            "trims": [
+              "S",
+              "SV",
+              "SL",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "Murano",
+            "category": "Midsize SUV",
+            "trims": [
+              "S",
+              "SV",
+              "SL",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "Frontier",
+            "category": "Pickup",
+            "trims": [
+              "S",
+              "SV",
+              "SL",
+              "PRO-4X"
+            ]
+          }
+        ],
+        "2025": [
+          {
+            "model_name": "Altima",
+            "category": "Midsize Sedan",
+            "trims": [
+              "S",
+              "SV",
+              "SL",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "Sentra",
+            "category": "Compact Sedan",
+            "trims": [
+              "S",
+              "SV",
+              "SL",
+              "SR"
+            ]
+          },
+          {
+            "model_name": "Rogue",
+            "category": "Compact SUV",
+            "trims": [
+              "S",
+              "SV",
+              "SL",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "Murano",
+            "category": "Midsize SUV",
+            "trims": [
+              "S",
+              "SV",
+              "SL",
+              "Platinum"
+            ]
+          },
+          {
+            "model_name": "Ariya",
+            "category": "Electric SUV",
+            "trims": [
+              "FWD",
+              "AWD",
+              "Plus",
+              "Pro Plus"
+            ]
+          },
+          {
+            "model_name": "Frontier",
+            "category": "Midsize Truck",
+            "trims": [
+              "S",
+              "SV",
+              "PRO",
+              "PRO-X"
+            ]
+          },
+          {
+            "model_name": "Kicks",
+            "category": "Subcompact SUV",
+            "trims": [
+              "S",
+              "SV",
+              "SL"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "brand_id": 6,
+      "brand_name": "Hyundai",
+      "type": "Korean",
+      "country": "South Korea",
+      "models_by_year": {
+        "1995": [
+          {
+            "model_name": "Excel",
+            "category": "Compact",
+            "trims": [
+              "Base",
+              "L",
+              "GL",
+              "GLS"
+            ]
+          },
+          {
+            "model_name": "Elantra",
+            "category": "Compact",
+            "trims": [
+              "Base",
+              "GLS"
+            ]
+          },
+          {
+            "model_name": "Sonata",
+            "category": "Midsize",
+            "trims": [
+              "Base",
+              "GLS"
+            ]
+          }
+        ],
+        "2005": [
+          {
+            "model_name": "Accent",
+            "category": "Compact",
+            "trims": [
+              "GL",
+              "GLS",
+              "GT"
+            ]
+          },
+          {
+            "model_name": "Elantra",
+            "category": "Compact",
+            "trims": [
+              "GL",
+              "GLS",
+              "GTS"
+            ]
+          },
+          {
+            "model_name": "Sonata",
+            "category": "Midsize",
+            "trims": [
+              "GL",
+              "GLS",
+              "LX",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "Tucson",
+            "category": "Compact SUV",
+            "trims": [
+              "GL",
+              "GLS",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "Santa Fe",
+            "category": "Midsize SUV",
+            "trims": [
+              "Base",
+              "GL",
+              "GLS"
+            ]
+          }
+        ],
+        "2015": [
+          {
+            "model_name": "Accent",
+            "category": "Compact",
+            "trims": [
+              "Base",
+              "L",
+              "SE",
+              "Sport"
+            ]
+          },
+          {
+            "model_name": "Elantra",
+            "category": "Compact",
+            "trims": [
+              "Base",
+              "GL",
+              "SE",
+              "Limited",
+              "Sport"
+            ]
+          },
+          {
+            "model_name": "Sonata",
+            "category": "Midsize",
+            "trims": [
+              "Base",
+              "GL",
+              "SE",
+              "Limited",
+              "Limited 2.0T"
+            ]
+          },
+          {
+            "model_name": "Tucson",
+            "category": "Compact SUV",
+            "trims": [
+              "Base",
+              "GL",
+              "SE",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "Santa Fe",
+            "category": "Midsize SUV",
+            "trims": [
+              "Base",
+              "GL",
+              "SE",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "Palisade",
+            "category": "Midsize 3-Row",
+            "trims": [
+              "Base",
+              "GLS"
+            ]
+          }
+        ],
+        "2025": [
+          {
+            "model_name": "Elantra",
+            "category": "Compact Sedan",
+            "trims": [
+              "Essential",
+              "Preferred",
+              "Ultimate",
+              "N"
+            ]
+          },
+          {
+            "model_name": "Sonata",
+            "category": "Midsize Sedan",
+            "trims": [
+              "Essential",
+              "Preferred",
+              "Ultimate",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Tucson",
+            "category": "Compact SUV",
+            "trims": [
+              "Essential",
+              "Preferred",
+              "Ultimate",
+              "N Line"
+            ]
+          },
+          {
+            "model_name": "Santa Fe",
+            "category": "Midsize SUV",
+            "trims": [
+              "Essential",
+              "Preferred",
+              "Ultimate",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Palisade",
+            "category": "Midsize 3-Row SUV",
+            "trims": [
+              "Essential",
+              "Preferred",
+              "Limited",
+              "Ultimate"
+            ]
+          },
+          {
+            "model_name": "Kona",
+            "category": "Subcompact SUV",
+            "trims": [
+              "Essential",
+              "Preferred",
+              "Ultimate",
+              "N Line"
+            ]
+          },
+          {
+            "model_name": "Ioniq 5",
+            "category": "Electric SUV",
+            "trims": [
+              "Standard",
+              "Preferred",
+              "Ultimate"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "brand_id": 7,
+      "brand_name": "Kia",
+      "type": "Korean",
+      "country": "South Korea",
+      "models_by_year": {
+        "2000": [
+          {
+            "model_name": "Sephia",
+            "category": "Compact",
+            "trims": [
+              "Base",
+              "LS",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "Spectra",
+            "category": "Compact",
+            "trims": [
+              "Base",
+              "LS",
+              "SE"
+            ]
+          }
+        ],
+        "2010": [
+          {
+            "model_name": "Forte",
+            "category": "Compact",
+            "trims": [
+              "LX",
+              "EX",
+              "SX"
+            ]
+          },
+          {
+            "model_name": "Optima",
+            "category": "Midsize",
+            "trims": [
+              "LX",
+              "EX",
+              "SX"
+            ]
+          },
+          {
+            "model_name": "Sorento",
+            "category": "Midsize SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "SX"
+            ]
+          },
+          {
+            "model_name": "Sportage",
+            "category": "Compact SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "SX"
+            ]
+          }
+        ],
+        "2015": [
+          {
+            "model_name": "Forte",
+            "category": "Compact",
+            "trims": [
+              "LX",
+              "EX",
+              "SX"
+            ]
+          },
+          {
+            "model_name": "K5",
+            "category": "Midsize",
+            "trims": [
+              "LX",
+              "EX",
+              "SX"
+            ]
+          },
+          {
+            "model_name": "Niro",
+            "category": "Compact SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "SX",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Sportage",
+            "category": "Compact SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "SX"
+            ]
+          },
+          {
+            "model_name": "Sorento",
+            "category": "Midsize SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "SX"
+            ]
+          },
+          {
+            "model_name": "Telluride",
+            "category": "Midsize 3-Row",
+            "trims": [
+              "LX",
+              "EX",
+              "SX"
+            ]
+          }
+        ],
+        "2025": [
+          {
+            "model_name": "Forte",
+            "category": "Compact Sedan",
+            "trims": [
+              "FWD",
+              "GT-Line",
+              "EX",
+              "SX"
+            ]
+          },
+          {
+            "model_name": "K5",
+            "category": "Midsize Sedan",
+            "trims": [
+              "LX",
+              "S",
+              "EX",
+              "SX"
+            ]
+          },
+          {
+            "model_name": "Niro",
+            "category": "Compact SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "SX",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Sportage",
+            "category": "Compact SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "SX",
+              "X-Line"
+            ]
+          },
+          {
+            "model_name": "Sorento",
+            "category": "Midsize SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "SX",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Telluride",
+            "category": "Midsize 3-Row SUV",
+            "trims": [
+              "LX",
+              "EX",
+              "SX",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "EV6",
+            "category": "Electric SUV",
+            "trims": [
+              "Standard",
+              "Preferred",
+              "Ultimate"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "brand_id": 8,
+      "brand_name": "Mazda",
+      "type": "Japanese",
+      "country": "Japan",
+      "models_by_year": {
+        "1995": [
+          {
+            "model_name": "Protege",
+            "category": "Compact",
+            "trims": [
+              "DX",
+              "LX",
+              "ES"
+            ]
+          },
+          {
+            "model_name": "626",
+            "category": "Midsize",
+            "trims": [
+              "DX",
+              "LX",
+              "ES",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "MX-6",
+            "category": "Coupe",
+            "trims": [
+              "Base",
+              "LS",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "MPV",
+            "category": "Minivan",
+            "trims": [
+              "Base",
+              "LX",
+              "ES"
+            ]
+          }
+        ],
+        "2010": [
+          {
+            "model_name": "Mazda3",
+            "category": "Compact",
+            "trims": [
+              "i",
+              "i Touring",
+              "s",
+              "s Grand Touring"
+            ]
+          },
+          {
+            "model_name": "Mazda6",
+            "category": "Midsize",
+            "trims": [
+              "i",
+              "i Touring",
+              "s",
+              "s Grand Touring"
+            ]
+          },
+          {
+            "model_name": "CX-7",
+            "category": "Compact SUV",
+            "trims": [
+              "i",
+              "i Touring",
+              "s Grand Touring"
+            ]
+          },
+          {
+            "model_name": "CX-9",
+            "category": "Midsize SUV",
+            "trims": [
+              "Sport",
+              "Touring",
+              "Grand Touring"
+            ]
+          }
+        ],
+        "2015": [
+          {
+            "model_name": "Mazda3",
+            "category": "Compact",
+            "trims": [
+              "i",
+              "i Touring",
+              "s",
+              "s Grand Touring"
+            ]
+          },
+          {
+            "model_name": "Mazda6",
+            "category": "Midsize",
+            "trims": [
+              "i",
+              "i Touring",
+              "s",
+              "s Grand Touring"
+            ]
+          },
+          {
+            "model_name": "CX-3",
+            "category": "Subcompact SUV",
+            "trims": [
+              "i",
+              "i Touring",
+              "s",
+              "s Grand Touring"
+            ]
+          },
+          {
+            "model_name": "CX-5",
+            "category": "Compact SUV",
+            "trims": [
+              "i",
+              "i Touring",
+              "s",
+              "s Grand Touring"
+            ]
+          },
+          {
+            "model_name": "CX-9",
+            "category": "Midsize SUV",
+            "trims": [
+              "i",
+              "i Touring",
+              "s",
+              "s Grand Touring"
+            ]
+          }
+        ],
+        "2025": [
+          {
+            "model_name": "Mazda3",
+            "category": "Compact Sedan",
+            "trims": [
+              "GX",
+              "GS",
+              "GT",
+              "Premium Plus"
+            ]
+          },
+          {
+            "model_name": "CX-30",
+            "category": "Subcompact SUV",
+            "trims": [
+              "GX",
+              "GS",
+              "GT",
+              "Premium"
+            ]
+          },
+          {
+            "model_name": "CX-50",
+            "category": "Compact SUV",
+            "trims": [
+              "GX",
+              "GS",
+              "GT",
+              "Premium"
+            ]
+          },
+          {
+            "model_name": "CX-5",
+            "category": "Midsize SUV",
+            "trims": [
+              "GX",
+              "GS",
+              "GT",
+              "Premium Plus"
+            ]
+          },
+          {
+            "model_name": "CX-90",
+            "category": "Midsize Luxury SUV",
+            "trims": [
+              "GS",
+              "GT",
+              "Preferred",
+              "Premium Plus"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "brand_id": 9,
+      "brand_name": "Subaru",
+      "type": "Japanese",
+      "country": "Japan",
+      "models_by_year": {
+        "1995": [
+          {
+            "model_name": "Legacy",
+            "category": "Midsize",
+            "trims": [
+              "Base",
+              "L",
+              "LS",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "Impreza",
+            "category": "Compact",
+            "trims": [
+              "Base",
+              "L",
+              "LS"
+            ]
+          },
+          {
+            "model_name": "SVX",
+            "category": "Coupe",
+            "trims": [
+              "L",
+              "LS"
+            ]
+          }
+        ],
+        "2010": [
+          {
+            "model_name": "Impreza",
+            "category": "Compact",
+            "trims": [
+              "2.5i",
+              "2.5i Premium",
+              "WRX",
+              "WRX STI"
+            ]
+          },
+          {
+            "model_name": "Legacy",
+            "category": "Midsize",
+            "trims": [
+              "2.5i",
+              "2.5i Premium",
+              "3.6R",
+              "3.6R Limited"
+            ]
+          },
+          {
+            "model_name": "Outback",
+            "category": "Wagon",
+            "trims": [
+              "2.5i",
+              "2.5i Premium",
+              "3.6R",
+              "3.6R Limited"
+            ]
+          },
+          {
+            "model_name": "Forester",
+            "category": "Compact SUV",
+            "trims": [
+              "2.5X",
+              "2.5X Premium",
+              "XT",
+              "XT Limited"
+            ]
+          }
+        ],
+        "2015": [
+          {
+            "model_name": "Impreza",
+            "category": "Compact",
+            "trims": [
+              "2.0i",
+              "2.0i Premium",
+              "2.0i Sport",
+              "WRX",
+              "STI"
+            ]
+          },
+          {
+            "model_name": "Legacy",
+            "category": "Midsize",
+            "trims": [
+              "2.5i",
+              "2.5i Premium",
+              "2.5i Sport",
+              "3.6R Limited"
+            ]
+          },
+          {
+            "model_name": "Outback",
+            "category": "Wagon",
+            "trims": [
+              "2.5i",
+              "2.5i Premium",
+              "3.6R",
+              "3.6R Limited"
+            ]
+          },
+          {
+            "model_name": "Crosstrek",
+            "category": "Subcompact SUV",
+            "trims": [
+              "2.0i",
+              "2.0i Premium",
+              "2.0i Sport"
+            ]
+          },
+          {
+            "model_name": "Forester",
+            "category": "Compact SUV",
+            "trims": [
+              "2.5i",
+              "2.5i Premium",
+              "2.5i Sport",
+              "XT"
+            ]
+          },
+          {
+            "model_name": "Ascent",
+            "category": "Midsize 3-Row",
+            "trims": [
+              "Base",
+              "Premium",
+              "Limited"
+            ]
+          }
+        ],
+        "2025": [
+          {
+            "model_name": "Impreza",
+            "category": "Compact Sedan",
+            "trims": [
+              "Base",
+              "Premium",
+              "Sport"
+            ]
+          },
+          {
+            "model_name": "Outback",
+            "category": "Wagon SUV",
+            "trims": [
+              "Base",
+              "Premium",
+              "Limited",
+              "Onyx Edition"
+            ]
+          },
+          {
+            "model_name": "Crosstrek",
+            "category": "Subcompact SUV",
+            "trims": [
+              "Base",
+              "Premium",
+              "Sport",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "Forester",
+            "category": "Compact SUV",
+            "trims": [
+              "Base",
+              "Premium",
+              "Sport",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "Ascent",
+            "category": "Midsize 3-Row SUV",
+            "trims": [
+              "Base",
+              "Premium",
+              "Limited",
+              "Touring"
+            ]
+          },
+          {
+            "model_name": "WRX",
+            "category": "Performance Sedan",
+            "trims": [
+              "Base",
+              "Premium",
+              "Limited",
+              "STI"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "brand_id": 10,
+      "brand_name": "BMW",
+      "type": "German Luxury",
+      "country": "Germany",
+      "models_by_year": {
+        "2000": [
+          {
+            "model_name": "3 Series",
+            "category": "Compact",
+            "trims": [
+              "318i",
+              "320i",
+              "330i",
+              "M3"
+            ]
+          },
+          {
+            "model_name": "5 Series",
+            "category": "Midsize",
+            "trims": [
+              "525i",
+              "530i",
+              "M5"
+            ]
+          },
+          {
+            "model_name": "7 Series",
+            "category": "Full-Size",
+            "trims": [
+              "740i",
+              "750i",
+              "M"
+            ]
+          },
+          {
+            "model_name": "X5",
+            "category": "SUV",
+            "trims": [
+              "3.0i",
+              "4.4i"
+            ]
+          }
+        ],
+        "2010": [
+          {
+            "model_name": "1 Series",
+            "category": "Compact",
+            "trims": [
+              "128i",
+              "135i",
+              "135is"
+            ]
+          },
+          {
+            "model_name": "3 Series",
+            "category": "Compact",
+            "trims": [
+              "320i",
+              "328i",
+              "335i",
+              "M3"
+            ]
+          },
+          {
+            "model_name": "5 Series",
+            "category": "Midsize",
+            "trims": [
+              "528i",
+              "535i",
+              "550i",
+              "M5"
+            ]
+          },
+          {
+            "model_name": "7 Series",
+            "category": "Full-Size",
+            "trims": [
+              "740Li",
+              "750Li",
+              "M"
+            ]
+          },
+          {
+            "model_name": "X3",
+            "category": "Compact SUV",
+            "trims": [
+              "xDrive28i",
+              "xDrive35i",
+              "M"
+            ]
+          },
+          {
+            "model_name": "X5",
+            "category": "Midsize SUV",
+            "trims": [
+              "xDrive35i",
+              "xDrive50i",
+              "M"
+            ]
+          }
+        ],
+        "2015": [
+          {
+            "model_name": "3 Series",
+            "category": "Compact",
+            "trims": [
+              "320i",
+              "328i",
+              "335i",
+              "M3",
+              "M4"
+            ]
+          },
+          {
+            "model_name": "5 Series",
+            "category": "Midsize",
+            "trims": [
+              "528i",
+              "535i",
+              "550i",
+              "M550i",
+              "M5"
+            ]
+          },
+          {
+            "model_name": "7 Series",
+            "category": "Full-Size",
+            "trims": [
+              "740i",
+              "740Li",
+              "750Li",
+              "M"
+            ]
+          },
+          {
+            "model_name": "X3",
+            "category": "Compact SUV",
+            "trims": [
+              "xDrive28i",
+              "xDrive35i",
+              "M"
+            ]
+          },
+          {
+            "model_name": "X5",
+            "category": "Midsize SUV",
+            "trims": [
+              "xDrive35i",
+              "xDrive50i",
+              "M"
+            ]
+          },
+          {
+            "model_name": "X6",
+            "category": "Midsize Coupe SUV",
+            "trims": [
+              "xDrive35i",
+              "xDrive50i",
+              "M"
+            ]
+          }
+        ],
+        "2025": [
+          {
+            "model_name": "3 Series",
+            "category": "Compact Sedan",
+            "trims": [
+              "340i",
+              "M340i",
+              "i4",
+              "M4"
+            ]
+          },
+          {
+            "model_name": "5 Series",
+            "category": "Midsize Sedan",
+            "trims": [
+              "540i",
+              "M550i",
+              "i5",
+              "M5"
+            ]
+          },
+          {
+            "model_name": "X3",
+            "category": "Compact Luxury SUV",
+            "trims": [
+              "xDrive40i",
+              "M40i",
+              "M",
+              "iX3"
+            ]
+          },
+          {
+            "model_name": "X5",
+            "category": "Midsize Luxury SUV",
+            "trims": [
+              "xDrive40i",
+              "M50i",
+              "M",
+              "iX"
+            ]
+          },
+          {
+            "model_name": "X7",
+            "category": "Full-Size Luxury SUV",
+            "trims": [
+              "xDrive40i",
+              "M50i",
+              "M"
+            ]
+          },
+          {
+            "model_name": "i4",
+            "category": "Electric Sedan",
+            "trims": [
+              "eDrive40",
+              "eDrive50",
+              "M60"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "brand_id": 11,
+      "brand_name": "Infiniti",
+      "type": "Japanese Luxury",
+      "country": "Japan",
+      "models_by_year": {
+        "1995": [
+          {
+            "model_name": "Q45",
+            "category": "Luxury Sedan",
+            "trims": [
+              "Base",
+              "Touring",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "J30",
+            "category": "Midsize Sedan",
+            "trims": [
+              "Base",
+              "Touring"
+            ]
+          }
+        ],
+        "2010": [
+          {
+            "model_name": "M37",
+            "category": "Midsize Sedan",
+            "trims": [
+              "Base",
+              "Journey",
+              "Premium Tech"
+            ]
+          },
+          {
+            "model_name": "Q50",
+            "category": "Compact Sedan",
+            "trims": [
+              "Base",
+              "Hybrid",
+              "Premium"
+            ]
+          },
+          {
+            "model_name": "QX70",
+            "category": "Midsize SUV",
+            "trims": [
+              "Base",
+              "Premium",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "QX80",
+            "category": "Full-Size SUV",
+            "trims": [
+              "Base",
+              "Premium",
+              "Limited",
+              "Deluxe Tech"
+            ]
+          }
+        ],
+        "2015": [
+          {
+            "model_name": "Q50",
+            "category": "Compact Sedan",
+            "trims": [
+              "Base",
+              "Premium",
+              "Sport",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "Q70",
+            "category": "Midsize Sedan",
+            "trims": [
+              "Base",
+              "Premium",
+              "Hybrid"
+            ]
+          },
+          {
+            "model_name": "QX60",
+            "category": "Midsize SUV",
+            "trims": [
+              "Base",
+              "Pure",
+              "Luxury",
+              "AWD"
+            ]
+          },
+          {
+            "model_name": "QX80",
+            "category": "Full-Size SUV",
+            "trims": [
+              "Base",
+              "Luxury",
+              "Premium Tech"
+            ]
+          }
+        ],
+        "2025": [
+          {
+            "model_name": "QX50",
+            "category": "Compact Luxury SUV",
+            "trims": [
+              "PURE",
+              "LUXE",
+              "SPORT"
+            ]
+          },
+          {
+            "model_name": "QX55",
+            "category": "Luxury Crossover Coupe",
+            "trims": [
+              "LUXE",
+              "ESSENTIAL",
+              "SENSORY"
+            ]
+          },
+          {
+            "model_name": "QX60",
+            "category": "Midsize Luxury SUV",
+            "trims": [
+              "PURE",
+              "LUXE",
+              "SPORT",
+              "AUTOGRAPH"
+            ]
+          },
+          {
+            "model_name": "QX80",
+            "category": "Full-Size Luxury SUV",
+            "trims": [
+              "LUXE",
+              "SPORT",
+              "AUTOGRAPH"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "brand_id": 12,
+      "brand_name": "Lexus",
+      "type": "Japanese Luxury",
+      "country": "Japan",
+      "models_by_year": {
+        "1995": [
+          {
+            "model_name": "LS400",
+            "category": "Luxury Sedan",
+            "trims": [
+              "Base",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "ES300",
+            "category": "Midsize Sedan",
+            "trims": [
+              "Base",
+              "SE"
+            ]
+          },
+          {
+            "model_name": "SC400",
+            "category": "Coupe",
+            "trims": [
+              "Base",
+              "Sport"
+            ]
+          },
+          {
+            "model_name": "RX300",
+            "category": "Midsize SUV",
+            "trims": [
+              "Base",
+              "SE"
+            ]
+          }
+        ],
+        "2010": [
+          {
+            "model_name": "IS250",
+            "category": "Compact Sedan",
+            "trims": [
+              "Base",
+              "Sport",
+              "AWD"
+            ]
+          },
+          {
+            "model_name": "IS350",
+            "category": "Compact Sedan",
+            "trims": [
+              "Base",
+              "AWD"
+            ]
+          },
+          {
+            "model_name": "ES350",
+            "category": "Midsize Sedan",
+            "trims": [
+              "Base",
+              "Luxury"
+            ]
+          },
+          {
+            "model_name": "GS350",
+            "category": "Midsize Sedan",
+            "trims": [
+              "Base",
+              "Luxury",
+              "F Sport"
+            ]
+          },
+          {
+            "model_name": "RX350",
+            "category": "Midsize SUV",
+            "trims": [
+              "Base",
+              "Luxury",
+              "Premium"
+            ]
+          },
+          {
+            "model_name": "RX450h",
+            "category": "Midsize Hybrid SUV",
+            "trims": [
+              "Base",
+              "Luxury",
+              "Premium"
+            ]
+          }
+        ],
+        "2015": [
+          {
+            "model_name": "IS250",
+            "category": "Compact Sedan",
+            "trims": [
+              "Base",
+              "AWD",
+              "F Sport"
+            ]
+          },
+          {
+            "model_name": "IS350",
+            "category": "Compact Sedan",
+            "trims": [
+              "Base",
+              "F Sport"
+            ]
+          },
+          {
+            "model_name": "ES350",
+            "category": "Midsize Sedan",
+            "trims": [
+              "Base",
+              "Luxury",
+              "Sport"
+            ]
+          },
+          {
+            "model_name": "GS350",
+            "category": "Midsize Sedan",
+            "trims": [
+              "Base",
+              "Luxury",
+              "F Sport"
+            ]
+          },
+          {
+            "model_name": "NX200t",
+            "category": "Compact SUV",
+            "trims": [
+              "Base",
+              "AWD",
+              "F Sport"
+            ]
+          },
+          {
+            "model_name": "RX350",
+            "category": "Midsize SUV",
+            "trims": [
+              "Base",
+              "Luxury",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "RX450h",
+            "category": "Midsize Hybrid SUV",
+            "trims": [
+              "Base",
+              "Luxury",
+              "Limited"
+            ]
+          },
+          {
+            "model_name": "LX570",
+            "category": "Full-Size SUV",
+            "trims": [
+              "Base",
+              "Sport Luxury"
+            ]
+          }
+        ],
+        "2025": [
+          {
+            "model_name": "IS",
+            "category": "Compact Luxury Sedan",
+            "trims": [
+              "Standard",
+              "F Sport",
+              "Ultra Luxury",
+              "F"
+            ]
+          },
+          {
+            "model_name": "ES",
+            "category": "Midsize Luxury Sedan",
+            "trims": [
+              "250",
+              "350",
+              "350h",
+              "F Sport"
+            ]
+          },
+          {
+            "model_name": "NX",
+            "category": "Compact Luxury SUV",
+            "trims": [
+              "250",
+              "350",
+              "350h",
+              "F Sport",
+              "450h+"
+            ]
+          },
+          {
+            "model_name": "RX",
+            "category": "Midsize Luxury SUV",
+            "trims": [
+              "350",
+              "350h",
+              "500h",
+              "F Sport"
+            ]
+          },
+          {
+            "model_name": "LX",
+            "category": "Full-Size Luxury SUV",
+            "trims": [
+              "570S",
+              "600h L",
+              "F Sport Ultra"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

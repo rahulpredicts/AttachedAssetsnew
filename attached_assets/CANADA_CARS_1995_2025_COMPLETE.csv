@@ -1,0 +1,1180 @@
+year,brand,brand_type,country,model,category,trim
+1995,Ford,Domestic,USA,F-150,Pickup,Regular
+1995,Ford,Domestic,USA,F-150,Pickup,SuperCab
+1995,Ford,Domestic,USA,F-150,Pickup,XL
+1995,Ford,Domestic,USA,F-150,Pickup,XLT
+1995,Ford,Domestic,USA,Mustang,Coupe,Base
+1995,Ford,Domestic,USA,Mustang,Coupe,GT
+1995,Ford,Domestic,USA,Mustang,Coupe,Cobra
+1995,Ford,Domestic,USA,Taurus,Sedan,GL
+1995,Ford,Domestic,USA,Taurus,Sedan,SE
+1995,Ford,Domestic,USA,Taurus,Sedan,SHO
+1995,Ford,Domestic,USA,Windstar,Minivan,Base
+1995,Ford,Domestic,USA,Windstar,Minivan,GL
+1995,Ford,Domestic,USA,Windstar,Minivan,LX
+1995,Ford,Domestic,USA,Explorer,SUV,Base
+1995,Ford,Domestic,USA,Explorer,SUV,XLT
+1995,Ford,Domestic,USA,Explorer,SUV,Eddie Bauer
+2000,Ford,Domestic,USA,F-150,Pickup,Regular
+2000,Ford,Domestic,USA,F-150,Pickup,SuperCrew
+2000,Ford,Domestic,USA,F-150,Pickup,XL
+2000,Ford,Domestic,USA,F-150,Pickup,XLT
+2000,Ford,Domestic,USA,F-150,Pickup,Lariat
+2000,Ford,Domestic,USA,Mustang,Coupe,Base
+2000,Ford,Domestic,USA,Mustang,Coupe,GT
+2000,Ford,Domestic,USA,Mustang,Coupe,SVT Cobra
+2000,Ford,Domestic,USA,Taurus,Sedan,SE
+2000,Ford,Domestic,USA,Taurus,Sedan,SHO
+2000,Ford,Domestic,USA,Taurus,Sedan,Wagon
+2000,Ford,Domestic,USA,Focus,Compact,Base
+2000,Ford,Domestic,USA,Focus,Compact,LX
+2000,Ford,Domestic,USA,Focus,Compact,SE
+2000,Ford,Domestic,USA,Focus,Compact,ZX3
+2000,Ford,Domestic,USA,Explorer,SUV,Base
+2000,Ford,Domestic,USA,Explorer,SUV,XLT
+2000,Ford,Domestic,USA,Explorer,SUV,Eddie Bauer
+2000,Ford,Domestic,USA,Explorer,SUV,Limited
+2005,Ford,Domestic,USA,F-150,Pickup,Regular
+2005,Ford,Domestic,USA,F-150,Pickup,SuperCrew
+2005,Ford,Domestic,USA,F-150,Pickup,FX4
+2005,Ford,Domestic,USA,F-150,Pickup,Lariat
+2005,Ford,Domestic,USA,F-150,Pickup,King Ranch
+2005,Ford,Domestic,USA,Mustang,Coupe,Base
+2005,Ford,Domestic,USA,Mustang,Coupe,GT
+2005,Ford,Domestic,USA,Mustang,Coupe,Shelby GT500
+2005,Ford,Domestic,USA,Focus,Compact,SE
+2005,Ford,Domestic,USA,Focus,Compact,ZX4
+2005,Ford,Domestic,USA,Focus,Compact,ST
+2005,Ford,Domestic,USA,Focus,Compact,SES
+2005,Ford,Domestic,USA,Fusion,Midsize,S
+2005,Ford,Domestic,USA,Fusion,Midsize,SE
+2005,Ford,Domestic,USA,Fusion,Midsize,SEL
+2005,Ford,Domestic,USA,Fusion,Midsize,Limited
+2005,Ford,Domestic,USA,Explorer,SUV,Base
+2005,Ford,Domestic,USA,Explorer,SUV,XLT
+2005,Ford,Domestic,USA,Explorer,SUV,Limited
+2005,Ford,Domestic,USA,Explorer,SUV,Eddie Bauer
+2005,Ford,Domestic,USA,Escape,Compact SUV,XLS
+2005,Ford,Domestic,USA,Escape,Compact SUV,XLT
+2005,Ford,Domestic,USA,Escape,Compact SUV,Limited
+2010,Ford,Domestic,USA,F-150,Pickup,Regular
+2010,Ford,Domestic,USA,F-150,Pickup,SuperCrew
+2010,Ford,Domestic,USA,F-150,Pickup,XL
+2010,Ford,Domestic,USA,F-150,Pickup,XLT
+2010,Ford,Domestic,USA,F-150,Pickup,Lariat
+2010,Ford,Domestic,USA,F-150,Pickup,King Ranch
+2010,Ford,Domestic,USA,Mustang,Coupe,Base
+2010,Ford,Domestic,USA,Mustang,Coupe,GT
+2010,Ford,Domestic,USA,Mustang,Coupe,Shelby
+2010,Ford,Domestic,USA,Mustang,Coupe,Boss
+2010,Ford,Domestic,USA,Focus,Compact,S
+2010,Ford,Domestic,USA,Focus,Compact,SE
+2010,Ford,Domestic,USA,Focus,Compact,SES
+2010,Ford,Domestic,USA,Focus,Compact,ST
+2010,Ford,Domestic,USA,Fusion,Midsize,S
+2010,Ford,Domestic,USA,Fusion,Midsize,SE
+2010,Ford,Domestic,USA,Fusion,Midsize,SEL
+2010,Ford,Domestic,USA,Fusion,Midsize,Limited
+2010,Ford,Domestic,USA,Fusion,Midsize,Hybrid
+2010,Ford,Domestic,USA,Edge,Midsize SUV,SE
+2010,Ford,Domestic,USA,Edge,Midsize SUV,SEL
+2010,Ford,Domestic,USA,Edge,Midsize SUV,Limited
+2010,Ford,Domestic,USA,Escape,Compact SUV,S
+2010,Ford,Domestic,USA,Escape,Compact SUV,XLS
+2010,Ford,Domestic,USA,Escape,Compact SUV,XLT
+2010,Ford,Domestic,USA,Escape,Compact SUV,Limited
+2010,Ford,Domestic,USA,Explorer,SUV,Base
+2010,Ford,Domestic,USA,Explorer,SUV,XLT
+2010,Ford,Domestic,USA,Explorer,SUV,Limited
+2010,Ford,Domestic,USA,Explorer,SUV,Eddie Bauer
+2015,Ford,Domestic,USA,F-150,Pickup,Regular
+2015,Ford,Domestic,USA,F-150,Pickup,SuperCrew
+2015,Ford,Domestic,USA,F-150,Pickup,XL
+2015,Ford,Domestic,USA,F-150,Pickup,XLT
+2015,Ford,Domestic,USA,F-150,Pickup,Lariat
+2015,Ford,Domestic,USA,F-150,Pickup,King Ranch
+2015,Ford,Domestic,USA,F-150,Pickup,Platinum
+2015,Ford,Domestic,USA,Mustang,Coupe,Base
+2015,Ford,Domestic,USA,Mustang,Coupe,EcoBoost
+2015,Ford,Domestic,USA,Mustang,Coupe,GT
+2015,Ford,Domestic,USA,Mustang,Coupe,Shelby
+2015,Ford,Domestic,USA,Mustang,Coupe,Boss
+2015,Ford,Domestic,USA,Focus,Compact,S
+2015,Ford,Domestic,USA,Focus,Compact,SE
+2015,Ford,Domestic,USA,Focus,Compact,ST
+2015,Ford,Domestic,USA,Focus,Compact,RS
+2015,Ford,Domestic,USA,Fusion,Midsize,S
+2015,Ford,Domestic,USA,Fusion,Midsize,SE
+2015,Ford,Domestic,USA,Fusion,Midsize,Titanium
+2015,Ford,Domestic,USA,Fusion,Midsize,Hybrid
+2015,Ford,Domestic,USA,Fusion,Midsize,Energi
+2015,Ford,Domestic,USA,Edge,Midsize SUV,S
+2015,Ford,Domestic,USA,Edge,Midsize SUV,SE
+2015,Ford,Domestic,USA,Edge,Midsize SUV,Titanium
+2015,Ford,Domestic,USA,Edge,Midsize SUV,Sport
+2015,Ford,Domestic,USA,Escape,Compact SUV,S
+2015,Ford,Domestic,USA,Escape,Compact SUV,SE
+2015,Ford,Domestic,USA,Escape,Compact SUV,Titanium
+2015,Ford,Domestic,USA,Escape,Compact SUV,4WD
+2015,Ford,Domestic,USA,Explorer,SUV,Base
+2015,Ford,Domestic,USA,Explorer,SUV,XLT
+2015,Ford,Domestic,USA,Explorer,SUV,Limited
+2015,Ford,Domestic,USA,Explorer,SUV,Sport
+2020,Ford,Domestic,USA,F-150,Pickup,Regular
+2020,Ford,Domestic,USA,F-150,Pickup,SuperCrew
+2020,Ford,Domestic,USA,F-150,Pickup,XL
+2020,Ford,Domestic,USA,F-150,Pickup,XLT
+2020,Ford,Domestic,USA,F-150,Pickup,Lariat
+2020,Ford,Domestic,USA,F-150,Pickup,King Ranch
+2020,Ford,Domestic,USA,F-150,Pickup,Platinum
+2020,Ford,Domestic,USA,F-150,Pickup,Limited
+2020,Ford,Domestic,USA,Mustang,Coupe,EcoBoost
+2020,Ford,Domestic,USA,Mustang,Coupe,GT
+2020,Ford,Domestic,USA,Mustang,Coupe,Shelby
+2020,Ford,Domestic,USA,Mustang,Coupe,Mach 1
+2020,Ford,Domestic,USA,Focus,Compact,S
+2020,Ford,Domestic,USA,Focus,Compact,SE
+2020,Ford,Domestic,USA,Focus,Compact,ST
+2020,Ford,Domestic,USA,Fusion,Midsize,S
+2020,Ford,Domestic,USA,Fusion,Midsize,SE
+2020,Ford,Domestic,USA,Fusion,Midsize,Titanium
+2020,Ford,Domestic,USA,Fusion,Midsize,Hybrid
+2020,Ford,Domestic,USA,Edge,Midsize SUV,S
+2020,Ford,Domestic,USA,Edge,Midsize SUV,SE
+2020,Ford,Domestic,USA,Edge,Midsize SUV,Titanium
+2020,Ford,Domestic,USA,Edge,Midsize SUV,ST
+2020,Ford,Domestic,USA,Escape,Compact SUV,S
+2020,Ford,Domestic,USA,Escape,Compact SUV,SE
+2020,Ford,Domestic,USA,Escape,Compact SUV,Titanium
+2020,Ford,Domestic,USA,Escape,Compact SUV,4WD
+2020,Ford,Domestic,USA,Explorer,SUV,Base
+2020,Ford,Domestic,USA,Explorer,SUV,XLT
+2020,Ford,Domestic,USA,Explorer,SUV,Limited
+2020,Ford,Domestic,USA,Explorer,SUV,ST
+2020,Ford,Domestic,USA,Explorer,SUV,Platinum
+2020,Ford,Domestic,USA,Expedition,Full-Size SUV,Base
+2020,Ford,Domestic,USA,Expedition,Full-Size SUV,XLT
+2020,Ford,Domestic,USA,Expedition,Full-Size SUV,Limited
+2020,Ford,Domestic,USA,Expedition,Full-Size SUV,King Ranch
+2020,Ford,Domestic,USA,Expedition,Full-Size SUV,Platinum
+2025,Ford,Domestic,USA,F-150,Pickup,Regular Cab
+2025,Ford,Domestic,USA,F-150,Pickup,SuperCrew
+2025,Ford,Domestic,USA,F-150,Pickup,XL
+2025,Ford,Domestic,USA,F-150,Pickup,XLT
+2025,Ford,Domestic,USA,F-150,Pickup,Lariat
+2025,Ford,Domestic,USA,F-150,Pickup,King Ranch
+2025,Ford,Domestic,USA,F-150,Pickup,Platinum
+2025,Ford,Domestic,USA,Mustang,Coupe,EcoBoost
+2025,Ford,Domestic,USA,Mustang,Coupe,GT
+2025,Ford,Domestic,USA,Mustang,Coupe,Dark Horse
+2025,Ford,Domestic,USA,Mustang,Coupe,Mach-E
+2025,Ford,Domestic,USA,Explorer,SUV,Base
+2025,Ford,Domestic,USA,Explorer,SUV,XLT
+2025,Ford,Domestic,USA,Explorer,SUV,Limited
+2025,Ford,Domestic,USA,Explorer,SUV,Platinum
+2025,Ford,Domestic,USA,Expedition,Full-Size SUV,Base
+2025,Ford,Domestic,USA,Expedition,Full-Size SUV,XLT
+2025,Ford,Domestic,USA,Expedition,Full-Size SUV,Limited
+2025,Ford,Domestic,USA,Expedition,Full-Size SUV,Platinum
+2025,Ford,Domestic,USA,Bronco,SUV,Big Bend
+2025,Ford,Domestic,USA,Bronco,SUV,Black Diamond
+2025,Ford,Domestic,USA,Bronco,SUV,Wildtrak
+2025,Ford,Domestic,USA,Bronco,SUV,Raptor
+2025,Ford,Domestic,USA,EcoSport,Compact SUV,S
+2025,Ford,Domestic,USA,EcoSport,Compact SUV,SE
+2025,Ford,Domestic,USA,EcoSport,Compact SUV,Titanium
+1995,Toyota,Japanese,Japan,Corolla,Sedan,Deluxe
+1995,Toyota,Japanese,Japan,Corolla,Sedan,LE
+1995,Toyota,Japanese,Japan,Corolla,Sedan,CE
+1995,Toyota,Japanese,Japan,Camry,Midsize Sedan,LE
+1995,Toyota,Japanese,Japan,Camry,Midsize Sedan,XLE
+1995,Toyota,Japanese,Japan,Camry,Midsize Sedan,SE
+1995,Toyota,Japanese,Japan,4Runner,SUV,Base
+1995,Toyota,Japanese,Japan,4Runner,SUV,DX
+1995,Toyota,Japanese,Japan,4Runner,SUV,Limited
+1995,Toyota,Japanese,Japan,Pickup,Pickup,Deluxe
+1995,Toyota,Japanese,Japan,Pickup,Pickup,LE
+1995,Toyota,Japanese,Japan,Pickup,Pickup,SR5
+1995,Toyota,Japanese,Japan,Tercel,Compact,Base
+1995,Toyota,Japanese,Japan,Tercel,Compact,CE
+1995,Toyota,Japanese,Japan,Tercel,Compact,DX
+2000,Toyota,Japanese,Japan,Corolla,Sedan,CE
+2000,Toyota,Japanese,Japan,Corolla,Sedan,LE
+2000,Toyota,Japanese,Japan,Corolla,Sedan,S
+2000,Toyota,Japanese,Japan,Camry,Midsize Sedan,CE
+2000,Toyota,Japanese,Japan,Camry,Midsize Sedan,LE
+2000,Toyota,Japanese,Japan,Camry,Midsize Sedan,XLE
+2000,Toyota,Japanese,Japan,Camry,Midsize Sedan,SE
+2000,Toyota,Japanese,Japan,RAV4,Compact SUV,Base
+2000,Toyota,Japanese,Japan,RAV4,Compact SUV,L
+2000,Toyota,Japanese,Japan,RAV4,Compact SUV,4WD
+2000,Toyota,Japanese,Japan,4Runner,SUV,SR5
+2000,Toyota,Japanese,Japan,4Runner,SUV,Limited
+2000,Toyota,Japanese,Japan,Tacoma,Pickup,Base
+2000,Toyota,Japanese,Japan,Tacoma,Pickup,Xtracab
+2000,Toyota,Japanese,Japan,Tacoma,Pickup,PreRunner
+2000,Toyota,Japanese,Japan,Tundra,Full-Size Truck,Base
+2000,Toyota,Japanese,Japan,Tundra,Full-Size Truck,Limited
+2005,Toyota,Japanese,Japan,Corolla,Sedan,CE
+2005,Toyota,Japanese,Japan,Corolla,Sedan,LE
+2005,Toyota,Japanese,Japan,Corolla,Sedan,S
+2005,Toyota,Japanese,Japan,Corolla,Sedan,XLE
+2005,Toyota,Japanese,Japan,Camry,Midsize Sedan,LE
+2005,Toyota,Japanese,Japan,Camry,Midsize Sedan,XLE
+2005,Toyota,Japanese,Japan,Camry,Midsize Sedan,SE
+2005,Toyota,Japanese,Japan,Camry,Midsize Sedan,Hybrid
+2005,Toyota,Japanese,Japan,RAV4,Compact SUV,LE
+2005,Toyota,Japanese,Japan,RAV4,Compact SUV,XLE
+2005,Toyota,Japanese,Japan,RAV4,Compact SUV,Limited
+2005,Toyota,Japanese,Japan,RAV4,Compact SUV,4WD
+2005,Toyota,Japanese,Japan,Highlander,Midsize SUV,Base
+2005,Toyota,Japanese,Japan,Highlander,Midsize SUV,LE
+2005,Toyota,Japanese,Japan,Highlander,Midsize SUV,Limited
+2005,Toyota,Japanese,Japan,Highlander,Midsize SUV,Hybrid
+2005,Toyota,Japanese,Japan,4Runner,SUV,SR5
+2005,Toyota,Japanese,Japan,4Runner,SUV,Limited
+2005,Toyota,Japanese,Japan,4Runner,SUV,V8
+2005,Toyota,Japanese,Japan,Tacoma,Pickup,Base
+2005,Toyota,Japanese,Japan,Tacoma,Pickup,PreRunner
+2005,Toyota,Japanese,Japan,Tacoma,Pickup,SR5
+2005,Toyota,Japanese,Japan,Tundra,Full-Size Truck,SR5
+2005,Toyota,Japanese,Japan,Tundra,Full-Size Truck,Limited
+2010,Toyota,Japanese,Japan,Corolla,Sedan,Base
+2010,Toyota,Japanese,Japan,Corolla,Sedan,CE
+2010,Toyota,Japanese,Japan,Corolla,Sedan,LE
+2010,Toyota,Japanese,Japan,Corolla,Sedan,XLE
+2010,Toyota,Japanese,Japan,Corolla,Sedan,S
+2010,Toyota,Japanese,Japan,Camry,Midsize Sedan,LE
+2010,Toyota,Japanese,Japan,Camry,Midsize Sedan,SE
+2010,Toyota,Japanese,Japan,Camry,Midsize Sedan,XLE
+2010,Toyota,Japanese,Japan,Camry,Midsize Sedan,Hybrid
+2010,Toyota,Japanese,Japan,Prius,Hybrid,I
+2010,Toyota,Japanese,Japan,Prius,Hybrid,II
+2010,Toyota,Japanese,Japan,Prius,Hybrid,III
+2010,Toyota,Japanese,Japan,Prius,Hybrid,IV
+2010,Toyota,Japanese,Japan,RAV4,Compact SUV,Base
+2010,Toyota,Japanese,Japan,RAV4,Compact SUV,LE
+2010,Toyota,Japanese,Japan,RAV4,Compact SUV,Limited
+2010,Toyota,Japanese,Japan,RAV4,Compact SUV,4WD
+2010,Toyota,Japanese,Japan,Highlander,Midsize SUV,Base
+2010,Toyota,Japanese,Japan,Highlander,Midsize SUV,LE
+2010,Toyota,Japanese,Japan,Highlander,Midsize SUV,Limited
+2010,Toyota,Japanese,Japan,Highlander,Midsize SUV,Hybrid
+2010,Toyota,Japanese,Japan,4Runner,SUV,SR5
+2010,Toyota,Japanese,Japan,4Runner,SUV,Limited
+2010,Toyota,Japanese,Japan,4Runner,SUV,V8
+2010,Toyota,Japanese,Japan,Tacoma,Pickup,Base
+2010,Toyota,Japanese,Japan,Tacoma,Pickup,PreRunner
+2010,Toyota,Japanese,Japan,Tacoma,Pickup,TRD
+2010,Toyota,Japanese,Japan,Tundra,Full-Size Truck,SR5
+2010,Toyota,Japanese,Japan,Tundra,Full-Size Truck,Limited
+2010,Toyota,Japanese,Japan,Tundra,Full-Size Truck,Platinum
+2015,Toyota,Japanese,Japan,Corolla,Sedan,L
+2015,Toyota,Japanese,Japan,Corolla,Sedan,LE
+2015,Toyota,Japanese,Japan,Corolla,Sedan,S
+2015,Toyota,Japanese,Japan,Corolla,Sedan,XLE
+2015,Toyota,Japanese,Japan,Camry,Midsize Sedan,LE
+2015,Toyota,Japanese,Japan,Camry,Midsize Sedan,SE
+2015,Toyota,Japanese,Japan,Camry,Midsize Sedan,XLE
+2015,Toyota,Japanese,Japan,Camry,Midsize Sedan,Hybrid
+2015,Toyota,Japanese,Japan,Camry,Midsize Sedan,XSE
+2015,Toyota,Japanese,Japan,Prius,Hybrid,Two
+2015,Toyota,Japanese,Japan,Prius,Hybrid,Three
+2015,Toyota,Japanese,Japan,Prius,Hybrid,Four
+2015,Toyota,Japanese,Japan,Prius,Hybrid,Five
+2015,Toyota,Japanese,Japan,RAV4,Compact SUV,LE
+2015,Toyota,Japanese,Japan,RAV4,Compact SUV,XLE
+2015,Toyota,Japanese,Japan,RAV4,Compact SUV,Limited
+2015,Toyota,Japanese,Japan,RAV4,Compact SUV,AWD
+2015,Toyota,Japanese,Japan,Highlander,Midsize SUV,LE
+2015,Toyota,Japanese,Japan,Highlander,Midsize SUV,XLE
+2015,Toyota,Japanese,Japan,Highlander,Midsize SUV,Limited
+2015,Toyota,Japanese,Japan,Highlander,Midsize SUV,Hybrid
+2015,Toyota,Japanese,Japan,4Runner,SUV,SR5
+2015,Toyota,Japanese,Japan,4Runner,SUV,Limited
+2015,Toyota,Japanese,Japan,4Runner,SUV,TRD
+2015,Toyota,Japanese,Japan,Tacoma,Pickup,Access
+2015,Toyota,Japanese,Japan,Tacoma,Pickup,Double Cab
+2015,Toyota,Japanese,Japan,Tacoma,Pickup,PreRunner
+2015,Toyota,Japanese,Japan,Tundra,Full-Size Truck,SR5
+2015,Toyota,Japanese,Japan,Tundra,Full-Size Truck,SR5 Plus
+2015,Toyota,Japanese,Japan,Tundra,Full-Size Truck,Limited
+2015,Toyota,Japanese,Japan,Tundra,Full-Size Truck,Platinum
+2020,Toyota,Japanese,Japan,Corolla,Sedan,L
+2020,Toyota,Japanese,Japan,Corolla,Sedan,LE
+2020,Toyota,Japanese,Japan,Corolla,Sedan,SE
+2020,Toyota,Japanese,Japan,Corolla,Sedan,XLE
+2020,Toyota,Japanese,Japan,Corolla,Sedan,Hybrid
+2020,Toyota,Japanese,Japan,Camry,Midsize Sedan,L
+2020,Toyota,Japanese,Japan,Camry,Midsize Sedan,LE
+2020,Toyota,Japanese,Japan,Camry,Midsize Sedan,SE
+2020,Toyota,Japanese,Japan,Camry,Midsize Sedan,XLE
+2020,Toyota,Japanese,Japan,Camry,Midsize Sedan,Limited
+2020,Toyota,Japanese,Japan,Camry,Midsize Sedan,Hybrid
+2020,Toyota,Japanese,Japan,Prius,Hybrid,L Eco
+2020,Toyota,Japanese,Japan,Prius,Hybrid,LE
+2020,Toyota,Japanese,Japan,Prius,Hybrid,XLE
+2020,Toyota,Japanese,Japan,Prius,Hybrid,Limited
+2020,Toyota,Japanese,Japan,RAV4,Compact SUV,LE
+2020,Toyota,Japanese,Japan,RAV4,Compact SUV,XLE
+2020,Toyota,Japanese,Japan,RAV4,Compact SUV,Adventure
+2020,Toyota,Japanese,Japan,RAV4,Compact SUV,Limited
+2020,Toyota,Japanese,Japan,RAV4,Compact SUV,Prime
+2020,Toyota,Japanese,Japan,RAV4,Compact SUV,Hybrid
+2020,Toyota,Japanese,Japan,Highlander,Midsize SUV,L
+2020,Toyota,Japanese,Japan,Highlander,Midsize SUV,LE
+2020,Toyota,Japanese,Japan,Highlander,Midsize SUV,XLE
+2020,Toyota,Japanese,Japan,Highlander,Midsize SUV,Limited
+2020,Toyota,Japanese,Japan,Highlander,Midsize SUV,Platinum
+2020,Toyota,Japanese,Japan,4Runner,SUV,SR5
+2020,Toyota,Japanese,Japan,4Runner,SUV,SR5 Plus
+2020,Toyota,Japanese,Japan,4Runner,SUV,TRD
+2020,Toyota,Japanese,Japan,4Runner,SUV,Limited
+2020,Toyota,Japanese,Japan,4Runner,SUV,Platinum
+2020,Toyota,Japanese,Japan,Tacoma,Pickup,Access Cab
+2020,Toyota,Japanese,Japan,Tacoma,Pickup,Double Cab
+2020,Toyota,Japanese,Japan,Tacoma,Pickup,CrewMax
+2020,Toyota,Japanese,Japan,Tundra,Full-Size Truck,SR5
+2020,Toyota,Japanese,Japan,Tundra,Full-Size Truck,SR5 Plus
+2020,Toyota,Japanese,Japan,Tundra,Full-Size Truck,Limited
+2020,Toyota,Japanese,Japan,Tundra,Full-Size Truck,Platinum
+2020,Toyota,Japanese,Japan,Tundra,Full-Size Truck,1794 Edition
+2025,Toyota,Japanese,Japan,Corolla,Sedan,L
+2025,Toyota,Japanese,Japan,Corolla,Sedan,LE
+2025,Toyota,Japanese,Japan,Corolla,Sedan,SE
+2025,Toyota,Japanese,Japan,Corolla,Sedan,XLE
+2025,Toyota,Japanese,Japan,Corolla,Sedan,Hybrid
+2025,Toyota,Japanese,Japan,Camry,Midsize Sedan,LE
+2025,Toyota,Japanese,Japan,Camry,Midsize Sedan,SE
+2025,Toyota,Japanese,Japan,Camry,Midsize Sedan,XLE
+2025,Toyota,Japanese,Japan,Camry,Midsize Sedan,Limited
+2025,Toyota,Japanese,Japan,Camry,Midsize Sedan,Hybrid
+2025,Toyota,Japanese,Japan,RAV4,Compact SUV,LE
+2025,Toyota,Japanese,Japan,RAV4,Compact SUV,XLE
+2025,Toyota,Japanese,Japan,RAV4,Compact SUV,Adventure
+2025,Toyota,Japanese,Japan,RAV4,Compact SUV,Prime
+2025,Toyota,Japanese,Japan,RAV4,Compact SUV,Hybrid
+2025,Toyota,Japanese,Japan,Highlander,Midsize SUV,L
+2025,Toyota,Japanese,Japan,Highlander,Midsize SUV,LE
+2025,Toyota,Japanese,Japan,Highlander,Midsize SUV,XLE
+2025,Toyota,Japanese,Japan,Highlander,Midsize SUV,Limited
+2025,Toyota,Japanese,Japan,Highlander,Midsize SUV,Platinum
+2025,Toyota,Japanese,Japan,4Runner,Full-Size SUV,SR5
+2025,Toyota,Japanese,Japan,4Runner,Full-Size SUV,TRD Off-Road
+2025,Toyota,Japanese,Japan,4Runner,Full-Size SUV,Limited
+2025,Toyota,Japanese,Japan,4Runner,Full-Size SUV,Platinum
+2025,Toyota,Japanese,Japan,Tacoma,Pickup,Access Cab
+2025,Toyota,Japanese,Japan,Tacoma,Pickup,Double Cab
+2025,Toyota,Japanese,Japan,Tacoma,Pickup,CrewMax
+2025,Toyota,Japanese,Japan,Tundra,Full-Size Truck,SR
+2025,Toyota,Japanese,Japan,Tundra,Full-Size Truck,SR5
+2025,Toyota,Japanese,Japan,Tundra,Full-Size Truck,Limited
+2025,Toyota,Japanese,Japan,Tundra,Full-Size Truck,Platinum
+2025,Toyota,Japanese,Japan,Tundra,Full-Size Truck,1794
+2025,Toyota,Japanese,Japan,Prius,Hybrid Sedan,LE
+2025,Toyota,Japanese,Japan,Prius,Hybrid Sedan,XLE
+2025,Toyota,Japanese,Japan,Prius,Hybrid Sedan,Limited
+2025,Toyota,Japanese,Japan,Prius,Hybrid Sedan,Prime
+1995,Honda,Japanese,Japan,Civic,Compact,DX
+1995,Honda,Japanese,Japan,Civic,Compact,LX
+1995,Honda,Japanese,Japan,Civic,Compact,EX
+1995,Honda,Japanese,Japan,Civic,Compact,Si
+1995,Honda,Japanese,Japan,Accord,Midsize,LX
+1995,Honda,Japanese,Japan,Accord,Midsize,EX
+1995,Honda,Japanese,Japan,Accord,Midsize,SE
+1995,Honda,Japanese,Japan,Accord,Midsize,DX
+1995,Honda,Japanese,Japan,CR-V,Compact SUV,LX
+1995,Honda,Japanese,Japan,CR-V,Compact SUV,EX
+1995,Honda,Japanese,Japan,Odyssey,Minivan,LX
+1995,Honda,Japanese,Japan,Odyssey,Minivan,EX
+2000,Honda,Japanese,Japan,Civic,Compact,DX
+2000,Honda,Japanese,Japan,Civic,Compact,LX
+2000,Honda,Japanese,Japan,Civic,Compact,EX
+2000,Honda,Japanese,Japan,Civic,Compact,Si
+2000,Honda,Japanese,Japan,Accord,Midsize,LX
+2000,Honda,Japanese,Japan,Accord,Midsize,EX
+2000,Honda,Japanese,Japan,Accord,Midsize,SE
+2000,Honda,Japanese,Japan,CR-V,Compact SUV,LX
+2000,Honda,Japanese,Japan,CR-V,Compact SUV,EX
+2000,Honda,Japanese,Japan,CR-V,Compact SUV,SE
+2000,Honda,Japanese,Japan,Odyssey,Minivan,LX
+2000,Honda,Japanese,Japan,Odyssey,Minivan,EX
+2000,Honda,Japanese,Japan,Odyssey,Minivan,EX-L
+2000,Honda,Japanese,Japan,Insight,Hybrid,Base
+2000,Honda,Japanese,Japan,Insight,Hybrid,SE
+2005,Honda,Japanese,Japan,Civic,Compact,DX
+2005,Honda,Japanese,Japan,Civic,Compact,LX
+2005,Honda,Japanese,Japan,Civic,Compact,EX
+2005,Honda,Japanese,Japan,Civic,Compact,Si
+2005,Honda,Japanese,Japan,Civic,Compact,Hybrid
+2005,Honda,Japanese,Japan,Accord,Midsize,LX
+2005,Honda,Japanese,Japan,Accord,Midsize,EX
+2005,Honda,Japanese,Japan,Accord,Midsize,EX-L
+2005,Honda,Japanese,Japan,Accord,Midsize,Hybrid
+2005,Honda,Japanese,Japan,CR-V,Compact SUV,LX
+2005,Honda,Japanese,Japan,CR-V,Compact SUV,EX
+2005,Honda,Japanese,Japan,CR-V,Compact SUV,SE
+2005,Honda,Japanese,Japan,CR-V,Compact SUV,Hybrid
+2005,Honda,Japanese,Japan,Odyssey,Minivan,LX
+2005,Honda,Japanese,Japan,Odyssey,Minivan,EX
+2005,Honda,Japanese,Japan,Odyssey,Minivan,EX-L
+2005,Honda,Japanese,Japan,Odyssey,Minivan,Touring
+2005,Honda,Japanese,Japan,Ridgeline,Pickup,RT
+2005,Honda,Japanese,Japan,Ridgeline,Pickup,RTX
+2005,Honda,Japanese,Japan,Ridgeline,Pickup,RTS
+2005,Honda,Japanese,Japan,Pilot,Midsize SUV,LX
+2005,Honda,Japanese,Japan,Pilot,Midsize SUV,EX
+2005,Honda,Japanese,Japan,Pilot,Midsize SUV,EX-L
+2010,Honda,Japanese,Japan,Civic,Compact,DX
+2010,Honda,Japanese,Japan,Civic,Compact,LX
+2010,Honda,Japanese,Japan,Civic,Compact,EX
+2010,Honda,Japanese,Japan,Civic,Compact,EX-L
+2010,Honda,Japanese,Japan,Civic,Compact,Si
+2010,Honda,Japanese,Japan,Civic,Compact,Hybrid
+2010,Honda,Japanese,Japan,Accord,Midsize,LX
+2010,Honda,Japanese,Japan,Accord,Midsize,EX
+2010,Honda,Japanese,Japan,Accord,Midsize,EX-L
+2010,Honda,Japanese,Japan,Accord,Midsize,Hybrid
+2010,Honda,Japanese,Japan,CR-V,Compact SUV,LX
+2010,Honda,Japanese,Japan,CR-V,Compact SUV,EX
+2010,Honda,Japanese,Japan,CR-V,Compact SUV,EX-L
+2010,Honda,Japanese,Japan,CR-V,Compact SUV,Hybrid
+2010,Honda,Japanese,Japan,Odyssey,Minivan,LX
+2010,Honda,Japanese,Japan,Odyssey,Minivan,EX
+2010,Honda,Japanese,Japan,Odyssey,Minivan,EX-L
+2010,Honda,Japanese,Japan,Odyssey,Minivan,Touring
+2010,Honda,Japanese,Japan,Ridgeline,Pickup,RT
+2010,Honda,Japanese,Japan,Ridgeline,Pickup,RTL
+2010,Honda,Japanese,Japan,Ridgeline,Pickup,RTX
+2010,Honda,Japanese,Japan,Ridgeline,Pickup,RTS
+2010,Honda,Japanese,Japan,Pilot,Midsize SUV,LX
+2010,Honda,Japanese,Japan,Pilot,Midsize SUV,EX
+2010,Honda,Japanese,Japan,Pilot,Midsize SUV,EX-L
+2010,Honda,Japanese,Japan,Pilot,Midsize SUV,Touring
+2015,Honda,Japanese,Japan,Civic,Compact,LX
+2015,Honda,Japanese,Japan,Civic,Compact,EX
+2015,Honda,Japanese,Japan,Civic,Compact,EX-T
+2015,Honda,Japanese,Japan,Civic,Compact,Si
+2015,Honda,Japanese,Japan,Civic,Compact,Type R
+2015,Honda,Japanese,Japan,Accord,Midsize,LX
+2015,Honda,Japanese,Japan,Accord,Midsize,EX
+2015,Honda,Japanese,Japan,Accord,Midsize,EX-L
+2015,Honda,Japanese,Japan,Accord,Midsize,Touring
+2015,Honda,Japanese,Japan,Accord,Midsize,Hybrid
+2015,Honda,Japanese,Japan,CR-V,Compact SUV,LX
+2015,Honda,Japanese,Japan,CR-V,Compact SUV,EX
+2015,Honda,Japanese,Japan,CR-V,Compact SUV,EX-L
+2015,Honda,Japanese,Japan,CR-V,Compact SUV,Touring
+2015,Honda,Japanese,Japan,CR-V,Compact SUV,Hybrid
+2015,Honda,Japanese,Japan,Odyssey,Minivan,LX
+2015,Honda,Japanese,Japan,Odyssey,Minivan,EX
+2015,Honda,Japanese,Japan,Odyssey,Minivan,EX-L
+2015,Honda,Japanese,Japan,Odyssey,Minivan,Touring
+2015,Honda,Japanese,Japan,Ridgeline,Pickup,RT
+2015,Honda,Japanese,Japan,Ridgeline,Pickup,RTL
+2015,Honda,Japanese,Japan,Ridgeline,Pickup,RTL-T
+2015,Honda,Japanese,Japan,Ridgeline,Pickup,Black Edition
+2015,Honda,Japanese,Japan,Pilot,Midsize SUV,LX
+2015,Honda,Japanese,Japan,Pilot,Midsize SUV,EX
+2015,Honda,Japanese,Japan,Pilot,Midsize SUV,EX-L
+2015,Honda,Japanese,Japan,Pilot,Midsize SUV,Touring
+2015,Honda,Japanese,Japan,Pilot,Midsize SUV,Elite
+2020,Honda,Japanese,Japan,Civic,Compact,LX
+2020,Honda,Japanese,Japan,Civic,Compact,Sport
+2020,Honda,Japanese,Japan,Civic,Compact,EX
+2020,Honda,Japanese,Japan,Civic,Compact,EX-T
+2020,Honda,Japanese,Japan,Civic,Compact,Touring
+2020,Honda,Japanese,Japan,Civic,Compact,Si
+2020,Honda,Japanese,Japan,Civic,Compact,Type R
+2020,Honda,Japanese,Japan,Civic,Compact,Hybrid
+2020,Honda,Japanese,Japan,Accord,Midsize,Sport
+2020,Honda,Japanese,Japan,Accord,Midsize,EX
+2020,Honda,Japanese,Japan,Accord,Midsize,EX-L
+2020,Honda,Japanese,Japan,Accord,Midsize,Touring
+2020,Honda,Japanese,Japan,Accord,Midsize,Hybrid
+2020,Honda,Japanese,Japan,CR-V,Compact SUV,LX
+2020,Honda,Japanese,Japan,CR-V,Compact SUV,EX
+2020,Honda,Japanese,Japan,CR-V,Compact SUV,EX-L
+2020,Honda,Japanese,Japan,CR-V,Compact SUV,Touring
+2020,Honda,Japanese,Japan,CR-V,Compact SUV,Hybrid
+2020,Honda,Japanese,Japan,Odyssey,Minivan,LX
+2020,Honda,Japanese,Japan,Odyssey,Minivan,EX
+2020,Honda,Japanese,Japan,Odyssey,Minivan,EX-L
+2020,Honda,Japanese,Japan,Odyssey,Minivan,Touring
+2020,Honda,Japanese,Japan,Ridgeline,Pickup,RT
+2020,Honda,Japanese,Japan,Ridgeline,Pickup,RTL
+2020,Honda,Japanese,Japan,Ridgeline,Pickup,RTL-E
+2020,Honda,Japanese,Japan,Ridgeline,Pickup,Black Edition
+2020,Honda,Japanese,Japan,Pilot,Midsize SUV,LX
+2020,Honda,Japanese,Japan,Pilot,Midsize SUV,EX
+2020,Honda,Japanese,Japan,Pilot,Midsize SUV,EX-L
+2020,Honda,Japanese,Japan,Pilot,Midsize SUV,Touring
+2020,Honda,Japanese,Japan,Pilot,Midsize SUV,Elite
+2025,Honda,Japanese,Japan,Civic,Compact Sedan,LX
+2025,Honda,Japanese,Japan,Civic,Compact Sedan,Sport
+2025,Honda,Japanese,Japan,Civic,Compact Sedan,EX
+2025,Honda,Japanese,Japan,Civic,Compact Sedan,Touring
+2025,Honda,Japanese,Japan,Civic,Compact Sedan,Hybrid
+2025,Honda,Japanese,Japan,Accord,Midsize Sedan,LX
+2025,Honda,Japanese,Japan,Accord,Midsize Sedan,Sport
+2025,Honda,Japanese,Japan,Accord,Midsize Sedan,EX
+2025,Honda,Japanese,Japan,Accord,Midsize Sedan,Touring
+2025,Honda,Japanese,Japan,CR-V,Compact SUV,LX
+2025,Honda,Japanese,Japan,CR-V,Compact SUV,EX
+2025,Honda,Japanese,Japan,CR-V,Compact SUV,EX-L
+2025,Honda,Japanese,Japan,CR-V,Compact SUV,Touring
+2025,Honda,Japanese,Japan,CR-V,Compact SUV,Hybrid
+2025,Honda,Japanese,Japan,Pilot,Midsize SUV,LX
+2025,Honda,Japanese,Japan,Pilot,Midsize SUV,EX
+2025,Honda,Japanese,Japan,Pilot,Midsize SUV,EX-L
+2025,Honda,Japanese,Japan,Pilot,Midsize SUV,Touring
+2025,Honda,Japanese,Japan,Pilot,Midsize SUV,Elite
+2025,Honda,Japanese,Japan,Odyssey,Minivan,LX
+2025,Honda,Japanese,Japan,Odyssey,Minivan,EX
+2025,Honda,Japanese,Japan,Odyssey,Minivan,EX-L
+2025,Honda,Japanese,Japan,Odyssey,Minivan,Touring
+2025,Honda,Japanese,Japan,Ridgeline,Pickup Truck,RT
+2025,Honda,Japanese,Japan,Ridgeline,Pickup Truck,RTL
+2025,Honda,Japanese,Japan,Ridgeline,Pickup Truck,RTL-T
+2025,Honda,Japanese,Japan,Ridgeline,Pickup Truck,Black Edition
+1995,Chevrolet,Domestic,USA,Silverado,Pickup,Base
+1995,Chevrolet,Domestic,USA,Silverado,Pickup,C1500
+1995,Chevrolet,Domestic,USA,Silverado,Pickup,K1500
+1995,Chevrolet,Domestic,USA,Silverado,Pickup,Suburban
+1995,Chevrolet,Domestic,USA,Cavalier,Compact,Base
+1995,Chevrolet,Domestic,USA,Cavalier,Compact,RS
+1995,Chevrolet,Domestic,USA,Cavalier,Compact,Z24
+1995,Chevrolet,Domestic,USA,Lumina,Midsize,Base
+1995,Chevrolet,Domestic,USA,Lumina,Midsize,LS
+1995,Chevrolet,Domestic,USA,Lumina,Midsize,Z34
+1995,Chevrolet,Domestic,USA,Tahoe,SUV,Base
+1995,Chevrolet,Domestic,USA,Tahoe,SUV,LS
+1995,Chevrolet,Domestic,USA,Tahoe,SUV,LT
+1995,Chevrolet,Domestic,USA,S-10,Pickup,Base
+1995,Chevrolet,Domestic,USA,S-10,Pickup,Regular
+1995,Chevrolet,Domestic,USA,S-10,Pickup,Extended
+2005,Chevrolet,Domestic,USA,Silverado,Pickup,Regular
+2005,Chevrolet,Domestic,USA,Silverado,Pickup,Extended
+2005,Chevrolet,Domestic,USA,Silverado,Pickup,Crew Cab
+2005,Chevrolet,Domestic,USA,Silverado,Pickup,Z71
+2005,Chevrolet,Domestic,USA,Cobalt,Compact,LS
+2005,Chevrolet,Domestic,USA,Cobalt,Compact,LT
+2005,Chevrolet,Domestic,USA,Cobalt,Compact,SS
+2005,Chevrolet,Domestic,USA,Malibu,Midsize,LS
+2005,Chevrolet,Domestic,USA,Malibu,Midsize,LT
+2005,Chevrolet,Domestic,USA,Malibu,Midsize,Maxx
+2005,Chevrolet,Domestic,USA,Tahoe,SUV,LS
+2005,Chevrolet,Domestic,USA,Tahoe,SUV,LT
+2005,Chevrolet,Domestic,USA,Tahoe,SUV,LTZ
+2005,Chevrolet,Domestic,USA,TrailBlazer,SUV,Base
+2005,Chevrolet,Domestic,USA,TrailBlazer,SUV,LS
+2005,Chevrolet,Domestic,USA,TrailBlazer,SUV,LT
+2005,Chevrolet,Domestic,USA,TrailBlazer,SUV,SS
+2005,Chevrolet,Domestic,USA,Equinox,Compact SUV,Base
+2005,Chevrolet,Domestic,USA,Equinox,Compact SUV,LS
+2005,Chevrolet,Domestic,USA,Equinox,Compact SUV,LT
+2015,Chevrolet,Domestic,USA,Silverado,Pickup,Work Truck
+2015,Chevrolet,Domestic,USA,Silverado,Pickup,LS
+2015,Chevrolet,Domestic,USA,Silverado,Pickup,LT
+2015,Chevrolet,Domestic,USA,Silverado,Pickup,LTZ
+2015,Chevrolet,Domestic,USA,Silverado,Pickup,High Country
+2015,Chevrolet,Domestic,USA,Cruze,Compact,LS
+2015,Chevrolet,Domestic,USA,Cruze,Compact,LT
+2015,Chevrolet,Domestic,USA,Cruze,Compact,LTZ
+2015,Chevrolet,Domestic,USA,Cruze,Compact,Diesel
+2015,Chevrolet,Domestic,USA,Malibu,Midsize,LS
+2015,Chevrolet,Domestic,USA,Malibu,Midsize,LT
+2015,Chevrolet,Domestic,USA,Malibu,Midsize,LTZ
+2015,Chevrolet,Domestic,USA,Malibu,Midsize,Premier
+2015,Chevrolet,Domestic,USA,Tahoe,SUV,LS
+2015,Chevrolet,Domestic,USA,Tahoe,SUV,LT
+2015,Chevrolet,Domestic,USA,Tahoe,SUV,LTZ
+2015,Chevrolet,Domestic,USA,Tahoe,SUV,High Country
+2015,Chevrolet,Domestic,USA,Suburban,SUV,LS
+2015,Chevrolet,Domestic,USA,Suburban,SUV,LT
+2015,Chevrolet,Domestic,USA,Suburban,SUV,LTZ
+2015,Chevrolet,Domestic,USA,Suburban,SUV,High Country
+2015,Chevrolet,Domestic,USA,Equinox,Compact SUV,LS
+2015,Chevrolet,Domestic,USA,Equinox,Compact SUV,LT
+2015,Chevrolet,Domestic,USA,Equinox,Compact SUV,LTZ
+2015,Chevrolet,Domestic,USA,Traverse,Midsize SUV,LS
+2015,Chevrolet,Domestic,USA,Traverse,Midsize SUV,LT
+2015,Chevrolet,Domestic,USA,Traverse,Midsize SUV,LTZ
+2025,Chevrolet,Domestic,USA,Silverado,Pickup Truck,RST
+2025,Chevrolet,Domestic,USA,Silverado,Pickup Truck,LTZ
+2025,Chevrolet,Domestic,USA,Silverado,Pickup Truck,High Country
+2025,Chevrolet,Domestic,USA,Silverado,Pickup Truck,ZR2
+2025,Chevrolet,Domestic,USA,Colorado,Midsize Truck,Base
+2025,Chevrolet,Domestic,USA,Colorado,Midsize Truck,Work Truck
+2025,Chevrolet,Domestic,USA,Colorado,Midsize Truck,LT
+2025,Chevrolet,Domestic,USA,Colorado,Midsize Truck,Z71
+2025,Chevrolet,Domestic,USA,Colorado,Midsize Truck,ZR2
+2025,Chevrolet,Domestic,USA,Equinox,Compact SUV,L
+2025,Chevrolet,Domestic,USA,Equinox,Compact SUV,LT
+2025,Chevrolet,Domestic,USA,Equinox,Compact SUV,Premier
+2025,Chevrolet,Domestic,USA,Equinox,Compact SUV,RS
+2025,Chevrolet,Domestic,USA,Blazer,Midsize SUV,L
+2025,Chevrolet,Domestic,USA,Blazer,Midsize SUV,LT
+2025,Chevrolet,Domestic,USA,Blazer,Midsize SUV,RS
+2025,Chevrolet,Domestic,USA,Blazer,Midsize SUV,SS
+2025,Chevrolet,Domestic,USA,Tahoe,Full-Size SUV,LS
+2025,Chevrolet,Domestic,USA,Tahoe,Full-Size SUV,LT
+2025,Chevrolet,Domestic,USA,Tahoe,Full-Size SUV,Premier
+2025,Chevrolet,Domestic,USA,Tahoe,Full-Size SUV,High Country
+2025,Chevrolet,Domestic,USA,Malibu,Midsize Sedan,L
+2025,Chevrolet,Domestic,USA,Malibu,Midsize Sedan,LT
+2025,Chevrolet,Domestic,USA,Malibu,Midsize Sedan,Premier
+2025,Chevrolet,Domestic,USA,Bolt EV,Electric Hatchback,LT
+2025,Chevrolet,Domestic,USA,Bolt EV,Electric Hatchback,EUV LT
+2025,Chevrolet,Domestic,USA,Bolt EV,Electric Hatchback,EUV Premier
+1995,Nissan,Japanese,Japan,Sentra,Compact,Base
+1995,Nissan,Japanese,Japan,Sentra,Compact,XE
+1995,Nissan,Japanese,Japan,Sentra,Compact,GXE
+1995,Nissan,Japanese,Japan,Sentra,Compact,SE-R
+1995,Nissan,Japanese,Japan,Altima,Midsize,XE
+1995,Nissan,Japanese,Japan,Altima,Midsize,GXE
+1995,Nissan,Japanese,Japan,Altima,Midsize,SE
+1995,Nissan,Japanese,Japan,Maxima,Luxury,SE
+1995,Nissan,Japanese,Japan,Maxima,Luxury,GLE
+1995,Nissan,Japanese,Japan,Pathfinder,SUV,Base
+1995,Nissan,Japanese,Japan,Pathfinder,SUV,SE
+1995,Nissan,Japanese,Japan,Pathfinder,SUV,XE
+1995,Nissan,Japanese,Japan,Pickup,Pickup,Base
+1995,Nissan,Japanese,Japan,Pickup,Pickup,SE
+1995,Nissan,Japanese,Japan,Pickup,Pickup,XE
+2005,Nissan,Japanese,Japan,Sentra,Compact,Base
+2005,Nissan,Japanese,Japan,Sentra,Compact,S
+2005,Nissan,Japanese,Japan,Sentra,Compact,SE
+2005,Nissan,Japanese,Japan,Sentra,Compact,SE-R
+2005,Nissan,Japanese,Japan,Altima,Midsize,Base
+2005,Nissan,Japanese,Japan,Altima,Midsize,S
+2005,Nissan,Japanese,Japan,Altima,Midsize,SE
+2005,Nissan,Japanese,Japan,Altima,Midsize,SL
+2005,Nissan,Japanese,Japan,Maxima,Luxury,Base
+2005,Nissan,Japanese,Japan,Maxima,Luxury,SE
+2005,Nissan,Japanese,Japan,Rogue,Compact SUV,Base
+2005,Nissan,Japanese,Japan,Rogue,Compact SUV,S
+2005,Nissan,Japanese,Japan,Rogue,Compact SUV,SL
+2005,Nissan,Japanese,Japan,Pathfinder,SUV,S
+2005,Nissan,Japanese,Japan,Pathfinder,SUV,SE
+2005,Nissan,Japanese,Japan,Pathfinder,SUV,LE
+2005,Nissan,Japanese,Japan,Frontier,Pickup,Base
+2005,Nissan,Japanese,Japan,Frontier,Pickup,XE
+2005,Nissan,Japanese,Japan,Frontier,Pickup,SE
+2015,Nissan,Japanese,Japan,Sentra,Compact,S
+2015,Nissan,Japanese,Japan,Sentra,Compact,SV
+2015,Nissan,Japanese,Japan,Sentra,Compact,SR
+2015,Nissan,Japanese,Japan,Sentra,Compact,Hybrid
+2015,Nissan,Japanese,Japan,Altima,Midsize,S
+2015,Nissan,Japanese,Japan,Altima,Midsize,SV
+2015,Nissan,Japanese,Japan,Altima,Midsize,SL
+2015,Nissan,Japanese,Japan,Altima,Midsize,SR
+2015,Nissan,Japanese,Japan,Altima,Midsize,Hybrid
+2015,Nissan,Japanese,Japan,Rogue,Compact SUV,S
+2015,Nissan,Japanese,Japan,Rogue,Compact SUV,SV
+2015,Nissan,Japanese,Japan,Rogue,Compact SUV,SL
+2015,Nissan,Japanese,Japan,Rogue,Compact SUV,Hybrid
+2015,Nissan,Japanese,Japan,Pathfinder,SUV,S
+2015,Nissan,Japanese,Japan,Pathfinder,SUV,SV
+2015,Nissan,Japanese,Japan,Pathfinder,SUV,SL
+2015,Nissan,Japanese,Japan,Pathfinder,SUV,Platinum
+2015,Nissan,Japanese,Japan,Murano,Midsize SUV,S
+2015,Nissan,Japanese,Japan,Murano,Midsize SUV,SV
+2015,Nissan,Japanese,Japan,Murano,Midsize SUV,SL
+2015,Nissan,Japanese,Japan,Murano,Midsize SUV,Platinum
+2015,Nissan,Japanese,Japan,Frontier,Pickup,S
+2015,Nissan,Japanese,Japan,Frontier,Pickup,SV
+2015,Nissan,Japanese,Japan,Frontier,Pickup,SL
+2015,Nissan,Japanese,Japan,Frontier,Pickup,PRO-4X
+2025,Nissan,Japanese,Japan,Altima,Midsize Sedan,S
+2025,Nissan,Japanese,Japan,Altima,Midsize Sedan,SV
+2025,Nissan,Japanese,Japan,Altima,Midsize Sedan,SL
+2025,Nissan,Japanese,Japan,Altima,Midsize Sedan,Platinum
+2025,Nissan,Japanese,Japan,Sentra,Compact Sedan,S
+2025,Nissan,Japanese,Japan,Sentra,Compact Sedan,SV
+2025,Nissan,Japanese,Japan,Sentra,Compact Sedan,SL
+2025,Nissan,Japanese,Japan,Sentra,Compact Sedan,SR
+2025,Nissan,Japanese,Japan,Rogue,Compact SUV,S
+2025,Nissan,Japanese,Japan,Rogue,Compact SUV,SV
+2025,Nissan,Japanese,Japan,Rogue,Compact SUV,SL
+2025,Nissan,Japanese,Japan,Rogue,Compact SUV,Platinum
+2025,Nissan,Japanese,Japan,Murano,Midsize SUV,S
+2025,Nissan,Japanese,Japan,Murano,Midsize SUV,SV
+2025,Nissan,Japanese,Japan,Murano,Midsize SUV,SL
+2025,Nissan,Japanese,Japan,Murano,Midsize SUV,Platinum
+2025,Nissan,Japanese,Japan,Ariya,Electric SUV,FWD
+2025,Nissan,Japanese,Japan,Ariya,Electric SUV,AWD
+2025,Nissan,Japanese,Japan,Ariya,Electric SUV,Plus
+2025,Nissan,Japanese,Japan,Ariya,Electric SUV,Pro Plus
+2025,Nissan,Japanese,Japan,Frontier,Midsize Truck,S
+2025,Nissan,Japanese,Japan,Frontier,Midsize Truck,SV
+2025,Nissan,Japanese,Japan,Frontier,Midsize Truck,PRO
+2025,Nissan,Japanese,Japan,Frontier,Midsize Truck,PRO-X
+2025,Nissan,Japanese,Japan,Kicks,Subcompact SUV,S
+2025,Nissan,Japanese,Japan,Kicks,Subcompact SUV,SV
+2025,Nissan,Japanese,Japan,Kicks,Subcompact SUV,SL
+1995,Hyundai,Korean,South Korea,Excel,Compact,Base
+1995,Hyundai,Korean,South Korea,Excel,Compact,L
+1995,Hyundai,Korean,South Korea,Excel,Compact,GL
+1995,Hyundai,Korean,South Korea,Excel,Compact,GLS
+1995,Hyundai,Korean,South Korea,Elantra,Compact,Base
+1995,Hyundai,Korean,South Korea,Elantra,Compact,GLS
+1995,Hyundai,Korean,South Korea,Sonata,Midsize,Base
+1995,Hyundai,Korean,South Korea,Sonata,Midsize,GLS
+2005,Hyundai,Korean,South Korea,Accent,Compact,GL
+2005,Hyundai,Korean,South Korea,Accent,Compact,GLS
+2005,Hyundai,Korean,South Korea,Accent,Compact,GT
+2005,Hyundai,Korean,South Korea,Elantra,Compact,GL
+2005,Hyundai,Korean,South Korea,Elantra,Compact,GLS
+2005,Hyundai,Korean,South Korea,Elantra,Compact,GTS
+2005,Hyundai,Korean,South Korea,Sonata,Midsize,GL
+2005,Hyundai,Korean,South Korea,Sonata,Midsize,GLS
+2005,Hyundai,Korean,South Korea,Sonata,Midsize,LX
+2005,Hyundai,Korean,South Korea,Sonata,Midsize,SE
+2005,Hyundai,Korean,South Korea,Tucson,Compact SUV,GL
+2005,Hyundai,Korean,South Korea,Tucson,Compact SUV,GLS
+2005,Hyundai,Korean,South Korea,Tucson,Compact SUV,SE
+2005,Hyundai,Korean,South Korea,Santa Fe,Midsize SUV,Base
+2005,Hyundai,Korean,South Korea,Santa Fe,Midsize SUV,GL
+2005,Hyundai,Korean,South Korea,Santa Fe,Midsize SUV,GLS
+2015,Hyundai,Korean,South Korea,Accent,Compact,Base
+2015,Hyundai,Korean,South Korea,Accent,Compact,L
+2015,Hyundai,Korean,South Korea,Accent,Compact,SE
+2015,Hyundai,Korean,South Korea,Accent,Compact,Sport
+2015,Hyundai,Korean,South Korea,Elantra,Compact,Base
+2015,Hyundai,Korean,South Korea,Elantra,Compact,GL
+2015,Hyundai,Korean,South Korea,Elantra,Compact,SE
+2015,Hyundai,Korean,South Korea,Elantra,Compact,Limited
+2015,Hyundai,Korean,South Korea,Elantra,Compact,Sport
+2015,Hyundai,Korean,South Korea,Sonata,Midsize,Base
+2015,Hyundai,Korean,South Korea,Sonata,Midsize,GL
+2015,Hyundai,Korean,South Korea,Sonata,Midsize,SE
+2015,Hyundai,Korean,South Korea,Sonata,Midsize,Limited
+2015,Hyundai,Korean,South Korea,Sonata,Midsize,Limited 2.0T
+2015,Hyundai,Korean,South Korea,Tucson,Compact SUV,Base
+2015,Hyundai,Korean,South Korea,Tucson,Compact SUV,GL
+2015,Hyundai,Korean,South Korea,Tucson,Compact SUV,SE
+2015,Hyundai,Korean,South Korea,Tucson,Compact SUV,Limited
+2015,Hyundai,Korean,South Korea,Santa Fe,Midsize SUV,Base
+2015,Hyundai,Korean,South Korea,Santa Fe,Midsize SUV,GL
+2015,Hyundai,Korean,South Korea,Santa Fe,Midsize SUV,SE
+2015,Hyundai,Korean,South Korea,Santa Fe,Midsize SUV,Limited
+2015,Hyundai,Korean,South Korea,Palisade,Midsize 3-Row,Base
+2015,Hyundai,Korean,South Korea,Palisade,Midsize 3-Row,GLS
+2025,Hyundai,Korean,South Korea,Elantra,Compact Sedan,Essential
+2025,Hyundai,Korean,South Korea,Elantra,Compact Sedan,Preferred
+2025,Hyundai,Korean,South Korea,Elantra,Compact Sedan,Ultimate
+2025,Hyundai,Korean,South Korea,Elantra,Compact Sedan,N
+2025,Hyundai,Korean,South Korea,Sonata,Midsize Sedan,Essential
+2025,Hyundai,Korean,South Korea,Sonata,Midsize Sedan,Preferred
+2025,Hyundai,Korean,South Korea,Sonata,Midsize Sedan,Ultimate
+2025,Hyundai,Korean,South Korea,Sonata,Midsize Sedan,Hybrid
+2025,Hyundai,Korean,South Korea,Tucson,Compact SUV,Essential
+2025,Hyundai,Korean,South Korea,Tucson,Compact SUV,Preferred
+2025,Hyundai,Korean,South Korea,Tucson,Compact SUV,Ultimate
+2025,Hyundai,Korean,South Korea,Tucson,Compact SUV,N Line
+2025,Hyundai,Korean,South Korea,Santa Fe,Midsize SUV,Essential
+2025,Hyundai,Korean,South Korea,Santa Fe,Midsize SUV,Preferred
+2025,Hyundai,Korean,South Korea,Santa Fe,Midsize SUV,Ultimate
+2025,Hyundai,Korean,South Korea,Santa Fe,Midsize SUV,Hybrid
+2025,Hyundai,Korean,South Korea,Palisade,Midsize 3-Row SUV,Essential
+2025,Hyundai,Korean,South Korea,Palisade,Midsize 3-Row SUV,Preferred
+2025,Hyundai,Korean,South Korea,Palisade,Midsize 3-Row SUV,Limited
+2025,Hyundai,Korean,South Korea,Palisade,Midsize 3-Row SUV,Ultimate
+2025,Hyundai,Korean,South Korea,Kona,Subcompact SUV,Essential
+2025,Hyundai,Korean,South Korea,Kona,Subcompact SUV,Preferred
+2025,Hyundai,Korean,South Korea,Kona,Subcompact SUV,Ultimate
+2025,Hyundai,Korean,South Korea,Kona,Subcompact SUV,N Line
+2025,Hyundai,Korean,South Korea,Ioniq 5,Electric SUV,Standard
+2025,Hyundai,Korean,South Korea,Ioniq 5,Electric SUV,Preferred
+2025,Hyundai,Korean,South Korea,Ioniq 5,Electric SUV,Ultimate
+2000,Kia,Korean,South Korea,Sephia,Compact,Base
+2000,Kia,Korean,South Korea,Sephia,Compact,LS
+2000,Kia,Korean,South Korea,Sephia,Compact,SE
+2000,Kia,Korean,South Korea,Spectra,Compact,Base
+2000,Kia,Korean,South Korea,Spectra,Compact,LS
+2000,Kia,Korean,South Korea,Spectra,Compact,SE
+2010,Kia,Korean,South Korea,Forte,Compact,LX
+2010,Kia,Korean,South Korea,Forte,Compact,EX
+2010,Kia,Korean,South Korea,Forte,Compact,SX
+2010,Kia,Korean,South Korea,Optima,Midsize,LX
+2010,Kia,Korean,South Korea,Optima,Midsize,EX
+2010,Kia,Korean,South Korea,Optima,Midsize,SX
+2010,Kia,Korean,South Korea,Sorento,Midsize SUV,LX
+2010,Kia,Korean,South Korea,Sorento,Midsize SUV,EX
+2010,Kia,Korean,South Korea,Sorento,Midsize SUV,SX
+2010,Kia,Korean,South Korea,Sportage,Compact SUV,LX
+2010,Kia,Korean,South Korea,Sportage,Compact SUV,EX
+2010,Kia,Korean,South Korea,Sportage,Compact SUV,SX
+2015,Kia,Korean,South Korea,Forte,Compact,LX
+2015,Kia,Korean,South Korea,Forte,Compact,EX
+2015,Kia,Korean,South Korea,Forte,Compact,SX
+2015,Kia,Korean,South Korea,K5,Midsize,LX
+2015,Kia,Korean,South Korea,K5,Midsize,EX
+2015,Kia,Korean,South Korea,K5,Midsize,SX
+2015,Kia,Korean,South Korea,Niro,Compact SUV,LX
+2015,Kia,Korean,South Korea,Niro,Compact SUV,EX
+2015,Kia,Korean,South Korea,Niro,Compact SUV,SX
+2015,Kia,Korean,South Korea,Niro,Compact SUV,Hybrid
+2015,Kia,Korean,South Korea,Sportage,Compact SUV,LX
+2015,Kia,Korean,South Korea,Sportage,Compact SUV,EX
+2015,Kia,Korean,South Korea,Sportage,Compact SUV,SX
+2015,Kia,Korean,South Korea,Sorento,Midsize SUV,LX
+2015,Kia,Korean,South Korea,Sorento,Midsize SUV,EX
+2015,Kia,Korean,South Korea,Sorento,Midsize SUV,SX
+2015,Kia,Korean,South Korea,Telluride,Midsize 3-Row,LX
+2015,Kia,Korean,South Korea,Telluride,Midsize 3-Row,EX
+2015,Kia,Korean,South Korea,Telluride,Midsize 3-Row,SX
+2025,Kia,Korean,South Korea,Forte,Compact Sedan,FWD
+2025,Kia,Korean,South Korea,Forte,Compact Sedan,GT-Line
+2025,Kia,Korean,South Korea,Forte,Compact Sedan,EX
+2025,Kia,Korean,South Korea,Forte,Compact Sedan,SX
+2025,Kia,Korean,South Korea,K5,Midsize Sedan,LX
+2025,Kia,Korean,South Korea,K5,Midsize Sedan,S
+2025,Kia,Korean,South Korea,K5,Midsize Sedan,EX
+2025,Kia,Korean,South Korea,K5,Midsize Sedan,SX
+2025,Kia,Korean,South Korea,Niro,Compact SUV,LX
+2025,Kia,Korean,South Korea,Niro,Compact SUV,EX
+2025,Kia,Korean,South Korea,Niro,Compact SUV,SX
+2025,Kia,Korean,South Korea,Niro,Compact SUV,Hybrid
+2025,Kia,Korean,South Korea,Sportage,Compact SUV,LX
+2025,Kia,Korean,South Korea,Sportage,Compact SUV,EX
+2025,Kia,Korean,South Korea,Sportage,Compact SUV,SX
+2025,Kia,Korean,South Korea,Sportage,Compact SUV,X-Line
+2025,Kia,Korean,South Korea,Sorento,Midsize SUV,LX
+2025,Kia,Korean,South Korea,Sorento,Midsize SUV,EX
+2025,Kia,Korean,South Korea,Sorento,Midsize SUV,SX
+2025,Kia,Korean,South Korea,Sorento,Midsize SUV,Hybrid
+2025,Kia,Korean,South Korea,Telluride,Midsize 3-Row SUV,LX
+2025,Kia,Korean,South Korea,Telluride,Midsize 3-Row SUV,EX
+2025,Kia,Korean,South Korea,Telluride,Midsize 3-Row SUV,SX
+2025,Kia,Korean,South Korea,Telluride,Midsize 3-Row SUV,Limited
+2025,Kia,Korean,South Korea,EV6,Electric SUV,Standard
+2025,Kia,Korean,South Korea,EV6,Electric SUV,Preferred
+2025,Kia,Korean,South Korea,EV6,Electric SUV,Ultimate
+1995,Mazda,Japanese,Japan,Protege,Compact,DX
+1995,Mazda,Japanese,Japan,Protege,Compact,LX
+1995,Mazda,Japanese,Japan,Protege,Compact,ES
+1995,Mazda,Japanese,Japan,626,Midsize,DX
+1995,Mazda,Japanese,Japan,626,Midsize,LX
+1995,Mazda,Japanese,Japan,626,Midsize,ES
+1995,Mazda,Japanese,Japan,626,Midsize,SE
+1995,Mazda,Japanese,Japan,MX-6,Coupe,Base
+1995,Mazda,Japanese,Japan,MX-6,Coupe,LS
+1995,Mazda,Japanese,Japan,MX-6,Coupe,SE
+1995,Mazda,Japanese,Japan,MPV,Minivan,Base
+1995,Mazda,Japanese,Japan,MPV,Minivan,LX
+1995,Mazda,Japanese,Japan,MPV,Minivan,ES
+2010,Mazda,Japanese,Japan,Mazda3,Compact,i
+2010,Mazda,Japanese,Japan,Mazda3,Compact,i Touring
+2010,Mazda,Japanese,Japan,Mazda3,Compact,s
+2010,Mazda,Japanese,Japan,Mazda3,Compact,s Grand Touring
+2010,Mazda,Japanese,Japan,Mazda6,Midsize,i
+2010,Mazda,Japanese,Japan,Mazda6,Midsize,i Touring
+2010,Mazda,Japanese,Japan,Mazda6,Midsize,s
+2010,Mazda,Japanese,Japan,Mazda6,Midsize,s Grand Touring
+2010,Mazda,Japanese,Japan,CX-7,Compact SUV,i
+2010,Mazda,Japanese,Japan,CX-7,Compact SUV,i Touring
+2010,Mazda,Japanese,Japan,CX-7,Compact SUV,s Grand Touring
+2010,Mazda,Japanese,Japan,CX-9,Midsize SUV,Sport
+2010,Mazda,Japanese,Japan,CX-9,Midsize SUV,Touring
+2010,Mazda,Japanese,Japan,CX-9,Midsize SUV,Grand Touring
+2015,Mazda,Japanese,Japan,Mazda3,Compact,i
+2015,Mazda,Japanese,Japan,Mazda3,Compact,i Touring
+2015,Mazda,Japanese,Japan,Mazda3,Compact,s
+2015,Mazda,Japanese,Japan,Mazda3,Compact,s Grand Touring
+2015,Mazda,Japanese,Japan,Mazda6,Midsize,i
+2015,Mazda,Japanese,Japan,Mazda6,Midsize,i Touring
+2015,Mazda,Japanese,Japan,Mazda6,Midsize,s
+2015,Mazda,Japanese,Japan,Mazda6,Midsize,s Grand Touring
+2015,Mazda,Japanese,Japan,CX-3,Subcompact SUV,i
+2015,Mazda,Japanese,Japan,CX-3,Subcompact SUV,i Touring
+2015,Mazda,Japanese,Japan,CX-3,Subcompact SUV,s
+2015,Mazda,Japanese,Japan,CX-3,Subcompact SUV,s Grand Touring
+2015,Mazda,Japanese,Japan,CX-5,Compact SUV,i
+2015,Mazda,Japanese,Japan,CX-5,Compact SUV,i Touring
+2015,Mazda,Japanese,Japan,CX-5,Compact SUV,s
+2015,Mazda,Japanese,Japan,CX-5,Compact SUV,s Grand Touring
+2015,Mazda,Japanese,Japan,CX-9,Midsize SUV,i
+2015,Mazda,Japanese,Japan,CX-9,Midsize SUV,i Touring
+2015,Mazda,Japanese,Japan,CX-9,Midsize SUV,s
+2015,Mazda,Japanese,Japan,CX-9,Midsize SUV,s Grand Touring
+2025,Mazda,Japanese,Japan,Mazda3,Compact Sedan,GX
+2025,Mazda,Japanese,Japan,Mazda3,Compact Sedan,GS
+2025,Mazda,Japanese,Japan,Mazda3,Compact Sedan,GT
+2025,Mazda,Japanese,Japan,Mazda3,Compact Sedan,Premium Plus
+2025,Mazda,Japanese,Japan,CX-30,Subcompact SUV,GX
+2025,Mazda,Japanese,Japan,CX-30,Subcompact SUV,GS
+2025,Mazda,Japanese,Japan,CX-30,Subcompact SUV,GT
+2025,Mazda,Japanese,Japan,CX-30,Subcompact SUV,Premium
+2025,Mazda,Japanese,Japan,CX-50,Compact SUV,GX
+2025,Mazda,Japanese,Japan,CX-50,Compact SUV,GS
+2025,Mazda,Japanese,Japan,CX-50,Compact SUV,GT
+2025,Mazda,Japanese,Japan,CX-50,Compact SUV,Premium
+2025,Mazda,Japanese,Japan,CX-5,Midsize SUV,GX
+2025,Mazda,Japanese,Japan,CX-5,Midsize SUV,GS
+2025,Mazda,Japanese,Japan,CX-5,Midsize SUV,GT
+2025,Mazda,Japanese,Japan,CX-5,Midsize SUV,Premium Plus
+2025,Mazda,Japanese,Japan,CX-90,Midsize Luxury SUV,GS
+2025,Mazda,Japanese,Japan,CX-90,Midsize Luxury SUV,GT
+2025,Mazda,Japanese,Japan,CX-90,Midsize Luxury SUV,Preferred
+2025,Mazda,Japanese,Japan,CX-90,Midsize Luxury SUV,Premium Plus
+1995,Subaru,Japanese,Japan,Legacy,Midsize,Base
+1995,Subaru,Japanese,Japan,Legacy,Midsize,L
+1995,Subaru,Japanese,Japan,Legacy,Midsize,LS
+1995,Subaru,Japanese,Japan,Legacy,Midsize,SE
+1995,Subaru,Japanese,Japan,Impreza,Compact,Base
+1995,Subaru,Japanese,Japan,Impreza,Compact,L
+1995,Subaru,Japanese,Japan,Impreza,Compact,LS
+1995,Subaru,Japanese,Japan,SVX,Coupe,L
+1995,Subaru,Japanese,Japan,SVX,Coupe,LS
+2010,Subaru,Japanese,Japan,Impreza,Compact,2.5i
+2010,Subaru,Japanese,Japan,Impreza,Compact,2.5i Premium
+2010,Subaru,Japanese,Japan,Impreza,Compact,WRX
+2010,Subaru,Japanese,Japan,Impreza,Compact,WRX STI
+2010,Subaru,Japanese,Japan,Legacy,Midsize,2.5i
+2010,Subaru,Japanese,Japan,Legacy,Midsize,2.5i Premium
+2010,Subaru,Japanese,Japan,Legacy,Midsize,3.6R
+2010,Subaru,Japanese,Japan,Legacy,Midsize,3.6R Limited
+2010,Subaru,Japanese,Japan,Outback,Wagon,2.5i
+2010,Subaru,Japanese,Japan,Outback,Wagon,2.5i Premium
+2010,Subaru,Japanese,Japan,Outback,Wagon,3.6R
+2010,Subaru,Japanese,Japan,Outback,Wagon,3.6R Limited
+2010,Subaru,Japanese,Japan,Forester,Compact SUV,2.5X
+2010,Subaru,Japanese,Japan,Forester,Compact SUV,2.5X Premium
+2010,Subaru,Japanese,Japan,Forester,Compact SUV,XT
+2010,Subaru,Japanese,Japan,Forester,Compact SUV,XT Limited
+2015,Subaru,Japanese,Japan,Impreza,Compact,2.0i
+2015,Subaru,Japanese,Japan,Impreza,Compact,2.0i Premium
+2015,Subaru,Japanese,Japan,Impreza,Compact,2.0i Sport
+2015,Subaru,Japanese,Japan,Impreza,Compact,WRX
+2015,Subaru,Japanese,Japan,Impreza,Compact,STI
+2015,Subaru,Japanese,Japan,Legacy,Midsize,2.5i
+2015,Subaru,Japanese,Japan,Legacy,Midsize,2.5i Premium
+2015,Subaru,Japanese,Japan,Legacy,Midsize,2.5i Sport
+2015,Subaru,Japanese,Japan,Legacy,Midsize,3.6R Limited
+2015,Subaru,Japanese,Japan,Outback,Wagon,2.5i
+2015,Subaru,Japanese,Japan,Outback,Wagon,2.5i Premium
+2015,Subaru,Japanese,Japan,Outback,Wagon,3.6R
+2015,Subaru,Japanese,Japan,Outback,Wagon,3.6R Limited
+2015,Subaru,Japanese,Japan,Crosstrek,Subcompact SUV,2.0i
+2015,Subaru,Japanese,Japan,Crosstrek,Subcompact SUV,2.0i Premium
+2015,Subaru,Japanese,Japan,Crosstrek,Subcompact SUV,2.0i Sport
+2015,Subaru,Japanese,Japan,Forester,Compact SUV,2.5i
+2015,Subaru,Japanese,Japan,Forester,Compact SUV,2.5i Premium
+2015,Subaru,Japanese,Japan,Forester,Compact SUV,2.5i Sport
+2015,Subaru,Japanese,Japan,Forester,Compact SUV,XT
+2015,Subaru,Japanese,Japan,Ascent,Midsize 3-Row,Base
+2015,Subaru,Japanese,Japan,Ascent,Midsize 3-Row,Premium
+2015,Subaru,Japanese,Japan,Ascent,Midsize 3-Row,Limited
+2025,Subaru,Japanese,Japan,Impreza,Compact Sedan,Base
+2025,Subaru,Japanese,Japan,Impreza,Compact Sedan,Premium
+2025,Subaru,Japanese,Japan,Impreza,Compact Sedan,Sport
+2025,Subaru,Japanese,Japan,Outback,Wagon SUV,Base
+2025,Subaru,Japanese,Japan,Outback,Wagon SUV,Premium
+2025,Subaru,Japanese,Japan,Outback,Wagon SUV,Limited
+2025,Subaru,Japanese,Japan,Outback,Wagon SUV,Onyx Edition
+2025,Subaru,Japanese,Japan,Crosstrek,Subcompact SUV,Base
+2025,Subaru,Japanese,Japan,Crosstrek,Subcompact SUV,Premium
+2025,Subaru,Japanese,Japan,Crosstrek,Subcompact SUV,Sport
+2025,Subaru,Japanese,Japan,Crosstrek,Subcompact SUV,Limited
+2025,Subaru,Japanese,Japan,Forester,Compact SUV,Base
+2025,Subaru,Japanese,Japan,Forester,Compact SUV,Premium
+2025,Subaru,Japanese,Japan,Forester,Compact SUV,Sport
+2025,Subaru,Japanese,Japan,Forester,Compact SUV,Limited
+2025,Subaru,Japanese,Japan,Ascent,Midsize 3-Row SUV,Base
+2025,Subaru,Japanese,Japan,Ascent,Midsize 3-Row SUV,Premium
+2025,Subaru,Japanese,Japan,Ascent,Midsize 3-Row SUV,Limited
+2025,Subaru,Japanese,Japan,Ascent,Midsize 3-Row SUV,Touring
+2025,Subaru,Japanese,Japan,WRX,Performance Sedan,Base
+2025,Subaru,Japanese,Japan,WRX,Performance Sedan,Premium
+2025,Subaru,Japanese,Japan,WRX,Performance Sedan,Limited
+2025,Subaru,Japanese,Japan,WRX,Performance Sedan,STI
+2000,BMW,German Luxury,Germany,3 Series,Compact,318i
+2000,BMW,German Luxury,Germany,3 Series,Compact,320i
+2000,BMW,German Luxury,Germany,3 Series,Compact,330i
+2000,BMW,German Luxury,Germany,3 Series,Compact,M3
+2000,BMW,German Luxury,Germany,5 Series,Midsize,525i
+2000,BMW,German Luxury,Germany,5 Series,Midsize,530i
+2000,BMW,German Luxury,Germany,5 Series,Midsize,M5
+2000,BMW,German Luxury,Germany,7 Series,Full-Size,740i
+2000,BMW,German Luxury,Germany,7 Series,Full-Size,750i
+2000,BMW,German Luxury,Germany,7 Series,Full-Size,M
+2000,BMW,German Luxury,Germany,X5,SUV,3.0i
+2000,BMW,German Luxury,Germany,X5,SUV,4.4i
+2010,BMW,German Luxury,Germany,1 Series,Compact,128i
+2010,BMW,German Luxury,Germany,1 Series,Compact,135i
+2010,BMW,German Luxury,Germany,1 Series,Compact,135is
+2010,BMW,German Luxury,Germany,3 Series,Compact,320i
+2010,BMW,German Luxury,Germany,3 Series,Compact,328i
+2010,BMW,German Luxury,Germany,3 Series,Compact,335i
+2010,BMW,German Luxury,Germany,3 Series,Compact,M3
+2010,BMW,German Luxury,Germany,5 Series,Midsize,528i
+2010,BMW,German Luxury,Germany,5 Series,Midsize,535i
+2010,BMW,German Luxury,Germany,5 Series,Midsize,550i
+2010,BMW,German Luxury,Germany,5 Series,Midsize,M5
+2010,BMW,German Luxury,Germany,7 Series,Full-Size,740Li
+2010,BMW,German Luxury,Germany,7 Series,Full-Size,750Li
+2010,BMW,German Luxury,Germany,7 Series,Full-Size,M
+2010,BMW,German Luxury,Germany,X3,Compact SUV,xDrive28i
+2010,BMW,German Luxury,Germany,X3,Compact SUV,xDrive35i
+2010,BMW,German Luxury,Germany,X3,Compact SUV,M
+2010,BMW,German Luxury,Germany,X5,Midsize SUV,xDrive35i
+2010,BMW,German Luxury,Germany,X5,Midsize SUV,xDrive50i
+2010,BMW,German Luxury,Germany,X5,Midsize SUV,M
+2015,BMW,German Luxury,Germany,3 Series,Compact,320i
+2015,BMW,German Luxury,Germany,3 Series,Compact,328i
+2015,BMW,German Luxury,Germany,3 Series,Compact,335i
+2015,BMW,German Luxury,Germany,3 Series,Compact,M3
+2015,BMW,German Luxury,Germany,3 Series,Compact,M4
+2015,BMW,German Luxury,Germany,5 Series,Midsize,528i
+2015,BMW,German Luxury,Germany,5 Series,Midsize,535i
+2015,BMW,German Luxury,Germany,5 Series,Midsize,550i
+2015,BMW,German Luxury,Germany,5 Series,Midsize,M550i
+2015,BMW,German Luxury,Germany,5 Series,Midsize,M5
+2015,BMW,German Luxury,Germany,7 Series,Full-Size,740i
+2015,BMW,German Luxury,Germany,7 Series,Full-Size,740Li
+2015,BMW,German Luxury,Germany,7 Series,Full-Size,750Li
+2015,BMW,German Luxury,Germany,7 Series,Full-Size,M
+2015,BMW,German Luxury,Germany,X3,Compact SUV,xDrive28i
+2015,BMW,German Luxury,Germany,X3,Compact SUV,xDrive35i
+2015,BMW,German Luxury,Germany,X3,Compact SUV,M
+2015,BMW,German Luxury,Germany,X5,Midsize SUV,xDrive35i
+2015,BMW,German Luxury,Germany,X5,Midsize SUV,xDrive50i
+2015,BMW,German Luxury,Germany,X5,Midsize SUV,M
+2015,BMW,German Luxury,Germany,X6,Midsize Coupe SUV,xDrive35i
+2015,BMW,German Luxury,Germany,X6,Midsize Coupe SUV,xDrive50i
+2015,BMW,German Luxury,Germany,X6,Midsize Coupe SUV,M
+2025,BMW,German Luxury,Germany,3 Series,Compact Sedan,340i
+2025,BMW,German Luxury,Germany,3 Series,Compact Sedan,M340i
+2025,BMW,German Luxury,Germany,3 Series,Compact Sedan,i4
+2025,BMW,German Luxury,Germany,3 Series,Compact Sedan,M4
+2025,BMW,German Luxury,Germany,5 Series,Midsize Sedan,540i
+2025,BMW,German Luxury,Germany,5 Series,Midsize Sedan,M550i
+2025,BMW,German Luxury,Germany,5 Series,Midsize Sedan,i5
+2025,BMW,German Luxury,Germany,5 Series,Midsize Sedan,M5
+2025,BMW,German Luxury,Germany,X3,Compact Luxury SUV,xDrive40i
+2025,BMW,German Luxury,Germany,X3,Compact Luxury SUV,M40i
+2025,BMW,German Luxury,Germany,X3,Compact Luxury SUV,M
+2025,BMW,German Luxury,Germany,X3,Compact Luxury SUV,iX3
+2025,BMW,German Luxury,Germany,X5,Midsize Luxury SUV,xDrive40i
+2025,BMW,German Luxury,Germany,X5,Midsize Luxury SUV,M50i
+2025,BMW,German Luxury,Germany,X5,Midsize Luxury SUV,M
+2025,BMW,German Luxury,Germany,X5,Midsize Luxury SUV,iX
+2025,BMW,German Luxury,Germany,X7,Full-Size Luxury SUV,xDrive40i
+2025,BMW,German Luxury,Germany,X7,Full-Size Luxury SUV,M50i
+2025,BMW,German Luxury,Germany,X7,Full-Size Luxury SUV,M
+2025,BMW,German Luxury,Germany,i4,Electric Sedan,eDrive40
+2025,BMW,German Luxury,Germany,i4,Electric Sedan,eDrive50
+2025,BMW,German Luxury,Germany,i4,Electric Sedan,M60
+1995,Infiniti,Japanese Luxury,Japan,Q45,Luxury Sedan,Base
+1995,Infiniti,Japanese Luxury,Japan,Q45,Luxury Sedan,Touring
+1995,Infiniti,Japanese Luxury,Japan,Q45,Luxury Sedan,Limited
+1995,Infiniti,Japanese Luxury,Japan,J30,Midsize Sedan,Base
+1995,Infiniti,Japanese Luxury,Japan,J30,Midsize Sedan,Touring
+2010,Infiniti,Japanese Luxury,Japan,M37,Midsize Sedan,Base
+2010,Infiniti,Japanese Luxury,Japan,M37,Midsize Sedan,Journey
+2010,Infiniti,Japanese Luxury,Japan,M37,Midsize Sedan,Premium Tech
+2010,Infiniti,Japanese Luxury,Japan,Q50,Compact Sedan,Base
+2010,Infiniti,Japanese Luxury,Japan,Q50,Compact Sedan,Hybrid
+2010,Infiniti,Japanese Luxury,Japan,Q50,Compact Sedan,Premium
+2010,Infiniti,Japanese Luxury,Japan,QX70,Midsize SUV,Base
+2010,Infiniti,Japanese Luxury,Japan,QX70,Midsize SUV,Premium
+2010,Infiniti,Japanese Luxury,Japan,QX70,Midsize SUV,Limited
+2010,Infiniti,Japanese Luxury,Japan,QX80,Full-Size SUV,Base
+2010,Infiniti,Japanese Luxury,Japan,QX80,Full-Size SUV,Premium
+2010,Infiniti,Japanese Luxury,Japan,QX80,Full-Size SUV,Limited
+2010,Infiniti,Japanese Luxury,Japan,QX80,Full-Size SUV,Deluxe Tech
+2015,Infiniti,Japanese Luxury,Japan,Q50,Compact Sedan,Base
+2015,Infiniti,Japanese Luxury,Japan,Q50,Compact Sedan,Premium
+2015,Infiniti,Japanese Luxury,Japan,Q50,Compact Sedan,Sport
+2015,Infiniti,Japanese Luxury,Japan,Q50,Compact Sedan,Hybrid
+2015,Infiniti,Japanese Luxury,Japan,Q70,Midsize Sedan,Base
+2015,Infiniti,Japanese Luxury,Japan,Q70,Midsize Sedan,Premium
+2015,Infiniti,Japanese Luxury,Japan,Q70,Midsize Sedan,Hybrid
+2015,Infiniti,Japanese Luxury,Japan,QX60,Midsize SUV,Base
+2015,Infiniti,Japanese Luxury,Japan,QX60,Midsize SUV,Pure
+2015,Infiniti,Japanese Luxury,Japan,QX60,Midsize SUV,Luxury
+2015,Infiniti,Japanese Luxury,Japan,QX60,Midsize SUV,AWD
+2015,Infiniti,Japanese Luxury,Japan,QX80,Full-Size SUV,Base
+2015,Infiniti,Japanese Luxury,Japan,QX80,Full-Size SUV,Luxury
+2015,Infiniti,Japanese Luxury,Japan,QX80,Full-Size SUV,Premium Tech
+2025,Infiniti,Japanese Luxury,Japan,QX50,Compact Luxury SUV,PURE
+2025,Infiniti,Japanese Luxury,Japan,QX50,Compact Luxury SUV,LUXE
+2025,Infiniti,Japanese Luxury,Japan,QX50,Compact Luxury SUV,SPORT
+2025,Infiniti,Japanese Luxury,Japan,QX55,Luxury Crossover Coupe,LUXE
+2025,Infiniti,Japanese Luxury,Japan,QX55,Luxury Crossover Coupe,ESSENTIAL
+2025,Infiniti,Japanese Luxury,Japan,QX55,Luxury Crossover Coupe,SENSORY
+2025,Infiniti,Japanese Luxury,Japan,QX60,Midsize Luxury SUV,PURE
+2025,Infiniti,Japanese Luxury,Japan,QX60,Midsize Luxury SUV,LUXE
+2025,Infiniti,Japanese Luxury,Japan,QX60,Midsize Luxury SUV,SPORT
+2025,Infiniti,Japanese Luxury,Japan,QX60,Midsize Luxury SUV,AUTOGRAPH
+2025,Infiniti,Japanese Luxury,Japan,QX80,Full-Size Luxury SUV,LUXE
+2025,Infiniti,Japanese Luxury,Japan,QX80,Full-Size Luxury SUV,SPORT
+2025,Infiniti,Japanese Luxury,Japan,QX80,Full-Size Luxury SUV,AUTOGRAPH
+1995,Lexus,Japanese Luxury,Japan,LS400,Luxury Sedan,Base
+1995,Lexus,Japanese Luxury,Japan,LS400,Luxury Sedan,SE
+1995,Lexus,Japanese Luxury,Japan,ES300,Midsize Sedan,Base
+1995,Lexus,Japanese Luxury,Japan,ES300,Midsize Sedan,SE
+1995,Lexus,Japanese Luxury,Japan,SC400,Coupe,Base
+1995,Lexus,Japanese Luxury,Japan,SC400,Coupe,Sport
+1995,Lexus,Japanese Luxury,Japan,RX300,Midsize SUV,Base
+1995,Lexus,Japanese Luxury,Japan,RX300,Midsize SUV,SE
+2010,Lexus,Japanese Luxury,Japan,IS250,Compact Sedan,Base
+2010,Lexus,Japanese Luxury,Japan,IS250,Compact Sedan,Sport
+2010,Lexus,Japanese Luxury,Japan,IS250,Compact Sedan,AWD
+2010,Lexus,Japanese Luxury,Japan,IS350,Compact Sedan,Base
+2010,Lexus,Japanese Luxury,Japan,IS350,Compact Sedan,AWD
+2010,Lexus,Japanese Luxury,Japan,ES350,Midsize Sedan,Base
+2010,Lexus,Japanese Luxury,Japan,ES350,Midsize Sedan,Luxury
+2010,Lexus,Japanese Luxury,Japan,GS350,Midsize Sedan,Base
+2010,Lexus,Japanese Luxury,Japan,GS350,Midsize Sedan,Luxury
+2010,Lexus,Japanese Luxury,Japan,GS350,Midsize Sedan,F Sport
+2010,Lexus,Japanese Luxury,Japan,RX350,Midsize SUV,Base
+2010,Lexus,Japanese Luxury,Japan,RX350,Midsize SUV,Luxury
+2010,Lexus,Japanese Luxury,Japan,RX350,Midsize SUV,Premium
+2010,Lexus,Japanese Luxury,Japan,RX450h,Midsize Hybrid SUV,Base
+2010,Lexus,Japanese Luxury,Japan,RX450h,Midsize Hybrid SUV,Luxury
+2010,Lexus,Japanese Luxury,Japan,RX450h,Midsize Hybrid SUV,Premium
+2015,Lexus,Japanese Luxury,Japan,IS250,Compact Sedan,Base
+2015,Lexus,Japanese Luxury,Japan,IS250,Compact Sedan,AWD
+2015,Lexus,Japanese Luxury,Japan,IS250,Compact Sedan,F Sport
+2015,Lexus,Japanese Luxury,Japan,IS350,Compact Sedan,Base
+2015,Lexus,Japanese Luxury,Japan,IS350,Compact Sedan,F Sport
+2015,Lexus,Japanese Luxury,Japan,ES350,Midsize Sedan,Base
+2015,Lexus,Japanese Luxury,Japan,ES350,Midsize Sedan,Luxury
+2015,Lexus,Japanese Luxury,Japan,ES350,Midsize Sedan,Sport
+2015,Lexus,Japanese Luxury,Japan,GS350,Midsize Sedan,Base
+2015,Lexus,Japanese Luxury,Japan,GS350,Midsize Sedan,Luxury
+2015,Lexus,Japanese Luxury,Japan,GS350,Midsize Sedan,F Sport
+2015,Lexus,Japanese Luxury,Japan,NX200t,Compact SUV,Base
+2015,Lexus,Japanese Luxury,Japan,NX200t,Compact SUV,AWD
+2015,Lexus,Japanese Luxury,Japan,NX200t,Compact SUV,F Sport
+2015,Lexus,Japanese Luxury,Japan,RX350,Midsize SUV,Base
+2015,Lexus,Japanese Luxury,Japan,RX350,Midsize SUV,Luxury
+2015,Lexus,Japanese Luxury,Japan,RX350,Midsize SUV,Limited
+2015,Lexus,Japanese Luxury,Japan,RX450h,Midsize Hybrid SUV,Base
+2015,Lexus,Japanese Luxury,Japan,RX450h,Midsize Hybrid SUV,Luxury
+2015,Lexus,Japanese Luxury,Japan,RX450h,Midsize Hybrid SUV,Limited
+2015,Lexus,Japanese Luxury,Japan,LX570,Full-Size SUV,Base
+2015,Lexus,Japanese Luxury,Japan,LX570,Full-Size SUV,Sport Luxury
+2025,Lexus,Japanese Luxury,Japan,IS,Compact Luxury Sedan,Standard
+2025,Lexus,Japanese Luxury,Japan,IS,Compact Luxury Sedan,F Sport
+2025,Lexus,Japanese Luxury,Japan,IS,Compact Luxury Sedan,Ultra Luxury
+2025,Lexus,Japanese Luxury,Japan,IS,Compact Luxury Sedan,F
+2025,Lexus,Japanese Luxury,Japan,ES,Midsize Luxury Sedan,250
+2025,Lexus,Japanese Luxury,Japan,ES,Midsize Luxury Sedan,350
+2025,Lexus,Japanese Luxury,Japan,ES,Midsize Luxury Sedan,350h
+2025,Lexus,Japanese Luxury,Japan,ES,Midsize Luxury Sedan,F Sport
+2025,Lexus,Japanese Luxury,Japan,NX,Compact Luxury SUV,250
+2025,Lexus,Japanese Luxury,Japan,NX,Compact Luxury SUV,350
+2025,Lexus,Japanese Luxury,Japan,NX,Compact Luxury SUV,350h
+2025,Lexus,Japanese Luxury,Japan,NX,Compact Luxury SUV,F Sport
+2025,Lexus,Japanese Luxury,Japan,NX,Compact Luxury SUV,450h+
+2025,Lexus,Japanese Luxury,Japan,RX,Midsize Luxury SUV,350
+2025,Lexus,Japanese Luxury,Japan,RX,Midsize Luxury SUV,350h
+2025,Lexus,Japanese Luxury,Japan,RX,Midsize Luxury SUV,500h
+2025,Lexus,Japanese Luxury,Japan,RX,Midsize Luxury SUV,F Sport
+2025,Lexus,Japanese Luxury,Japan,LX,Full-Size Luxury SUV,570S
+2025,Lexus,Japanese Luxury,Japan,LX,Full-Size Luxury SUV,600h L
+2025,Lexus,Japanese Luxury,Japan,LX,Full-Size Luxury SUV,F Sport Ultra
