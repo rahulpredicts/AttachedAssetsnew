@@ -74,6 +74,7 @@ export default function Inventory() {
   const [filterMake, setFilterMake] = useState("");
   const [filterModel, setFilterModel] = useState("");
   const [filterVin, setFilterVin] = useState("");
+  const [filterVinStart, setFilterVinStart] = useState("");
   const [filterColor, setFilterColor] = useState("");
   const [filterTrim, setFilterTrim] = useState("");
   const [filterYear, setFilterYear] = useState("");
@@ -183,6 +184,7 @@ export default function Inventory() {
     if (filterMake) cars = cars.filter(c => c.make?.toLowerCase().includes(filterMake.toLowerCase()));
     if (filterModel) cars = cars.filter(c => c.model?.toLowerCase().includes(filterModel.toLowerCase()));
     if (filterVin) cars = cars.filter(c => c.vin?.toLowerCase().includes(filterVin.toLowerCase()));
+    if (filterVinStart) cars = cars.filter(c => c.vin?.toUpperCase().startsWith(filterVinStart.toUpperCase()));
     if (filterColor) cars = cars.filter(c => c.color?.toLowerCase().includes(filterColor.toLowerCase()));
     if (filterTrim) cars = cars.filter(c => c.trim?.toLowerCase().includes(filterTrim.toLowerCase()));
     if (filterYear) cars = cars.filter(c => c.year?.toString().includes(filterYear));
@@ -230,6 +232,7 @@ export default function Inventory() {
     setFilterMake("");
     setFilterModel("");
     setFilterVin("");
+    setFilterVinStart("");
     setFilterColor("");
     setFilterTrim("");
     setFilterYear("");
@@ -352,16 +355,24 @@ export default function Inventory() {
                                 <Input placeholder="Any Year" value={filterYear} onChange={(e) => setFilterYear(e.target.value)} className="h-9" />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs text-gray-500">VIN</Label>
+                                <Label className="text-xs text-gray-500">VIN Contains</Label>
                                 <Input placeholder="Search VIN" value={filterVin} onChange={(e) => setFilterVin(e.target.value)} className="h-9" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">VIN Starts With</Label>
+                                <Input placeholder="e.g. 1, 2, J" value={filterVinStart} onChange={(e) => setFilterVinStart(e.target.value)} className="h-9" maxLength={3} />
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-xs text-gray-500">Trim</Label>
                                 <Input placeholder="Any Trim" value={filterTrim} onChange={(e) => setFilterTrim(e.target.value)} className="h-9" />
                             </div>
-                             <div className="space-y-2">
+                            <div className="space-y-2">
                                 <Label className="text-xs text-gray-500">Province</Label>
                                 <Input placeholder="Any Prov" value={filterProvince} onChange={(e) => setFilterProvince(e.target.value)} className="h-9" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Color</Label>
+                                <Input placeholder="Any Color" value={filterColor} onChange={(e) => setFilterColor(e.target.value)} className="h-9" />
                             </div>
                         </div>
 
