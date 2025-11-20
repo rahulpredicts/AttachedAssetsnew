@@ -17,7 +17,10 @@ import {
   Palette,
   CheckCircle2,
   ArrowUpWideNarrow,
-  ArrowDownWideNarrow
+  ArrowDownWideNarrow,
+  FileText,
+  AlertOctagon,
+  FileQuestion
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -529,15 +532,32 @@ export default function Inventory() {
                     <Card key={car.id} className="group overflow-hidden border-0 shadow-sm hover:shadow-xl transition-all duration-300 bg-white">
                         <div className="aspect-[16/10] bg-gray-100 relative overflow-hidden">
                             {/* Status Badge */}
-                            <div className="absolute top-3 left-3 z-10 flex gap-2">
-                                {car.status === 'sold' && (
-                                    <Badge className="bg-red-500 text-white shadow-sm">SOLD</Badge>
+                            <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
+                                <div className="flex gap-2">
+                                    {car.status === 'sold' && (
+                                        <Badge className="bg-red-500 text-white shadow-sm">SOLD</Badge>
+                                    )}
+                                    {car.status === 'pending' && (
+                                        <Badge className="bg-yellow-500 text-white shadow-sm">PENDING</Badge>
+                                    )}
+                                    {car.status === 'available' && (
+                                        <Badge className="bg-green-500/90 backdrop-blur-sm text-white shadow-sm">AVAILABLE</Badge>
+                                    )}
+                                </div>
+                                {car.carfaxStatus === 'clean' && (
+                                    <Badge className="bg-blue-600/90 backdrop-blur-sm text-white shadow-sm flex items-center gap-1 w-fit">
+                                        <CheckCircle2 className="w-3 h-3" /> Carfax Clean
+                                    </Badge>
                                 )}
-                                {car.status === 'pending' && (
-                                    <Badge className="bg-yellow-500 text-white shadow-sm">PENDING</Badge>
+                                {car.carfaxStatus === 'claims' && (
+                                    <Badge className="bg-orange-500/90 backdrop-blur-sm text-white shadow-sm flex items-center gap-1 w-fit">
+                                        <AlertOctagon className="w-3 h-3" /> Has Claims
+                                    </Badge>
                                 )}
-                                {car.status === 'available' && (
-                                    <Badge className="bg-green-500/90 backdrop-blur-sm text-white shadow-sm">AVAILABLE</Badge>
+                                {car.carfaxStatus === 'unavailable' && (
+                                    <Badge className="bg-gray-500/90 backdrop-blur-sm text-white shadow-sm flex items-center gap-1 w-fit">
+                                        <FileQuestion className="w-3 h-3" /> Carfax N/A
+                                    </Badge>
                                 )}
                             </div>
                             
@@ -814,6 +834,19 @@ export default function Inventory() {
                         <SelectItem value="available">Available</SelectItem>
                         <SelectItem value="sold">Sold</SelectItem>
                         <SelectItem value="pending">Pending</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label>Carfax Status</Label>
+                  <Select value={editingCar.carfaxStatus || "unavailable"} onValueChange={(val: any) => setEditingCar({ ...editingCar, carfaxStatus: val })}>
+                    <SelectTrigger>
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="clean">Clean</SelectItem>
+                        <SelectItem value="claims">Claims/Rebuilt</SelectItem>
+                        <SelectItem value="unavailable">Not Available</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

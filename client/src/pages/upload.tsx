@@ -52,7 +52,7 @@ export default function UploadPage() {
     vin: "", make: "", model: "", trim: "", year: "", color: "",
     price: "", kilometers: "", transmission: "", fuelType: "", bodyType: "",
     listingLink: "", carfaxLink: "", notes: "", dealershipId: "", status: 'available',
-    engineCylinders: "", engineDisplacement: "", drivetrain: "fwd"
+    engineCylinders: "", engineDisplacement: "", drivetrain: "fwd", carfaxStatus: "unavailable"
   });
   
   const [features, setFeatures] = useState<string[]>([]);
@@ -282,7 +282,7 @@ export default function UploadPage() {
         vin: "", make: "", model: "", trim: "", year: "", color: "",
         price: "", kilometers: "", transmission: "", fuelType: "", bodyType: "",
         listingLink: "", carfaxLink: "", notes: "", dealershipId: newCar.dealershipId, status: 'available',
-        engineCylinders: "", engineDisplacement: "", drivetrain: "fwd"
+        engineCylinders: "", engineDisplacement: "", drivetrain: "fwd", carfaxStatus: "unavailable"
     });
     setFeatures([]);
     setShowAdvanced(false);
@@ -590,7 +590,22 @@ export default function UploadPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                  <div className="space-y-2"><Label>Listing URL</Label><Input placeholder="https://..." value={newCar.listingLink} onChange={(e) => setNewCar({...newCar, listingLink: e.target.value})} /></div>
-                 <div className="space-y-2"><Label>Carfax URL</Label><Input placeholder="https://..." value={newCar.carfaxLink} onChange={(e) => setNewCar({...newCar, carfaxLink: e.target.value})} /></div>
+                 <div className="space-y-2">
+                    <Label>Carfax URL</Label>
+                    <div className="flex gap-2">
+                        <Input placeholder="https://..." value={newCar.carfaxLink} onChange={(e) => setNewCar({...newCar, carfaxLink: e.target.value})} />
+                        <Select value={newCar.carfaxStatus} onValueChange={(val: any) => setNewCar({...newCar, carfaxStatus: val})}>
+                            <SelectTrigger className="w-[140px]">
+                                <SelectValue placeholder="Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="clean">Clean</SelectItem>
+                                <SelectItem value="claims">Claims/Rebuilt</SelectItem>
+                                <SelectItem value="unavailable">Not Available</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                 </div>
               </div>
 
               <div className="space-y-2">

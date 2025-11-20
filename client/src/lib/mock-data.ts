@@ -17,6 +17,7 @@ export interface Car {
   features?: string[];
   listingLink: string;
   carfaxLink: string;
+  carfaxStatus?: 'clean' | 'claims' | 'unavailable';
   notes: string;
   dealershipId?: string;
   dealershipName?: string;
