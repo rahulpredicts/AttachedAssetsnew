@@ -753,126 +753,75 @@ export default function Inventory() {
           </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-9 space-y-6">
-             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="lg:col-span-9 space-y-2">
                 {filteredCars.map(car => (
-                    <Card key={car.id} className="group overflow-hidden border-0 shadow-sm hover:shadow-xl transition-all duration-300 bg-white">
-                        <div className="aspect-[16/10] bg-gray-100 relative overflow-hidden">
-                            {/* Status Badge */}
-                            <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
-                                <div className="flex gap-2">
+                    <Card key={car.id} className="hover:shadow-md transition-shadow bg-white border border-gray-200">
+                        <CardContent className="p-3">
+                            <div className="flex items-center gap-3">
+                                {/* Status Badges */}
+                                <div className="flex flex-col gap-1">
                                     {car.status === 'sold' && (
-                                        <Badge className="bg-red-500 text-white shadow-sm">SOLD</Badge>
+                                        <Badge className="bg-red-500 text-white text-[10px] px-1.5 py-0">SOLD</Badge>
                                     )}
                                     {car.status === 'pending' && (
-                                        <Badge className="bg-yellow-500 text-white shadow-sm">PENDING</Badge>
+                                        <Badge className="bg-yellow-500 text-white text-[10px] px-1.5 py-0">PENDING</Badge>
                                     )}
                                     {car.status === 'available' && (
-                                        <Badge className="bg-green-500/90 backdrop-blur-sm text-white shadow-sm">AVAILABLE</Badge>
+                                        <Badge className="bg-green-500 text-white text-[10px] px-1.5 py-0">AVAILABLE</Badge>
+                                    )}
+                                    {car.carfaxStatus === 'clean' && (
+                                        <Badge className="bg-blue-600 text-white text-[10px] px-1.5 py-0 flex items-center gap-0.5">
+                                            <CheckCircle2 className="w-2 h-2" /> Clean
+                                        </Badge>
                                     )}
                                 </div>
-                                {car.carfaxStatus === 'clean' && (
-                                    <Badge className="bg-blue-600/90 backdrop-blur-sm text-white shadow-sm flex items-center gap-1 w-fit">
-                                        <CheckCircle2 className="w-3 h-3" /> Carfax Clean
-                                    </Badge>
-                                )}
-                                {car.carfaxStatus === 'claims' && (
-                                    <Badge className="bg-orange-500/90 backdrop-blur-sm text-white shadow-sm flex items-center gap-1 w-fit">
-                                        <AlertOctagon className="w-3 h-3" /> Has Claims
-                                    </Badge>
-                                )}
-                                {car.carfaxStatus === 'unavailable' && (
-                                    <Badge className="bg-gray-500/90 backdrop-blur-sm text-white shadow-sm flex items-center gap-1 w-fit">
-                                        <FileQuestion className="w-3 h-3" /> Carfax N/A
-                                    </Badge>
-                                )}
-                            </div>
-                            
-                            {/* Image Placeholder */}
-                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 group-hover:scale-105 transition-transform duration-500">
-                                <CarIcon className="w-16 h-16 text-gray-300" />
-                            </div>
-                            
-                            {/* Quick Actions Overlay */}
-                            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex justify-end gap-2">
-                                <Button size="sm" variant="secondary" className="h-8 text-xs bg-white/90 backdrop-blur">
-                                    View Details
-                                </Button>
-                            </div>
-                        </div>
 
-                        <CardContent className="p-5">
-                            <div className="flex justify-between items-start mb-2">
-                                <div>
-                                    <h3 className="font-bold text-lg text-gray-900 leading-tight">
-                                        {car.year} {car.make} {car.model}
-                                    </h3>
-                                    <div className="text-sm text-gray-500 font-medium mt-1">{car.trim}</div>
-                                </div>
-                                <div className="text-right">
-                                    <div className="font-bold text-xl text-blue-600">
-                                        ${parseInt(car.price).toLocaleString()}
+                                {/* Vehicle Info */}
+                                <div className="flex-1 grid grid-cols-12 gap-2 items-center text-sm">
+                                    <div className="col-span-3">
+                                        <div className="font-bold text-gray-900">{car.year} {car.make} {car.model}</div>
+                                        <div className="text-xs text-gray-500">{car.trim}</div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-y-2 gap-x-4 my-4 text-sm text-gray-600">
-                                <div className="flex items-center gap-2">
-                                    <Gauge className="w-4 h-4 text-gray-400" />
-                                    {parseInt(car.kilometers).toLocaleString()} km
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Settings2 className="w-4 h-4 text-gray-400" />
-                                    <span className="capitalize">{car.transmission}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Fuel className="w-4 h-4 text-gray-400" />
-                                    <span className="capitalize">{car.fuelType}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Palette className="w-4 h-4 text-gray-400" />
-                                    {car.color}
-                                </div>
-                            </div>
-
-                            <div className="flex gap-2 pt-4 border-t border-gray-100">
-                                <Button 
-                                    variant={car.status === 'sold' ? "outline" : "default"} 
-                                    className={cn(
-                                        "flex-1 h-9 text-xs font-medium",
-                                        car.status === 'sold' 
-                                            ? "bg-transparent border-green-600 text-green-600 hover:bg-green-50" 
-                                            : "bg-green-600 hover:bg-green-700 text-white"
+                                    <div className="col-span-2 text-blue-600 font-bold">${parseInt(car.price).toLocaleString()}</div>
+                                    <div className="col-span-2 text-gray-600 text-xs">{parseInt(car.kilometers).toLocaleString()} km</div>
+                                    <div className="col-span-1 text-gray-600 text-xs capitalize">{car.color}</div>
+                                    <div className="col-span-2 text-gray-600 text-xs">
+                                        <span className="capitalize">{car.transmission}</span> • <span className="capitalize">{car.fuelType}</span>
+                                    </div>
+                                    {!selectedDealership && (
+                                        <div className="col-span-2 flex items-center gap-1 text-xs text-gray-400">
+                                            <Building2 className="w-3 h-3" />
+                                            <span className="truncate">{car.dealershipName}</span>
+                                        </div>
                                     )}
-                                    onClick={() => toggleSoldStatusMutation.mutate(car)}
-                                >
-                                    {car.status === 'sold' ? (
-                                        <>Mark Available</>
-                                    ) : (
-                                        <>
-                                            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
-                                            Mark Sold
-                                        </>
-                                    )}
-                                </Button>
-                                <Button variant="secondary" size="icon" className="h-9 w-9 rounded-md bg-gray-100 hover:bg-blue-50 hover:text-blue-600 transition-colors" onClick={() => { setEditingCar({ ...car, dealershipId: car.dealershipId }); }}>
-                                    <Edit2 className="w-4 h-4" />
-                                </Button>
-                                <Button variant="secondary" size="icon" className="h-9 w-9 rounded-md bg-gray-100 hover:bg-red-50 hover:text-red-600 transition-colors" onClick={() => handleDeleteCar(car.id)}>
-                                    <Trash2 className="w-4 h-4" />
-                                </Button>
-                            </div>
-
-                            {!selectedDealership && (
-                                <div className="mt-4 pt-3 border-t border-dashed border-gray-100 flex items-center gap-2 text-xs text-gray-400 font-medium">
-                                    <Building2 className="w-3 h-3" />
-                                    {car.dealershipName}
                                 </div>
-                            )}
+
+                                {/* Actions */}
+                                <div className="flex gap-1">
+                                    <Button 
+                                        size="sm"
+                                        variant={car.status === 'sold' ? "outline" : "default"} 
+                                        className={cn(
+                                            "h-7 px-2 text-[10px]",
+                                            car.status === 'sold' 
+                                                ? "border-green-600 text-green-600 hover:bg-green-50" 
+                                                : "bg-green-600 hover:bg-green-700 text-white"
+                                        )}
+                                        onClick={() => toggleSoldStatusMutation.mutate(car)}
+                                    >
+                                        {car.status === 'sold' ? 'Available' : 'Sold'}
+                                    </Button>
+                                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-blue-50 hover:text-blue-600" onClick={() => { setEditingCar({ ...car, dealershipId: car.dealershipId }); }}>
+                                        <Edit2 className="w-3 h-3" />
+                                    </Button>
+                                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-red-50 hover:text-red-600" onClick={() => handleDeleteCar(car.id)}>
+                                        <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                </div>
+                            </div>
                         </CardContent>
                     </Card>
                 ))}
-             </div>
           </div>
         </div>
       </div>
