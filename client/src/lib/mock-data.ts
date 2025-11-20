@@ -24,6 +24,7 @@ export interface Dealership {
   id: string;
   name: string;
   location: string;
+  province: string;
   address: string;
   postalCode: string;
   phone: string;

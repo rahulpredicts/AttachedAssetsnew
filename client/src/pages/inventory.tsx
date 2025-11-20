@@ -66,6 +66,7 @@ export default function Inventory() {
   const [filterPriceMax, setFilterPriceMax] = useState("");
   const [filterKmsMin, setFilterKmsMin] = useState("");
   const [filterKmsMax, setFilterKmsMax] = useState("");
+  const [filterProvince, setFilterProvince] = useState("");
   const [sortBy, setSortBy] = useState("addedDate");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -73,6 +74,7 @@ export default function Inventory() {
   const [newDealership, setNewDealership] = useState<Partial<Dealership>>({
     name: "",
     location: "",
+    province: "",
     address: "",
     postalCode: "",
     phone: "",
@@ -88,7 +90,7 @@ export default function Inventory() {
         id: Math.random().toString(36).substr(2, 9),
         inventory: []
     });
-    setNewDealership({ name: "", location: "", address: "", postalCode: "", phone: "" });
+    setNewDealership({ name: "", location: "", province: "", address: "", postalCode: "", phone: "" });
     setShowAddDealership(false);
   };
 
@@ -126,7 +128,8 @@ export default function Inventory() {
         ...car,
         dealershipName: d.name,
         dealershipId: d.id,
-        dealershipLocation: d.location
+        dealershipLocation: d.location,
+        dealershipProvince: d.province
       }))
     );
   };
@@ -146,6 +149,8 @@ export default function Inventory() {
         car.model?.toLowerCase().includes(term) ||
         car.color?.toLowerCase().includes(term) ||
         car.dealershipName?.toLowerCase().includes(term) ||
+        // @ts-ignore
+        car.dealershipProvince?.toLowerCase().includes(term) ||
         car.transmission?.toLowerCase().includes(term) || 
         car.year?.toString().includes(term) ||
         car.trim?.toLowerCase().includes(term)
@@ -162,6 +167,8 @@ export default function Inventory() {
     if (filterPriceMax) cars = cars.filter(c => parseFloat(c.price || "0") <= parseFloat(filterPriceMax));
     if (filterKmsMin) cars = cars.filter(c => parseFloat(c.kilometers || "0") >= parseFloat(filterKmsMin));
     if (filterKmsMax) cars = cars.filter(c => parseFloat(c.kilometers || "0") <= parseFloat(filterKmsMax));
+    // @ts-ignore
+    if (filterProvince) cars = cars.filter(c => c.dealershipProvince?.toLowerCase().includes(filterProvince.toLowerCase()));
 
     cars.sort((a, b) => {
         // @ts-ignore
@@ -199,6 +206,7 @@ export default function Inventory() {
     setFilterPriceMax("");
     setFilterKmsMin("");
     setFilterKmsMax("");
+    setFilterProvince("");
   };
 
   const totalInventory = dealerships.reduce((sum, d) => sum + d.inventory.length, 0);
@@ -259,9 +267,9 @@ export default function Inventory() {
             <CollapsibleContent className="animate-in slide-in-from-top-5 fade-in duration-200 pt-4">
                 <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm">
                     <CardContent className="p-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                         {['Make', 'Model', 'Year', 'Color', 'Trim', 'VIN'].map((placeholder, i) => {
-                            const stateMap = [filterMake, filterModel, filterYear, filterColor, filterTrim, filterVin];
-                            const setterMap = [setFilterMake, setFilterModel, setFilterYear, setFilterColor, setFilterTrim, setFilterVin];
+                         {['Make', 'Model', 'Year', 'Color', 'Trim', 'VIN', 'Province'].map((placeholder, i) => {
+                            const stateMap = [filterMake, filterModel, filterYear, filterColor, filterTrim, filterVin, filterProvince];
+                            const setterMap = [setFilterMake, setFilterModel, setFilterYear, setFilterColor, setFilterTrim, setFilterVin, setFilterProvince];
                             return (
                                 <Input 
                                     key={placeholder}
@@ -319,7 +327,7 @@ export default function Inventory() {
                         <div className="font-bold text-gray-900 mb-1">{dealership.name}</div>
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                             <MapPin className="w-3 h-3" />
-                            <span className="truncate">{dealership.location}</span>
+                            <span className="truncate">{dealership.location}, {dealership.province}</span>
                         </div>
                         <div className="flex items-center gap-2 mt-3">
                             <Badge variant="secondary" className="bg-gray-100 text-gray-600 hover:bg-gray-200">
@@ -437,6 +445,9 @@ export default function Inventory() {
                                 <div className="mt-4 pt-3 border-t border-dashed border-gray-100 flex items-center gap-2 text-xs text-gray-400">
                                     <Building2 className="w-3 h-3" />
                                     {car.dealershipName}
+                                    <span className="text-gray-300">•</span>
+                                    {/* @ts-ignore */}
+                                    <span>{car.dealershipProvince}</span>
                                 </div>
                             )}
                         </CardContent>
@@ -477,18 +488,24 @@ export default function Inventory() {
                             <Label>Location</Label>
                             <Input placeholder="City" value={newDealership.location} onChange={(e) => setNewDealership({ ...newDealership, location: e.target.value })} className="h-11 rounded-xl" />
                         </div>
+                        <div className="space-y-2">
+                            <Label>Province</Label>
+                            <Input placeholder="e.g. ON" value={newDealership.province} onChange={(e) => setNewDealership({ ...newDealership, province: e.target.value })} className="h-11 rounded-xl" />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
                          <div className="space-y-2">
                             <Label>Postal Code</Label>
                             <Input placeholder="ZIP/Postal" value={newDealership.postalCode} onChange={(e) => setNewDealership({ ...newDealership, postalCode: e.target.value })} className="h-11 rounded-xl" />
+                        </div>
+                         <div className="space-y-2">
+                            <Label>Phone</Label>
+                            <Input placeholder="(555) 000-0000" value={newDealership.phone} onChange={(e) => setNewDealership({ ...newDealership, phone: e.target.value })} className="h-11 rounded-xl" />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <Label>Address</Label>
                         <Input placeholder="Street Address" value={newDealership.address} onChange={(e) => setNewDealership({ ...newDealership, address: e.target.value })} className="h-11 rounded-xl" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Phone</Label>
-                        <Input placeholder="(555) 000-0000" value={newDealership.phone} onChange={(e) => setNewDealership({ ...newDealership, phone: e.target.value })} className="h-11 rounded-xl" />
                     </div>
                 </div>
                 <DialogFooter className="p-6 bg-gray-50/50 border-t">
@@ -516,17 +533,23 @@ export default function Inventory() {
                         <Input value={editingDealership.location} onChange={(e) => setEditingDealership({ ...editingDealership, location: e.target.value })} className="h-11 rounded-xl" />
                     </div>
                     <div className="space-y-2">
+                        <Label>Province</Label>
+                        <Input value={editingDealership.province} onChange={(e) => setEditingDealership({ ...editingDealership, province: e.target.value })} className="h-11 rounded-xl" />
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
                         <Label>Postal Code</Label>
                         <Input value={editingDealership.postalCode} onChange={(e) => setEditingDealership({ ...editingDealership, postalCode: e.target.value })} className="h-11 rounded-xl" />
+                    </div>
+                     <div className="space-y-2">
+                        <Label>Phone</Label>
+                        <Input value={editingDealership.phone} onChange={(e) => setEditingDealership({ ...editingDealership, phone: e.target.value })} className="h-11 rounded-xl" />
                     </div>
                 </div>
                  <div className="space-y-2">
                     <Label>Address</Label>
                     <Input value={editingDealership.address} onChange={(e) => setEditingDealership({ ...editingDealership, address: e.target.value })} className="h-11 rounded-xl" />
-                </div>
-                 <div className="space-y-2">
-                    <Label>Phone</Label>
-                    <Input value={editingDealership.phone} onChange={(e) => setEditingDealership({ ...editingDealership, phone: e.target.value })} className="h-11 rounded-xl" />
                 </div>
             </div>
           )}
