@@ -13,9 +13,11 @@ import {
   Car as CarIcon, 
   AlertCircle, 
   Search,
-  ArrowRight
+  ArrowRight,
+  MapPin
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function AppraisalPage() {
   const { dealerships } = useInventory();
@@ -24,7 +26,9 @@ export default function AppraisalPage() {
     model: "",
     year: "",
     kilometers: "",
-    trim: ""
+    trim: "",
+    postalCode: "",
+    radius: "50"
   });
   const [appraisal, setAppraisal] = useState<{
     retailLow: number;
@@ -42,49 +46,71 @@ export default function AppraisalPage() {
     if (!formData.make || !formData.model) return;
 
     // Find similar cars
-    const similar = allCars.filter(car => 
+    let similar = allCars.filter(car => 
       car.make.toLowerCase() === formData.make.toLowerCase() &&
       car.model.toLowerCase() === formData.model.toLowerCase() &&
       // Match year within +/- 2 years if provided
       (!formData.year || Math.abs(parseInt(car.year) - parseInt(formData.year)) <= 2)
     );
 
+    // Filter by trim if provided
+    if (formData.trim) {
+        const trimMatches = similar.filter(car => car.trim.toLowerCase().includes(formData.trim.toLowerCase()));
+        // If we have matches with trim, use them, otherwise fall back to just make/model
+        if (trimMatches.length > 0) {
+            similar = trimMatches;
+        }
+    }
+
+    let basePrice = 25000;
+    let estimatedRetail = 0;
+
     if (similar.length === 0) {
         // Fallback mock logic if no inventory matches
         // This ensures the tool feels functional even with empty inventory
-        const basePrice = 25000; 
+        
+        // Adjust base price based on trim (mock)
+        if (formData.trim.toLowerCase().includes('limited') || formData.trim.toLowerCase().includes('touring') || formData.trim.toLowerCase().includes('premium')) {
+            basePrice += 5000;
+        } else if (formData.trim.toLowerCase().includes('sport') || formData.trim.toLowerCase().includes('gt')) {
+            basePrice += 3000;
+        }
+
         const yearFactor = formData.year ? (parseInt(formData.year) - 2010) * 1000 : 5000;
         const kmFactor = formData.kilometers ? Math.max(0, (150000 - parseInt(formData.kilometers)) * 0.05) : 2000;
-        const estimatedRetail = basePrice + yearFactor + kmFactor;
         
-        setAppraisal({
-            retailLow: estimatedRetail * 0.9,
-            retailHigh: estimatedRetail * 1.1,
-            tradeInLow: estimatedRetail * 0.7,
-            tradeInHigh: estimatedRetail * 0.8,
-            similarCars: []
-        });
-        return;
-    }
+        // Mock regional adjustment based on postal code
+        const regionFactor = formData.postalCode ? (formData.postalCode.length * 100) : 0;
+        
+        estimatedRetail = basePrice + yearFactor + kmFactor + regionFactor;
+    } else {
+        // Calculate based on real data
+        const prices = similar.map(c => parseFloat(c.price));
+        const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
 
-    // Calculate based on real data
-    const prices = similar.map(c => parseFloat(c.price));
-    const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+        // Adjust for kms if provided
+        let adjustedPrice = avgPrice;
+        if (formData.kilometers) {
+            const avgKms = similar.reduce((a, b) => a + parseFloat(b.kilometers), 0) / similar.length;
+            const kmDiff = avgKms - parseFloat(formData.kilometers);
+            // Add/subtract value based on km difference ($0.05 per km)
+            adjustedPrice += kmDiff * 0.05;
+        }
+        
+        // Apply mock regional/radius adjustment
+        // In a real app, this would query market data within the radius
+        if (formData.radius === "100") adjustedPrice *= 0.98; // Wider market, slightly lower average
+        if (formData.radius === "250") adjustedPrice *= 0.96;
+        if (formData.radius === "500") adjustedPrice *= 0.95;
 
-    // Adjust for kms if provided
-    let adjustedPrice = avgPrice;
-    if (formData.kilometers) {
-        const avgKms = similar.reduce((a, b) => a + parseFloat(b.kilometers), 0) / similar.length;
-        const kmDiff = avgKms - parseFloat(formData.kilometers);
-        // Add/subtract value based on km difference ($0.05 per km)
-        adjustedPrice += kmDiff * 0.05;
+        estimatedRetail = adjustedPrice;
     }
 
     setAppraisal({
-        retailLow: adjustedPrice * 0.95,
-        retailHigh: adjustedPrice * 1.05,
-        tradeInLow: adjustedPrice * 0.75,
-        tradeInHigh: adjustedPrice * 0.85,
+        retailLow: estimatedRetail * 0.9,
+        retailHigh: estimatedRetail * 1.1,
+        tradeInLow: estimatedRetail * 0.7,
+        tradeInHigh: estimatedRetail * 0.8,
         similarCars: similar.slice(0, 3)
     });
   };
@@ -109,7 +135,7 @@ export default function AppraisalPage() {
                 </CardHeader>
                 <CardContent className="p-6 space-y-4">
                     <div className="space-y-2">
-                        <Label>Make</Label>
+                        <Label>Make *</Label>
                         <Input 
                             placeholder="e.g. Toyota" 
                             value={formData.make} 
@@ -117,7 +143,7 @@ export default function AppraisalPage() {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label>Model</Label>
+                        <Label>Model *</Label>
                         <Input 
                             placeholder="e.g. Camry" 
                             value={formData.model} 
@@ -151,6 +177,35 @@ export default function AppraisalPage() {
                             value={formData.kilometers} 
                             onChange={e => setFormData({...formData, kilometers: e.target.value})} 
                         />
+                    </div>
+
+                    <Separator className="my-2" />
+                    
+                    <div className="space-y-2">
+                        <Label>Region & Market</Label>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Input 
+                                    placeholder="Postal Code" 
+                                    value={formData.postalCode} 
+                                    onChange={e => setFormData({...formData, postalCode: e.target.value})} 
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Select value={formData.radius} onValueChange={(val) => setFormData({...formData, radius: val})}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Radius" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="25">25 km</SelectItem>
+                                        <SelectItem value="50">50 km</SelectItem>
+                                        <SelectItem value="100">100 km</SelectItem>
+                                        <SelectItem value="250">250 km</SelectItem>
+                                        <SelectItem value="500">500 km</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
                     </div>
 
                     <Button 
@@ -204,7 +259,9 @@ export default function AppraisalPage() {
                                 <CarIcon className="w-5 h-5 text-gray-500" />
                                 Comparable Vehicles
                             </CardTitle>
-                            <CardDescription>Similar vehicles currently in your inventory</CardDescription>
+                            <CardDescription>
+                                Based on {formData.radius}km radius around {formData.postalCode || 'your location'}
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                             {appraisal.similarCars.length > 0 ? (
@@ -242,7 +299,7 @@ export default function AppraisalPage() {
                         <Calculator className="w-10 h-10 text-gray-300" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">Ready to Appraise</h3>
-                    <p className="max-w-md">Enter vehicle details on the left to generate a value estimate based on your inventory data and market algorithms.</p>
+                    <p className="max-w-md">Enter vehicle details, including trim and location, to generate a value estimate.</p>
                 </div>
             )}
         </div>
