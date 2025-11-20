@@ -96,7 +96,7 @@ export default function AppraisalPage() {
                 make: vehicle.Make || "",
                 model: vehicle.Model || "",
                 year: vehicle.ModelYear || "",
-                trim: vehicle.Trim || "" // NHTSA sometimes provides trim, sometimes not
+                // Trim is explicitly excluded per user request to keep it manual
             };
 
             // Check if we got valid data
@@ -111,7 +111,7 @@ export default function AppraisalPage() {
             
             toast({ 
                 title: "VIN Decoded Successfully", 
-                description: `Identified: ${decoded.year} ${decoded.make} ${decoded.model} ${decoded.trim ? decoded.trim : ''}` 
+                description: `Identified: ${decoded.year} ${decoded.make} ${decoded.model}` 
             });
         } else {
             throw new Error("No results found");
