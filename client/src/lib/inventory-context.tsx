@@ -68,8 +68,8 @@ export function InventoryProvider({ children }: { children: ReactNode }) {
   };
 
   const toggleSoldStatus = (car: Car) => {
-    const newStatus = car.status === 'sold' ? 'available' : 'sold';
-    const updatedCar = { ...car, status: newStatus };
+    const newStatus: 'available' | 'sold' = car.status === 'sold' ? 'available' : 'sold';
+    const updatedCar: Car = { ...car, status: newStatus };
     
     setDealerships(dealerships.map(d => {
         if (d.id === car.dealershipId) {
