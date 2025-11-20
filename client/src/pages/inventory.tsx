@@ -186,7 +186,14 @@ export default function Inventory() {
         car.dealershipProvince?.toLowerCase().includes(term) ||
         car.transmission?.toLowerCase().includes(term) || 
         car.year?.toString().includes(term) ||
-        car.trim?.toLowerCase().includes(term)
+        car.trim?.toLowerCase().includes(term) ||
+        car.carfaxStatus?.toLowerCase().includes(term) ||
+        car.bodyType?.toLowerCase().includes(term) ||
+        car.fuelType?.toLowerCase().includes(term) ||
+        car.drivetrain?.toLowerCase().includes(term) ||
+        car.engineCylinders?.toLowerCase().includes(term) ||
+        car.features?.some(f => f.toLowerCase().includes(term)) ||
+        car.notes?.toLowerCase().includes(term)
       );
     }
 
