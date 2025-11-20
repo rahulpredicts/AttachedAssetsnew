@@ -114,6 +114,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/cars", async (req, res) => {
     try {
       const validated = insertCarSchema.parse(req.body);
+      
+      const existingCar = await storage.getCarByVin(validated.vin);
+      if (existingCar) {
+        return res.status(409).json({ error: "A vehicle with this VIN already exists" });
+      }
+      
       const car = await storage.createCar(validated);
       res.status(201).json(car);
     } catch (error) {
@@ -125,6 +131,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/cars/:id", async (req, res) => {
     try {
       const validated = updateCarSchema.parse(req.body);
+      
+      if (validated.vin) {
+        const existingCar = await storage.getCarByVin(validated.vin);
+        if (existingCar && existingCar.id !== req.params.id) {
+          return res.status(409).json({ error: "A vehicle with this VIN already exists" });
+        }
+      }
+      
       const car = await storage.updateCar(req.params.id, validated);
       if (!car) {
         return res.status(404).json({ error: "Car not found" });
