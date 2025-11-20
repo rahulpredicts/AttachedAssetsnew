@@ -61,30 +61,31 @@ export default function UploadPage() {
   const [scannedFile, setScannedFile] = useState<File | null>(null);
   const [scanResult, setScanResult] = useState<Partial<Car> | null>(null);
 
+  // Effect to update trims based on Make immediately (local fallback)
   useEffect(() => {
-    const loadTrims = async () => {
-        if (newCar.make && newCar.make !== "Other") {
+    if (newCar.make && newCar.make !== "Other") {
+        // Immediate local update
+        const localTrims = getTrimsForMake(newCar.make);
+        setAvailableTrims(localTrims);
+    } else {
+        setAvailableTrims(CANADIAN_TRIMS);
+    }
+  }, [newCar.make]);
+
+  // Effect to fetch API trims when Year/Model are available
+  useEffect(() => {
+    const fetchTrims = async () => {
+        if (newCar.year && newCar.make && newCar.model && newCar.make !== "Other") {
              setIsLoadingTrims(true);
-             
-             // 1. Try to get Model specific trims from API if we have year/model
-             let trims: string[] = [];
-             if (newCar.year && newCar.model) {
-                 trims = await fetchCanadianTrims(newCar.year, newCar.make, newCar.model);
+             const apiTrims = await fetchCanadianTrims(newCar.year, newCar.make, newCar.model);
+             if (apiTrims.length > 0) {
+                 setAvailableTrims(apiTrims);
              }
-             
-             // 2. If no API results, fall back to Make specific trims
-             if (trims.length === 0) {
-                 trims = getTrimsForMake(newCar.make);
-             }
-             
-             setAvailableTrims(trims);
              setIsLoadingTrims(false);
-        } else {
-            setAvailableTrims(CANADIAN_TRIMS); // Fallback to everything if no make selected
         }
     };
     
-    const timer = setTimeout(loadTrims, 500);
+    const timer = setTimeout(fetchTrims, 500);
     return () => clearTimeout(timer);
   }, [newCar.year, newCar.make, newCar.model]);
 
