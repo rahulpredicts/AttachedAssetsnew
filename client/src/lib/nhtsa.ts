@@ -15,7 +15,42 @@ export const CANADIAN_TRIMS_BY_MAKE: Record<string, string[]> = {
   "Jeep": ["Sport", "Willys", "Sahara", "Rubicon", "Overland", "Summit", "Trailhawk", "High Altitude", "Laredo", "Limited"],
   "Dodge": ["SXT", "GT", "R/T", "Scat Pack", "Hellcat", "SRT", "Citadel"],
   "BMW": ["Base", "xLine", "M Sport", "M40i", "M50i", "M", "Competition"],
-  "Mercedes-Benz": ["Avantgarde", "AMG Line", "Night Package", "AMG 43", "AMG 53", "AMG 63", "Maybach"],
+  "Mercedes-Benz": [
+    // Sedans & Coupes (A, C, E, S, CLA, CLS)
+    "A 220", "A 220 4MATIC", "A 35 AMG 4MATIC", "A 45 AMG 4MATIC",
+    "C 300 4MATIC", "C 43 AMG 4MATIC", "C 63 S AMG", "C 63 S E Performance",
+    "E 350 4MATIC", "E 450 4MATIC", "E 53 AMG 4MATIC+", "E 63 S AMG 4MATIC+",
+    "S 500 4MATIC", "S 580 4MATIC", "S 63 E Performance", "Maybach S 580", "Maybach S 680",
+    "CLA 250 4MATIC", "CLA 35 AMG 4MATIC", "CLA 45 AMG 4MATIC+",
+    "CLS 450 4MATIC", "CLS 53 AMG 4MATIC+",
+
+    // SUVs (GLA, GLB, GLC, GLE, GLS, G-Class)
+    "GLA 250 4MATIC", "GLA 35 AMG 4MATIC", "GLA 45 AMG 4MATIC+",
+    "GLB 250 4MATIC", "GLB 35 AMG 4MATIC",
+    "GLC 300 4MATIC", "GLC 43 AMG 4MATIC", "GLC 63 S AMG 4MATIC+",
+    "GLE 350 4MATIC", "GLE 450 4MATIC", "GLE 53 AMG 4MATIC+", "GLE 63 S AMG 4MATIC+",
+    "GLS 450 4MATIC", "GLS 580 4MATIC", "GLS 63 AMG 4MATIC+", "Maybach GLS 600",
+    "G 550", "G 63 AMG",
+
+    // Roadsters & GT
+    "SL 55 AMG 4MATIC+", "SL 63 AMG 4MATIC+",
+    "AMG GT 53 4MATIC+", "AMG GT 63 4MATIC+", "AMG GT 63 S E Performance",
+
+    // Electric (EQ)
+    "EQB 350 4MATIC",
+    "EQE 350 4MATIC", "EQE 500 4MATIC", "AMG EQE 4MATIC+",
+    "EQS 450 4MATIC", "EQS 580 4MATIC", "AMG EQS 4MATIC+",
+    "EQS 450 SUV", "EQS 580 SUV",
+
+    // Legacy Trims (older models often seen in used inventory)
+    "B 250", "C 250", "C 350", "E 250 BlueTEC", "E 300", "E 400", "E 550",
+    "GLK 250 BlueTEC", "GLK 350", "ML 350", "ML 550", "ML 63 AMG",
+    "GL 350 BlueTEC", "GL 450", "GL 550",
+    "SLK 250", "SLK 350", "SLC 300", "SLC 43 AMG",
+    
+    // Generic Packages/Lines
+    "Avantgarde Edition", "AMG Line", "Night Package", "Premium Package", "Intelligent Drive Package"
+  ],
   "Audi": ["Komfort", "Progressiv", "Technik", "S Line", "RS"],
   "Lexus": ["Base", "Premium", "Luxury", "Ultra Luxury", "Executive", "F Sport 1", "F Sport 2", "F Sport 3"],
   "Tesla": ["Standard Range", "Standard Range Plus", "Long Range", "Performance", "Plaid"],
