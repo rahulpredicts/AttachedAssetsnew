@@ -154,6 +154,32 @@ export default function UploadPage() {
                 else if (body.includes("hatch")) decoded.bodyType = "hatchback";
             }
 
+            // Extract Extra Information for Notes
+            const extras = [];
+            if (vehicle.EngineHP) extras.push(`Power: ${vehicle.EngineHP} HP`);
+            if (vehicle.Doors) extras.push(`Doors: ${vehicle.Doors}`);
+            if (vehicle.PlantCountry) extras.push(`Origin: ${vehicle.PlantCountry}`);
+            if (vehicle.DriveType) extras.push(`Drive: ${vehicle.DriveType}`); // Full text
+            if (vehicle.TransmissionStyle) extras.push(`Trans: ${vehicle.TransmissionStyle}`); // Full text
+            
+            const notes = extras.length > 0 ? `Specs: ${extras.join(", ")}` : "";
+
+            // Extract Features
+            const detectedFeatures: string[] = [];
+            // Map common NHTSA feature fields to our list
+            // Note: NHTSA fields vary but often include these keys for Yes/No/Optional values
+            
+            // Helper to check positive values
+            const hasFeature = (val: string) => val && (val.toLowerCase().includes("yes") || val.toLowerCase().includes("std") || val.toLowerCase().includes("opt"));
+
+            if (hasFeature(vehicle.AdaptiveCruiseControl)) detectedFeatures.push("Adaptive Cruise Control");
+            if (hasFeature(vehicle.BackupCam)) detectedFeatures.push("Backup Camera");
+            if (hasFeature(vehicle.BlindSpotMon)) detectedFeatures.push("Blind Spot Monitor");
+            if (hasFeature(vehicle.LaneDepartureWarning)) detectedFeatures.push("Lane Departure Warning");
+            if (hasFeature(vehicle.Navi)) detectedFeatures.push("Navigation");
+            if (hasFeature(vehicle.KeylessIgnition)) detectedFeatures.push("Remote Start"); // Approximation
+            if (hasFeature(vehicle.ParkAssist)) detectedFeatures.push("Backup Camera"); // Often related
+
             // Check if we got valid data
             if (!decoded.make && !decoded.model) {
                  throw new Error("Could not decode vehicle details");
@@ -161,8 +187,14 @@ export default function UploadPage() {
 
             setNewCar(prev => ({
                 ...prev,
-                ...decoded
+                ...decoded,
+                notes: prev.notes ? prev.notes + "\n" + notes : notes
             }));
+            
+            if (detectedFeatures.length > 0) {
+                // Add unique features
+                setFeatures(prev => Array.from(new Set([...prev, ...detectedFeatures])));
+            }
             
             // Auto open advanced section to show decoded details
             setShowAdvanced(true);
