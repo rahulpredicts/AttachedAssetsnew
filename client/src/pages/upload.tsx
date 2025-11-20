@@ -14,12 +14,22 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Upload as UploadIcon, FileText, Image as ImageIcon, Plus, Loader2, CheckCircle2, AlertCircle, Link as LinkIcon, QrCode, CheckSquare } from "lucide-react";
+import { Upload as UploadIcon, FileText, Image as ImageIcon, Plus, Loader2, CheckCircle2, AlertCircle, Link as LinkIcon, QrCode, CheckSquare, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { fetchCanadianTrims, getTrimsForMake, CANADIAN_TRIMS } from "@/lib/nhtsa";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const POPULAR_MAKES = [
   "Acura", "Audi", "BMW", "Buick", "Cadillac", "Chevrolet", "Chrysler", "Dodge", "Fiat", "Ford", "GMC", "Honda", "Hyundai", "Infiniti", "Jaguar", "Jeep", "Kia", "Land Rover", "Lexus", "Lincoln", "Mazda", "Mercedes-Benz", "Mini", "Mitsubishi", "Nissan", "Porsche", "Ram", "Subaru", "Tesla", "Toyota", "Volkswagen", "Volvo"
@@ -50,6 +60,8 @@ export default function UploadPage() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [availableTrims, setAvailableTrims] = useState<string[]>([]);
   const [isLoadingTrims, setIsLoadingTrims] = useState(false);
+  const [duplicateCar, setDuplicateCar] = useState<Car | null>(null);
+  const [showDuplicateAlert, setShowDuplicateAlert] = useState(false);
 
   // Bulk CSV State
   const [csvData, setCsvData] = useState("");
@@ -226,7 +238,18 @@ export default function UploadPage() {
     }
   };
 
-  const handleManualSubmit = () => {
+  const checkDuplicateVin = (vin: string): Car | null => {
+      if (!vin || vin.length < 11) return null;
+      
+      // Check all dealerships for this VIN
+      for (const dealer of dealerships) {
+          const found = dealer.inventory.find(car => car.vin.toUpperCase() === vin.toUpperCase());
+          if (found) return { ...found, dealershipName: dealer.name } as Car & { dealershipName: string };
+      }
+      return null;
+  };
+
+  const handleManualSubmit = (ignoreDuplicate = false) => {
     if (!newCar.dealershipId) {
         toast({ title: "Error", description: "Please select a dealership", variant: "destructive" });
         return;
@@ -234,6 +257,16 @@ export default function UploadPage() {
     if (!newCar.make || !newCar.model) {
         toast({ title: "Error", description: "Make and Model are required", variant: "destructive" });
         return;
+    }
+    
+    // Check for duplicates first
+    if (!ignoreDuplicate && newCar.vin) {
+        const duplicate = checkDuplicateVin(newCar.vin);
+        if (duplicate) {
+            setDuplicateCar(duplicate);
+            setShowDuplicateAlert(true);
+            return;
+        }
     }
     
     const car: Car = {
@@ -253,6 +286,8 @@ export default function UploadPage() {
     });
     setFeatures([]);
     setShowAdvanced(false);
+    setShowDuplicateAlert(false);
+    setDuplicateCar(null);
     toast({ title: "Success", description: "Vehicle added to inventory" });
   };
 
@@ -564,7 +599,7 @@ export default function UploadPage() {
               </div>
 
               <div className="flex justify-end pt-4">
-                <Button onClick={handleManualSubmit} size="lg" className="w-full md:w-auto">
+                <Button onClick={() => handleManualSubmit(false)} size="lg" className="w-full md:w-auto">
                     <Plus className="w-4 h-4 mr-2" /> Add to Inventory
                 </Button>
               </div>
@@ -780,6 +815,29 @@ export default function UploadPage() {
             </Card>
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={showDuplicateAlert} onOpenChange={setShowDuplicateAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-amber-600">
+                <AlertTriangle className="w-5 h-5" />
+                Duplicate VIN Detected
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+                A vehicle with VIN <span className="font-mono font-bold text-gray-800">{newCar.vin}</span> already exists in your inventory at <strong>{duplicateCar?.dealershipName}</strong>.
+                <br /><br />
+                Adding this vehicle will create a duplicate entry. Are you sure you want to proceed?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowDuplicateAlert(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => handleManualSubmit(true)} className="bg-amber-600 hover:bg-amber-700">
+                Add Anyway
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     </div>
   );
 }
