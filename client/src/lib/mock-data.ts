@@ -11,12 +11,17 @@ export interface Car {
   transmission: string;
   fuelType: string;
   bodyType: string;
+  drivetrain?: string;
+  engineCylinders?: string;
+  engineDisplacement?: string;
+  features?: string[];
   listingLink: string;
   carfaxLink: string;
   notes: string;
   dealershipId?: string;
   dealershipName?: string;
   dealershipLocation?: string;
+  dealershipProvince?: string; // Added to match usage in inventory.tsx
   status: 'available' | 'sold';
 }
 

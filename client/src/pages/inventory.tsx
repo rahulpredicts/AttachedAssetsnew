@@ -43,6 +43,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Dealership, Car } from "@/lib/mock-data";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -75,6 +82,14 @@ export default function Inventory() {
   const [filterKmsMin, setFilterKmsMin] = useState("");
   const [filterKmsMax, setFilterKmsMax] = useState("");
   const [filterProvince, setFilterProvince] = useState("");
+  
+  // New Filters
+  const [filterTransmission, setFilterTransmission] = useState("");
+  const [filterDrivetrain, setFilterDrivetrain] = useState("");
+  const [filterFuelType, setFilterFuelType] = useState("");
+  const [filterBodyType, setFilterBodyType] = useState("");
+  const [filterEngineCylinders, setFilterEngineCylinders] = useState("");
+
   const [sortBy, setSortBy] = useState("addedDate");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -178,6 +193,14 @@ export default function Inventory() {
     // @ts-ignore
     if (filterProvince) cars = cars.filter(c => c.dealershipProvince?.toLowerCase().includes(filterProvince.toLowerCase()));
 
+    // New Filters
+    if (filterTransmission && filterTransmission !== 'all') cars = cars.filter(c => c.transmission?.toLowerCase() === filterTransmission.toLowerCase());
+    if (filterDrivetrain && filterDrivetrain !== 'all') cars = cars.filter(c => c.drivetrain?.toLowerCase() === filterDrivetrain.toLowerCase());
+    if (filterFuelType && filterFuelType !== 'all') cars = cars.filter(c => c.fuelType?.toLowerCase() === filterFuelType.toLowerCase());
+    if (filterBodyType && filterBodyType !== 'all') cars = cars.filter(c => c.bodyType?.toLowerCase() === filterBodyType.toLowerCase());
+    if (filterEngineCylinders && filterEngineCylinders !== 'all') cars = cars.filter(c => c.engineCylinders === filterEngineCylinders);
+
+
     cars.sort((a, b) => {
         // @ts-ignore
       let aVal = a[sortBy];
@@ -215,6 +238,11 @@ export default function Inventory() {
     setFilterKmsMin("");
     setFilterKmsMax("");
     setFilterProvince("");
+    setFilterTransmission("");
+    setFilterDrivetrain("");
+    setFilterFuelType("");
+    setFilterBodyType("");
+    setFilterEngineCylinders("");
   };
 
   const totalInventory = dealerships.reduce((sum, d) => sum + d.inventory.length, 0);
@@ -308,23 +336,114 @@ export default function Inventory() {
         <Collapsible open={showAdvancedFilters}>
             <CollapsibleContent className="animate-in slide-in-from-top-5 fade-in duration-200 pt-4">
                 <Card className="border-0 shadow-sm bg-white/80 backdrop-blur-sm">
-                    <CardContent className="p-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                         {['Make', 'Model', 'Year', 'Color', 'Trim', 'VIN', 'Province'].map((placeholder, i) => {
-                            const stateMap = [filterMake, filterModel, filterYear, filterColor, filterTrim, filterVin, filterProvince];
-                            const setterMap = [setFilterMake, setFilterModel, setFilterYear, setFilterColor, setFilterTrim, setFilterVin, setFilterProvince];
-                            return (
-                                <Input 
-                                    key={placeholder}
-                                    placeholder={placeholder}
-                                    value={stateMap[i]}
-                                    onChange={(e) => setterMap[i](e.target.value)}
-                                    className="h-10 bg-white border-gray-200 rounded-lg"
-                                />
-                            )
-                        })}
-                         <Button variant="ghost" onClick={clearFilters} className="text-gray-500 hover:text-gray-900">
-                            Reset All
-                        </Button>
+                    <CardContent className="p-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+                            {/* Standard Text Filters */}
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Make</Label>
+                                <Input placeholder="Any Make" value={filterMake} onChange={(e) => setFilterMake(e.target.value)} className="h-9" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Model</Label>
+                                <Input placeholder="Any Model" value={filterModel} onChange={(e) => setFilterModel(e.target.value)} className="h-9" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Year</Label>
+                                <Input placeholder="Any Year" value={filterYear} onChange={(e) => setFilterYear(e.target.value)} className="h-9" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">VIN</Label>
+                                <Input placeholder="Search VIN" value={filterVin} onChange={(e) => setFilterVin(e.target.value)} className="h-9" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Trim</Label>
+                                <Input placeholder="Any Trim" value={filterTrim} onChange={(e) => setFilterTrim(e.target.value)} className="h-9" />
+                            </div>
+                             <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Province</Label>
+                                <Input placeholder="Any Prov" value={filterProvince} onChange={(e) => setFilterProvince(e.target.value)} className="h-9" />
+                            </div>
+                        </div>
+
+                        {/* Dropdown Filters */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6 pt-4 border-t border-gray-100">
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Transmission</Label>
+                                <Select value={filterTransmission} onValueChange={setFilterTransmission}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="All" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Transmissions</SelectItem>
+                                        <SelectItem value="automatic">Automatic</SelectItem>
+                                        <SelectItem value="manual">Manual</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Drivetrain</Label>
+                                <Select value={filterDrivetrain} onValueChange={setFilterDrivetrain}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="All" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Drivetrains</SelectItem>
+                                        <SelectItem value="fwd">FWD</SelectItem>
+                                        <SelectItem value="rwd">RWD</SelectItem>
+                                        <SelectItem value="awd">AWD</SelectItem>
+                                        <SelectItem value="4wd">4WD</SelectItem>
+                                        <SelectItem value="4x4">4x4</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Fuel Type</Label>
+                                <Select value={filterFuelType} onValueChange={setFilterFuelType}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="All" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Fuel Types</SelectItem>
+                                        <SelectItem value="gasoline">Gasoline</SelectItem>
+                                        <SelectItem value="diesel">Diesel</SelectItem>
+                                        <SelectItem value="hybrid">Hybrid</SelectItem>
+                                        <SelectItem value="electric">Electric</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Body Type</Label>
+                                <Select value={filterBodyType} onValueChange={setFilterBodyType}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="All" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Body Types</SelectItem>
+                                        <SelectItem value="sedan">Sedan</SelectItem>
+                                        <SelectItem value="suv">SUV</SelectItem>
+                                        <SelectItem value="truck">Truck</SelectItem>
+                                        <SelectItem value="coupe">Coupe</SelectItem>
+                                        <SelectItem value="hatchback">Hatchback</SelectItem>
+                                        <SelectItem value="van">Van</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Cylinders</Label>
+                                <Select value={filterEngineCylinders} onValueChange={setFilterEngineCylinders}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="All" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Cylinders</SelectItem>
+                                        <SelectItem value="3">3 Cyl</SelectItem>
+                                        <SelectItem value="4">4 Cyl</SelectItem>
+                                        <SelectItem value="5">5 Cyl</SelectItem>
+                                        <SelectItem value="6">6 Cyl</SelectItem>
+                                        <SelectItem value="8">8 Cyl</SelectItem>
+                                        <SelectItem value="10">10 Cyl</SelectItem>
+                                        <SelectItem value="12">12 Cyl</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end pt-2">
+                             <Button variant="ghost" onClick={clearFilters} className="text-gray-500 hover:text-gray-900 hover:bg-gray-100">
+                                <X className="w-4 h-4 mr-2" />
+                                Clear All Filters
+                            </Button>
+                        </div>
                     </CardContent>
                 </Card>
             </CollapsibleContent>
@@ -439,6 +558,11 @@ export default function Inventory() {
                                 <Badge variant="secondary" className="bg-gray-50 text-gray-600 hover:bg-gray-100 border-0">
                                     <Fuel className="w-3 h-3 mr-1" /> {car.fuelType}
                                 </Badge>
+                                {car.drivetrain && (
+                                    <Badge variant="secondary" className="bg-gray-50 text-gray-600 hover:bg-gray-100 border-0 uppercase">
+                                        {car.drivetrain}
+                                    </Badge>
+                                )}
                             </div>
 
                             <div className="flex items-end justify-between mt-auto pt-4 border-t border-gray-50">
@@ -487,173 +611,14 @@ export default function Inventory() {
                                 <div className="mt-4 pt-3 border-t border-dashed border-gray-100 flex items-center gap-2 text-xs text-gray-400">
                                     <Building2 className="w-3 h-3" />
                                     {car.dealershipName}
-                                    <span className="text-gray-300">•</span>
-                                    {/* @ts-ignore */}
-                                    <span>{car.dealershipProvince}</span>
                                 </div>
                             )}
                         </CardContent>
                     </Card>
                 ))}
-
-                {filteredCars.length === 0 && (
-                    <div className="col-span-full flex flex-col items-center justify-center py-24 text-center">
-                        <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                            <CarIcon className="w-10 h-10 text-gray-300" />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">No vehicles found</h3>
-                        <p className="text-gray-500 max-w-md mx-auto mb-8">
-                            We couldn't find any cars matching your search criteria. Try adjusting your filters or add a new vehicle.
-                        </p>
-                        <Button onClick={() => setLocation("/upload")} size="lg" className="rounded-full px-8">
-                            Add New Vehicle
-                        </Button>
-                    </div>
-                )}
              </div>
           </div>
         </div>
-
-        {/* Add Dealership Modal */}
-        <Dialog open={showAddDealership} onOpenChange={setShowAddDealership}>
-            <DialogContent className="sm:max-w-[500px] rounded-2xl p-0 overflow-hidden">
-                <DialogHeader className="p-6 bg-gray-50/50 border-b">
-                    <DialogTitle className="text-xl">Add New Dealership</DialogTitle>
-                </DialogHeader>
-                <div className="p-6 space-y-4">
-                    <div className="space-y-2">
-                        <Label>Dealership Name</Label>
-                        <Input placeholder="e.g. Downtown Toyota" value={newDealership.name} onChange={(e) => setNewDealership({ ...newDealership, name: e.target.value })} className="h-11 rounded-xl" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label>Location</Label>
-                            <Input placeholder="City" value={newDealership.location} onChange={(e) => setNewDealership({ ...newDealership, location: e.target.value })} className="h-11 rounded-xl" />
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Province</Label>
-                            <Input placeholder="e.g. ON" value={newDealership.province} onChange={(e) => setNewDealership({ ...newDealership, province: e.target.value })} className="h-11 rounded-xl" />
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                         <div className="space-y-2">
-                            <Label>Postal Code</Label>
-                            <Input placeholder="ZIP/Postal" value={newDealership.postalCode} onChange={(e) => setNewDealership({ ...newDealership, postalCode: e.target.value })} className="h-11 rounded-xl" />
-                        </div>
-                         <div className="space-y-2">
-                            <Label>Phone</Label>
-                            <Input placeholder="(555) 000-0000" value={newDealership.phone} onChange={(e) => setNewDealership({ ...newDealership, phone: e.target.value })} className="h-11 rounded-xl" />
-                        </div>
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Address</Label>
-                        <Input placeholder="Street Address" value={newDealership.address} onChange={(e) => setNewDealership({ ...newDealership, address: e.target.value })} className="h-11 rounded-xl" />
-                    </div>
-                </div>
-                <DialogFooter className="p-6 bg-gray-50/50 border-t">
-                    <Button variant="outline" onClick={() => setShowAddDealership(false)} className="rounded-xl h-11">Cancel</Button>
-                    <Button onClick={handleAddDealership} className="rounded-xl h-11 px-8">Create Dealership</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-
-       {/* Edit Dealership Modal */}
-       <Dialog open={!!editingDealership} onOpenChange={(open) => !open && setEditingDealership(null)}>
-        <DialogContent className="sm:max-w-[500px] rounded-2xl p-0 overflow-hidden">
-          <DialogHeader className="p-6 bg-gray-50/50 border-b">
-            <DialogTitle className="text-xl">Edit Dealership</DialogTitle>
-          </DialogHeader>
-          {editingDealership && (
-             <div className="p-6 space-y-4">
-                <div className="space-y-2">
-                    <Label>Name</Label>
-                    <Input value={editingDealership.name} onChange={(e) => setEditingDealership({ ...editingDealership, name: e.target.value })} className="h-11 rounded-xl" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label>Location</Label>
-                        <Input value={editingDealership.location} onChange={(e) => setEditingDealership({ ...editingDealership, location: e.target.value })} className="h-11 rounded-xl" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label>Province</Label>
-                        <Input value={editingDealership.province} onChange={(e) => setEditingDealership({ ...editingDealership, province: e.target.value })} className="h-11 rounded-xl" />
-                    </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label>Postal Code</Label>
-                        <Input value={editingDealership.postalCode} onChange={(e) => setEditingDealership({ ...editingDealership, postalCode: e.target.value })} className="h-11 rounded-xl" />
-                    </div>
-                     <div className="space-y-2">
-                        <Label>Phone</Label>
-                        <Input value={editingDealership.phone} onChange={(e) => setEditingDealership({ ...editingDealership, phone: e.target.value })} className="h-11 rounded-xl" />
-                    </div>
-                </div>
-                 <div className="space-y-2">
-                    <Label>Address</Label>
-                    <Input value={editingDealership.address} onChange={(e) => setEditingDealership({ ...editingDealership, address: e.target.value })} className="h-11 rounded-xl" />
-                </div>
-            </div>
-          )}
-          <DialogFooter className="p-6 bg-gray-50/50 border-t">
-            <Button variant="outline" onClick={() => setEditingDealership(null)} className="rounded-xl h-11">Cancel</Button>
-            <Button onClick={handleUpdateDealership} className="rounded-xl h-11 px-8">Save Changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Car Modal */}
-      <Dialog open={!!editingCar} onOpenChange={(open) => !open && setEditingCar(null)}>
-        <DialogContent className="max-w-3xl rounded-2xl p-0 overflow-hidden">
-          <DialogHeader className="p-6 bg-gray-50/50 border-b">
-            <DialogTitle className="text-xl">Edit Vehicle</DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="max-h-[70vh]">
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                {editingCar && (() => {
-                    const update = (field: string, val: string) => {
-                        // @ts-ignore
-                        setEditingCar({ ...editingCar, [field]: val });
-                    }
-
-                    return (
-                        <>
-                            <div className="space-y-2"><Label>VIN *</Label><Input placeholder="Vehicle Identification Number" value={editingCar.vin} onChange={(e) => update('vin', e.target.value)} className="h-11 rounded-xl" /></div>
-                            
-                            <div className="col-span-2 grid grid-cols-3 gap-4">
-                                <div className="space-y-2"><Label>Make *</Label><Input placeholder="e.g. Toyota" value={editingCar.make} onChange={(e) => update('make', e.target.value)} className="h-11 rounded-xl" /></div>
-                                <div className="space-y-2"><Label>Model *</Label><Input placeholder="e.g. Camry" value={editingCar.model} onChange={(e) => update('model', e.target.value)} className="h-11 rounded-xl" /></div>
-                                <div className="space-y-2"><Label>Year</Label><Input placeholder="YYYY" value={editingCar.year} onChange={(e) => update('year', e.target.value)} className="h-11 rounded-xl" /></div>
-                            </div>
-
-                            <div className="space-y-2"><Label>Trim</Label><Input placeholder="e.g. XLE" value={editingCar.trim} onChange={(e) => update('trim', e.target.value)} className="h-11 rounded-xl" /></div>
-                            <div className="space-y-2"><Label>Color</Label><Input placeholder="Exterior Color" value={editingCar.color} onChange={(e) => update('color', e.target.value)} className="h-11 rounded-xl" /></div>
-                            
-                            <div className="space-y-2"><Label>Price ($)</Label><Input type="number" placeholder="0.00" value={editingCar.price} onChange={(e) => update('price', e.target.value)} className="h-11 rounded-xl font-mono" /></div>
-                            <div className="space-y-2"><Label>Mileage (km)</Label><Input type="number" placeholder="0" value={editingCar.kilometers} onChange={(e) => update('kilometers', e.target.value)} className="h-11 rounded-xl font-mono" /></div>
-                            
-                            <div className="space-y-2"><Label>Transmission</Label><Input placeholder="e.g. Automatic" value={editingCar.transmission} onChange={(e) => update('transmission', e.target.value)} className="h-11 rounded-xl" /></div>
-                            <div className="space-y-2"><Label>Fuel Type</Label><Input placeholder="e.g. Gasoline" value={editingCar.fuelType} onChange={(e) => update('fuelType', e.target.value)} className="h-11 rounded-xl" /></div>
-                            
-                            <div className="space-y-2"><Label>Body Type</Label><Input placeholder="e.g. Sedan" value={editingCar.bodyType} onChange={(e) => update('bodyType', e.target.value)} className="h-11 rounded-xl" /></div>
-                            <div className="space-y-2"><Label>Listing URL</Label><Input placeholder="https://..." value={editingCar.listingLink} onChange={(e) => update('listingLink', e.target.value)} className="h-11 rounded-xl" /></div>
-                            <div className="space-y-2"><Label>Carfax URL</Label><Input placeholder="https://..." value={editingCar.carfaxLink} onChange={(e) => update('carfaxLink', e.target.value)} className="h-11 rounded-xl" /></div>
-                            
-                            <div className="col-span-2 space-y-2">
-                                <Label>Notes</Label>
-                                <Input placeholder="Additional details..." value={editingCar.notes} onChange={(e) => update('notes', e.target.value)} className="h-11 rounded-xl" />
-                            </div>
-                        </>
-                    )
-                })()}
-            </div>
-          </ScrollArea>
-          <DialogFooter className="p-6 bg-gray-50/50 border-t">
-            <Button variant="outline" onClick={() => setEditingCar(null)} className="rounded-xl h-11">Cancel</Button>
-            <Button onClick={handleUpdateCar} className="rounded-xl h-11 px-8">Save Changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
       </div>
     </div>
   );

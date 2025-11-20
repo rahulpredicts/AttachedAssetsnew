@@ -192,11 +192,8 @@ export default function UploadPage() {
         ...newCar as Car,
         id: Math.random().toString(36).substr(2, 9),
         status: 'available',
-        // Store features and engine specs in notes since mock data type is fixed
-        notes: (newCar.notes ? newCar.notes + "\n" : "") + 
-               `Engine: ${newCar.engineCylinders || '?'} Cyl, ${newCar.engineDisplacement || '?'}L\n` +
-               `Drivetrain: ${newCar.drivetrain?.toUpperCase() || '?'}\n` +
-               "Features: " + features.join(", ")
+        features: features,
+        notes: newCar.notes || ""
     };
     
     addCar(car);
