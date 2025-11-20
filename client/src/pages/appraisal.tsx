@@ -259,7 +259,7 @@ export default function AppraisalPage() {
         
         // Adjustments for new fields
         const transmissionFactor = formData.transmission === 'manual' ? -500 : 0;
-        const drivetrainFactor = (formData.drivetrain === 'awd' || formData.drivetrain === '4wd') ? 2000 : 0;
+        const drivetrainFactor = (formData.drivetrain === 'awd' || formData.drivetrain === '4wd' || formData.drivetrain === '4x4') ? 2000 : 0;
         const fuelFactor = (formData.fuelType === 'hybrid' || formData.fuelType === 'electric') ? 3000 : 0;
         
         // Engine factor (mock logic)
@@ -291,7 +291,7 @@ export default function AppraisalPage() {
         if (formData.radius === "500") adjustedPrice *= 0.95;
 
         // Adjust for features/specs on top of average if we didn't filter strictly
-        if (!filterOptions.matchDrivetrain && (formData.drivetrain === 'awd' || formData.drivetrain === '4wd')) adjustedPrice += 1500;
+        if (!filterOptions.matchDrivetrain && (formData.drivetrain === 'awd' || formData.drivetrain === '4wd' || formData.drivetrain === '4x4')) adjustedPrice += 1500;
         if (!filterOptions.matchFuelType && (formData.fuelType === 'hybrid' || formData.fuelType === 'electric')) adjustedPrice += 2000;
         if (formData.engineCylinders === '8') adjustedPrice += 1000; // V8 premium if not already accounted for in comps
         
@@ -442,6 +442,7 @@ export default function AppraisalPage() {
                                             <SelectItem value="rwd">RWD</SelectItem>
                                             <SelectItem value="awd">AWD</SelectItem>
                                             <SelectItem value="4wd">4WD</SelectItem>
+                                            <SelectItem value="4x4">4x4</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>

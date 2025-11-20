@@ -52,11 +52,11 @@ export default function UploadPage() {
   const [activeTab, setActiveTab] = useState("manual");
 
   // Manual Entry State
-  const [newCar, setNewCar] = useState<Partial<Car> & { engineCylinders?: string, engineDisplacement?: string }>({
+  const [newCar, setNewCar] = useState<Partial<Car> & { engineCylinders?: string, engineDisplacement?: string, drivetrain?: string }>({
     vin: "", make: "", model: "", trim: "", year: "", color: "",
     price: "", kilometers: "", transmission: "", fuelType: "", bodyType: "",
     listingLink: "", carfaxLink: "", notes: "", dealershipId: "", status: 'available',
-    engineCylinders: "", engineDisplacement: ""
+    engineCylinders: "", engineDisplacement: "", drivetrain: "fwd"
   });
   
   const [features, setFeatures] = useState<string[]>([]);
@@ -116,6 +116,15 @@ export default function UploadPage() {
                 else if (fuel.includes("diesel")) decoded.fuelType = "diesel";
                 else if (fuel.includes("electric")) decoded.fuelType = "electric";
                 else if (fuel.includes("hybrid")) decoded.fuelType = "hybrid";
+            }
+
+            // Decode Drivetrain
+            if (vehicle.DriveType) {
+                const drive = vehicle.DriveType.toLowerCase();
+                if (drive.includes("awd") || drive.includes("all")) decoded.drivetrain = "awd";
+                else if (drive.includes("4wd") || drive.includes("4-wheel")) decoded.drivetrain = "4wd";
+                else if (drive.includes("rwd") || drive.includes("rear")) decoded.drivetrain = "rwd";
+                else if (drive.includes("fwd") || drive.includes("front")) decoded.drivetrain = "fwd";
             }
 
             // Decode Body Type
@@ -186,6 +195,7 @@ export default function UploadPage() {
         // Store features and engine specs in notes since mock data type is fixed
         notes: (newCar.notes ? newCar.notes + "\n" : "") + 
                `Engine: ${newCar.engineCylinders || '?'} Cyl, ${newCar.engineDisplacement || '?'}L\n` +
+               `Drivetrain: ${newCar.drivetrain?.toUpperCase() || '?'}\n` +
                "Features: " + features.join(", ")
     };
     
@@ -194,7 +204,7 @@ export default function UploadPage() {
         vin: "", make: "", model: "", trim: "", year: "", color: "",
         price: "", kilometers: "", transmission: "", fuelType: "", bodyType: "",
         listingLink: "", carfaxLink: "", notes: "", dealershipId: newCar.dealershipId, status: 'available',
-        engineCylinders: "", engineDisplacement: ""
+        engineCylinders: "", engineDisplacement: "", drivetrain: "fwd"
     });
     setFeatures([]);
     setShowAdvanced(false);
@@ -459,6 +469,20 @@ export default function UploadPage() {
                                     </SelectContent>
                                 </Select>
                             </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Drivetrain</Label>
+                            <Select value={newCar.drivetrain} onValueChange={(val) => setNewCar({...newCar, drivetrain: val})}>
+                                <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="fwd">FWD</SelectItem>
+                                    <SelectItem value="rwd">RWD</SelectItem>
+                                    <SelectItem value="awd">AWD</SelectItem>
+                                    <SelectItem value="4wd">4WD</SelectItem>
+                                    <SelectItem value="4x4">4x4</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
 
                         <div className="space-y-2">
