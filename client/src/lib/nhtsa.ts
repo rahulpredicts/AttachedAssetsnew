@@ -1,4 +1,5 @@
 export const CANADIAN_TRIMS_BY_MAKE: Record<string, string[]> = {
+  "Acura": ["Base", "Tech", "A-Spec", "Elite", "Elite A-Spec", "Platinum Elite", "Platinum Elite A-Spec", "Type S", "Type S Ultra", "Tech SH-AWD", "Type S Ultra SH-AWD", "CSX", "Dynamic", "Premium", "Navi", "Tech Plus", "Advance", "SH-AWD", "Launch Edition", "PMC Edition"],
   "Toyota": ["CE", "LE", "XLE", "SE", "XSE", "Limited", "Platinum", "TRD", "TRD Sport", "TRD Off-Road", "TRD Pro", "Nightshade"],
   "Honda": ["DX", "LX", "EX", "EX-L", "Touring", "Sport", "Si", "Type R", "Black Edition", "SE"],
   "Nissan": ["S", "SV", "SL", "SR", "Platinum", "Midnight Edition", "PRO-4X", "Nismo"],
