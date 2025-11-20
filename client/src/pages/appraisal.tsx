@@ -75,7 +75,7 @@ export default function AppraisalPage() {
     dealerships.flatMap(d => d.inventory), 
   [dealerships]);
 
-  const handleDecodeVin = () => {
+  const handleDecodeVin = async () => {
     if (!formData.vin || formData.vin.length < 11) {
         toast({ title: "Invalid VIN", description: "Please enter a valid 17-character VIN", variant: "destructive" });
         return;
@@ -83,24 +83,49 @@ export default function AppraisalPage() {
 
     setIsDecoding(true);
     
-    // Simulate API call
-    setTimeout(() => {
-        // Mock decoding logic
-        const mockDecoded = {
-            make: "Toyota",
-            model: "RAV4",
-            year: "2023",
-            trim: "XLE"
-        };
-        
-        setFormData(prev => ({
-            ...prev,
-            ...mockDecoded
-        }));
-        
+    try {
+        // Use NHTSA Public API for real decoding
+        const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${formData.vin}?format=json`);
+        const data = await response.json();
+
+        if (data.Results && data.Results.length > 0) {
+            const vehicle = data.Results[0];
+            
+            // Map API response to our form fields
+            const decoded = {
+                make: vehicle.Make || "",
+                model: vehicle.Model || "",
+                year: vehicle.ModelYear || "",
+                trim: vehicle.Trim || "" // NHTSA sometimes provides trim, sometimes not
+            };
+
+            // Check if we got valid data
+            if (!decoded.make && !decoded.model) {
+                 throw new Error("Could not decode vehicle details");
+            }
+
+            setFormData(prev => ({
+                ...prev,
+                ...decoded
+            }));
+            
+            toast({ 
+                title: "VIN Decoded Successfully", 
+                description: `Identified: ${decoded.year} ${decoded.make} ${decoded.model} ${decoded.trim ? decoded.trim : ''}` 
+            });
+        } else {
+            throw new Error("No results found");
+        }
+    } catch (error) {
+        console.error("VIN Decode Error:", error);
+        toast({ 
+            title: "Decoding Failed", 
+            description: "Could not fetch vehicle details. Please enter manually.", 
+            variant: "destructive" 
+        });
+    } finally {
         setIsDecoding(false);
-        toast({ title: "VIN Decoded", description: `Identified: ${mockDecoded.year} ${mockDecoded.make} ${mockDecoded.model}` });
-    }, 1000);
+    }
   };
 
   const handleAppraise = () => {
