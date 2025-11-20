@@ -22,9 +22,9 @@ export const CANADIAN_TRIMS_BY_MAKE: Record<string, string[]> = {
 };
 
 // Keep a flat list for backward compatibility or generic fallback
-export const CANADIAN_TRIMS = [
-  ...new Set(Object.values(CANADIAN_TRIMS_BY_MAKE).flat())
-].sort();
+export const CANADIAN_TRIMS = Array.from(
+  new Set(Object.values(CANADIAN_TRIMS_BY_MAKE).flat())
+).sort();
 
 export function getTrimsForMake(make: string): string[] {
     // Try to find exact match
