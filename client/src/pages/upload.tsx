@@ -52,14 +52,16 @@ export default function UploadPage() {
   const [activeTab, setActiveTab] = useState("manual");
 
   // Manual Entry State
-  const [newCar, setNewCar] = useState<Partial<Car>>({
+  const [newCar, setNewCar] = useState<Partial<Car> & { engineCylinders?: string, engineDisplacement?: string }>({
     vin: "", make: "", model: "", trim: "", year: "", color: "",
     price: "", kilometers: "", transmission: "", fuelType: "", bodyType: "",
-    listingLink: "", carfaxLink: "", notes: "", dealershipId: "", status: 'available'
+    listingLink: "", carfaxLink: "", notes: "", dealershipId: "", status: 'available',
+    engineCylinders: "", engineDisplacement: ""
   });
   
   const [features, setFeatures] = useState<string[]>([]);
   const [isDecoding, setIsDecoding] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   // Bulk CSV State
   const [csvData, setCsvData] = useState("");
@@ -92,6 +94,8 @@ export default function UploadPage() {
                 make: vehicle.Make || "",
                 model: vehicle.Model || "",
                 year: vehicle.ModelYear || "",
+                engineCylinders: vehicle.EngineCylinders || "",
+                engineDisplacement: vehicle.DisplacementL ? parseFloat(vehicle.DisplacementL).toFixed(1) : "",
                 // Trim is explicitly excluded per user request to keep it manual
             };
 
@@ -135,6 +139,9 @@ export default function UploadPage() {
                 ...decoded
             }));
             
+            // Auto open advanced section to show decoded details
+            setShowAdvanced(true);
+            
             toast({ 
                 title: "VIN Decoded Successfully", 
                 description: `Identified: ${decoded.year} ${decoded.make} ${decoded.model}` 
@@ -176,17 +183,21 @@ export default function UploadPage() {
         ...newCar as Car,
         id: Math.random().toString(36).substr(2, 9),
         status: 'available',
-        // Store features in notes or separate field if mock data supported it, for now just mock usage
-        notes: (newCar.notes ? newCar.notes + "\n" : "") + "Features: " + features.join(", ")
+        // Store features and engine specs in notes since mock data type is fixed
+        notes: (newCar.notes ? newCar.notes + "\n" : "") + 
+               `Engine: ${newCar.engineCylinders || '?'} Cyl, ${newCar.engineDisplacement || '?'}L\n` +
+               "Features: " + features.join(", ")
     };
     
     addCar(car);
     setNewCar({
         vin: "", make: "", model: "", trim: "", year: "", color: "",
         price: "", kilometers: "", transmission: "", fuelType: "", bodyType: "",
-        listingLink: "", carfaxLink: "", notes: "", dealershipId: newCar.dealershipId, status: 'available'
+        listingLink: "", carfaxLink: "", notes: "", dealershipId: newCar.dealershipId, status: 'available',
+        engineCylinders: "", engineDisplacement: ""
     });
     setFeatures([]);
+    setShowAdvanced(false);
     toast({ title: "Success", description: "Vehicle added to inventory" });
   };
 
@@ -401,24 +412,74 @@ export default function UploadPage() {
                     </Select>
                 </div>
               </div>
-               
-               <div className="space-y-2">
-                    <Label>Key Features</Label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-4 border rounded-xl bg-gray-50/50">
-                        {FEATURES_LIST.map(feature => (
-                            <div key={feature} className="flex items-center space-x-2">
-                                <Checkbox 
-                                    id={`upload-${feature}`} 
-                                    checked={features.includes(feature)}
-                                    onCheckedChange={() => toggleFeature(feature)}
-                                />
-                                <label htmlFor={`upload-${feature}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
-                                    {feature}
-                                </label>
+
+               <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced} className="space-y-4 border rounded-xl p-4 bg-gray-50/50 mt-4">
+                    <CollapsibleTrigger asChild>
+                        <Button variant="outline" className="w-full flex items-center justify-between bg-white">
+                            Engine & Features (Advanced)
+                            <CheckSquare className="w-4 h-4 ml-2" />
+                        </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-6 pt-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label>Cylinders</Label>
+                                <Select value={newCar.engineCylinders} onValueChange={(val) => setNewCar({...newCar, engineCylinders: val})}>
+                                    <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="3">3 Cyl</SelectItem>
+                                        <SelectItem value="4">4 Cyl</SelectItem>
+                                        <SelectItem value="5">5 Cyl</SelectItem>
+                                        <SelectItem value="6">6 Cyl (V6/I6)</SelectItem>
+                                        <SelectItem value="8">8 Cyl (V8)</SelectItem>
+                                        <SelectItem value="10">10 Cyl (V10)</SelectItem>
+                                        <SelectItem value="12">12 Cyl (V12)</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
-                        ))}
-                    </div>
-                </div>
+                            <div className="space-y-2">
+                                <Label>Displacement (L)</Label>
+                                <Select value={newCar.engineDisplacement} onValueChange={(val) => setNewCar({...newCar, engineDisplacement: val})}>
+                                    <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                                    <SelectContent className="max-h-[200px]">
+                                        <SelectItem value="1.5">1.5L</SelectItem>
+                                        <SelectItem value="1.8">1.8L</SelectItem>
+                                        <SelectItem value="2.0">2.0L</SelectItem>
+                                        <SelectItem value="2.4">2.4L</SelectItem>
+                                        <SelectItem value="2.5">2.5L</SelectItem>
+                                        <SelectItem value="2.7">2.7L</SelectItem>
+                                        <SelectItem value="3.0">3.0L</SelectItem>
+                                        <SelectItem value="3.5">3.5L</SelectItem>
+                                        <SelectItem value="3.6">3.6L</SelectItem>
+                                        <SelectItem value="5.0">5.0L</SelectItem>
+                                        <SelectItem value="5.3">5.3L</SelectItem>
+                                        <SelectItem value="5.7">5.7L (Hemi)</SelectItem>
+                                        <SelectItem value="6.2">6.2L</SelectItem>
+                                        <SelectItem value="6.7">6.7L (Diesel)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Key Features</Label>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                                {FEATURES_LIST.map(feature => (
+                                    <div key={feature} className="flex items-center space-x-2">
+                                        <Checkbox 
+                                            id={`upload-${feature}`} 
+                                            checked={features.includes(feature)}
+                                            onCheckedChange={() => toggleFeature(feature)}
+                                        />
+                                        <label htmlFor={`upload-${feature}`} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                                            {feature}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </CollapsibleContent>
+               </Collapsible>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                  <div className="space-y-2"><Label>Listing URL</Label><Input placeholder="https://..." value={newCar.listingLink} onChange={(e) => setNewCar({...newCar, listingLink: e.target.value})} /></div>
