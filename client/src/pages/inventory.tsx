@@ -59,6 +59,12 @@ import { cn } from "@/lib/utils";
 import { useInventory } from "@/lib/inventory-context";
 import { useLocation } from "wouter";
 
+const COMMON_COLORS = [
+  "Black", "White", "Silver", "Gray", "Red", "Blue", 
+  "Brown", "Green", "Beige", "Gold", "Orange", "Yellow", 
+  "Purple", "Other"
+];
+
 export default function Inventory() {
   const { dealerships, addDealership, updateDealership, deleteDealership, updateCar, deleteCar, toggleSoldStatus } = useInventory();
   const { toast } = useToast();
@@ -375,7 +381,15 @@ export default function Inventory() {
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-xs text-gray-500">Color</Label>
-                                <Input placeholder="Any Color" value={filterColor} onChange={(e) => setFilterColor(e.target.value)} className="h-9" />
+                                <Select value={filterColor} onValueChange={setFilterColor}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="Any Color" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Colors</SelectItem>
+                                        {COMMON_COLORS.map(color => (
+                                            <SelectItem key={color} value={color}>{color}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </div>
 
@@ -819,10 +833,16 @@ export default function Inventory() {
                 </div>
                  <div className="grid gap-2">
                   <Label>Color</Label>
-                  <Input
-                    value={editingCar.color}
-                    onChange={(e) => setEditingCar({ ...editingCar, color: e.target.value })}
-                  />
+                  <Select value={editingCar.color} onValueChange={(val) => setEditingCar({ ...editingCar, color: val })}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select Color" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {COMMON_COLORS.map(color => (
+                            <SelectItem key={color} value={color}>{color}</SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="grid gap-2">
                   <Label>Status</Label>

@@ -35,6 +35,12 @@ const POPULAR_MAKES = [
   "Acura", "Audi", "BMW", "Buick", "Cadillac", "Chevrolet", "Chrysler", "Dodge", "Fiat", "Ford", "GMC", "Honda", "Hyundai", "Infiniti", "Jaguar", "Jeep", "Kia", "Land Rover", "Lexus", "Lincoln", "Mazda", "Mercedes-Benz", "Mini", "Mitsubishi", "Nissan", "Porsche", "Ram", "Subaru", "Tesla", "Toyota", "Volkswagen", "Volvo"
 ];
 
+const COMMON_COLORS = [
+  "Black", "White", "Silver", "Gray", "Red", "Blue", 
+  "Brown", "Green", "Beige", "Gold", "Orange", "Yellow", 
+  "Purple", "Other"
+];
+
 const FEATURES_LIST = [
     "Navigation", "Sunroof/Moonroof", "Leather Seats", "Heated Seats", "Backup Camera", 
     "Bluetooth", "Apple CarPlay", "Android Auto", "Blind Spot Monitor", "Adaptive Cruise Control",
@@ -462,7 +468,19 @@ export default function UploadPage() {
                     </Select>
                 </div>
                 
-                <div className="space-y-2"><Label>Color</Label><Input placeholder="Exterior Color" value={newCar.color} onChange={(e) => setNewCar({...newCar, color: e.target.value})} /></div>
+                <div className="space-y-2">
+                  <Label>Color</Label>
+                  <Select value={newCar.color} onValueChange={(val) => setNewCar({...newCar, color: val})}>
+                      <SelectTrigger>
+                          <SelectValue placeholder="Select Color" />
+                      </SelectTrigger>
+                      <SelectContent>
+                          {COMMON_COLORS.map(color => (
+                              <SelectItem key={color} value={color}>{color}</SelectItem>
+                          ))}
+                      </SelectContent>
+                  </Select>
+                </div>
                 <div className="space-y-2"><Label>Price ($)</Label><Input type="number" placeholder="0.00" value={newCar.price} onChange={(e) => setNewCar({...newCar, price: e.target.value})} /></div>
                 <div className="space-y-2"><Label>Kilometers</Label><Input type="number" placeholder="0" value={newCar.kilometers} onChange={(e) => setNewCar({...newCar, kilometers: e.target.value})} /></div>
                 
