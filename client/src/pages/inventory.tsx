@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Search,
   Plus,
@@ -20,7 +20,9 @@ import {
   ArrowDownWideNarrow,
   FileText,
   AlertOctagon,
-  FileQuestion
+  FileQuestion,
+  Download,
+  Upload
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,6 +64,7 @@ import {
   useCreateDealership,
   useUpdateDealership,
   useDeleteDealership,
+  useCreateCar,
   useUpdateCar,
   useDeleteCar,
   useToggleSoldStatus,
@@ -81,6 +84,7 @@ export default function Inventory() {
   const createDealershipMutation = useCreateDealership();
   const updateDealershipMutation = useUpdateDealership();
   const deleteDealershipMutation = useDeleteDealership();
+  const createCarMutation = useCreateCar();
   const updateCarMutation = useUpdateCar();
   const deleteCarMutation = useDeleteCar();
   const toggleSoldStatusMutation = useToggleSoldStatus();
@@ -190,6 +194,85 @@ export default function Inventory() {
   const handleDeleteCar = (carId: string) => {
       if (!window.confirm("Delete this car?")) return;
       deleteCarMutation.mutate(carId);
+  };
+
+  const handleExportData = () => {
+    const exportData = {
+      dealerships,
+      cars: allCars,
+      exportDate: new Date().toISOString(),
+      version: "1.0"
+    };
+    
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `inventory-backup-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast({ 
+      title: "Export Successful", 
+      description: `Exported ${dealerships.length} dealerships and ${allCars.length} vehicles` 
+    });
+  };
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImportData = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const importData = JSON.parse(text);
+      
+      if (!importData.dealerships || !importData.cars) {
+        throw new Error("Invalid backup file format");
+      }
+
+      // Import dealerships first
+      const dealershipIdMap = new Map<string, string>();
+      
+      for (const dealership of importData.dealerships) {
+        const { id, createdAt, ...dealershipData } = dealership;
+        const newDealership = await createDealershipMutation.mutateAsync(dealershipData);
+        dealershipIdMap.set(id, newDealership.id);
+      }
+
+      // Import cars with updated dealership IDs
+      for (const car of importData.cars) {
+        const { id, createdAt, dealershipId, ...carData } = car;
+        const newDealershipId = dealershipIdMap.get(dealershipId);
+        if (newDealershipId) {
+          await createCarMutation.mutateAsync({
+            ...carData,
+            dealershipId: newDealershipId
+          });
+        }
+      }
+
+      toast({ 
+        title: "Import Successful", 
+        description: `Imported ${importData.dealerships.length} dealerships and ${importData.cars.length} vehicles` 
+      });
+      
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    } catch (error) {
+      console.error("Import error:", error);
+      toast({ 
+        title: "Import Failed", 
+        description: "Failed to import data. Please check the file format.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getAllCars = () => {
@@ -322,6 +405,31 @@ export default function Inventory() {
             </p>
           </div>
           <div className="flex gap-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="lg" className="rounded-full h-12 px-6 border-gray-200 hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all">
+                  <Download className="w-4 h-4 mr-2" />
+                  Backup
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleExportData}>
+                  <Download className="w-4 h-4 mr-2" />
+                  Export Data
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Import Data
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleImportData}
+              className="hidden"
+            />
             <Button onClick={() => setShowAddDealership(true)} variant="outline" size="lg" className="rounded-full h-12 px-6 border-gray-200 hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all">
               <Building2 className="w-4 h-4 mr-2" />
               New Dealership
