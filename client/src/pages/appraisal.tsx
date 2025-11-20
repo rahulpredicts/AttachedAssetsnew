@@ -15,11 +15,14 @@ import {
   Search,
   ArrowRight,
   MapPin,
-  QrCode
+  QrCode,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 
 const CANADIAN_TRIMS = [
   "CE", "LE", "XLE", "SE", "XSE", "Limited", "Platinum", // Toyota
@@ -54,6 +57,7 @@ export default function AppraisalPage() {
     province: "",
     radius: "50"
   });
+  const [showComparables, setShowComparables] = useState(true);
   const [appraisal, setAppraisal] = useState<{
     retailLow: number;
     retailHigh: number;
@@ -305,6 +309,18 @@ export default function AppraisalPage() {
                         </div>
                     </div>
 
+                    <div className="flex items-center justify-between space-x-2 py-2">
+                        <Label htmlFor="show-comparables" className="flex items-center gap-2 cursor-pointer">
+                            {showComparables ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4 text-gray-400" />}
+                            Show Comparables
+                        </Label>
+                        <Switch 
+                            id="show-comparables" 
+                            checked={showComparables}
+                            onCheckedChange={setShowComparables}
+                        />
+                    </div>
+
                     <Button 
                         className="w-full mt-4 h-12 text-lg" 
                         onClick={handleAppraise}
@@ -350,45 +366,47 @@ export default function AppraisalPage() {
                     </div>
 
                     {/* Comparable Vehicles */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <CarIcon className="w-5 h-5 text-gray-500" />
-                                Comparable Vehicles
-                            </CardTitle>
-                            <CardDescription>
-                                Based on {formData.radius}km radius around {formData.postalCode || 'your location'} {formData.province && `in ${formData.province}`}
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            {appraisal.similarCars.length > 0 ? (
-                                <div className="space-y-4">
-                                    {appraisal.similarCars.map(car => (
-                                        <div key={car.id} className="flex items-center justify-between p-4 border rounded-xl hover:bg-gray-50 transition-colors">
-                                            <div>
-                                                <div className="font-bold text-gray-900">{car.year} {car.make} {car.model}</div>
-                                                <div className="text-sm text-gray-500 flex items-center gap-2">
-                                                    <span>{parseFloat(car.kilometers).toLocaleString()} km</span>
-                                                    <span>•</span>
-                                                    <span>{car.trim}</span>
+                    {showComparables && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <CarIcon className="w-5 h-5 text-gray-500" />
+                                    Comparable Vehicles
+                                </CardTitle>
+                                <CardDescription>
+                                    Based on {formData.radius}km radius around {formData.postalCode || 'your location'} {formData.province && `in ${formData.province}`}
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                {appraisal.similarCars.length > 0 ? (
+                                    <div className="space-y-4">
+                                        {appraisal.similarCars.map(car => (
+                                            <div key={car.id} className="flex items-center justify-between p-4 border rounded-xl hover:bg-gray-50 transition-colors">
+                                                <div>
+                                                    <div className="font-bold text-gray-900">{car.year} {car.make} {car.model}</div>
+                                                    <div className="text-sm text-gray-500 flex items-center gap-2">
+                                                        <span>{parseFloat(car.kilometers).toLocaleString()} km</span>
+                                                        <span>•</span>
+                                                        <span>{car.trim}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="font-bold text-lg">${parseFloat(car.price).toLocaleString()}</div>
+                                                    <Badge variant="outline" className="text-xs font-normal">Match</Badge>
                                                 </div>
                                             </div>
-                                            <div className="text-right">
-                                                <div className="font-bold text-lg">${parseFloat(car.price).toLocaleString()}</div>
-                                                <Badge variant="outline" className="text-xs font-normal">Match</Badge>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-xl border border-dashed">
-                                    <Search className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                                    <p>No direct matches found in inventory.</p>
-                                    <p className="text-sm opacity-60">Estimate is based on general market data.</p>
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-xl border border-dashed">
+                                        <Search className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                                        <p>No direct matches found in inventory.</p>
+                                        <p className="text-sm opacity-60">Estimate is based on general market data.</p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
             ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center p-12 border-2 border-dashed rounded-2xl bg-gray-50/50 text-gray-400">

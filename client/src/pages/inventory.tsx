@@ -15,7 +15,9 @@ import {
   Gauge,
   Settings2,
   Palette,
-  CheckCircle2
+  CheckCircle2,
+  ArrowUpWideNarrow,
+  ArrowDownWideNarrow
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +37,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Dealership, Car } from "@/lib/mock-data";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -243,22 +251,56 @@ export default function Inventory() {
 
         {/* Modern Search Bar */}
         <div className="relative max-w-2xl">
-          <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 transition-colors group-focus-within:text-primary" />
-            <Input
-              placeholder="Search by VIN, make, model, or features..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 h-14 text-lg bg-white border-0 shadow-sm rounded-2xl focus-visible:ring-2 focus-visible:ring-primary/20 transition-all hover:shadow-md"
-            />
-             <Collapsible open={showAdvancedFilters} onOpenChange={setShowAdvancedFilters} className="absolute right-2 top-1/2 -translate-y-1/2">
-                <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-10 px-3 rounded-xl hover:bg-gray-100 text-gray-500">
-                        <SlidersHorizontal className="w-4 h-4 mr-2" />
-                        Filters
-                    </Button>
-                </CollapsibleTrigger>
-            </Collapsible>
+          <div className="relative group flex gap-2">
+            <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 transition-colors group-focus-within:text-primary" />
+                <Input
+                placeholder="Search by VIN, make, model, or features..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 h-14 text-lg bg-white border-0 shadow-sm rounded-2xl focus-visible:ring-2 focus-visible:ring-primary/20 transition-all hover:shadow-md"
+                />
+            </div>
+            <div className="flex gap-2">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="h-14 px-4 rounded-2xl border-0 shadow-sm bg-white hover:bg-gray-50">
+                            {sortBy === 'price' ? (
+                                sortOrder === 'asc' ? <ArrowUpWideNarrow className="w-5 h-5 mr-2" /> : <ArrowDownWideNarrow className="w-5 h-5 mr-2" />
+                            ) : (
+                                <ChevronDown className="w-5 h-5 mr-2" />
+                            )}
+                            Sort
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => { setSortBy('price'); setSortOrder('desc'); }}>
+                            Price: High to Low
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setSortBy('price'); setSortOrder('asc'); }}>
+                            Price: Low to High
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setSortBy('year'); setSortOrder('desc'); }}>
+                            Year: Newest
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setSortBy('year'); setSortOrder('asc'); }}>
+                            Year: Oldest
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setSortBy('kilometers'); setSortOrder('asc'); }}>
+                            Mileage: Low to High
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
+                <Collapsible open={showAdvancedFilters} onOpenChange={setShowAdvancedFilters}>
+                    <CollapsibleTrigger asChild>
+                        <Button variant="outline" className="h-14 px-4 rounded-2xl border-0 shadow-sm bg-white hover:bg-gray-50">
+                            <SlidersHorizontal className="w-5 h-5 mr-2" />
+                            Filters
+                        </Button>
+                    </CollapsibleTrigger>
+                </Collapsible>
+            </div>
           </div>
         </div>
 
