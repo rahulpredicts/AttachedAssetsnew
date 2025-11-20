@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Upload as UploadIcon, FileText, Image as ImageIcon, Plus, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { Upload as UploadIcon, FileText, Image as ImageIcon, Plus, Loader2, CheckCircle2, AlertCircle, Link as LinkIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +34,9 @@ export default function UploadPage() {
   // Bulk CSV State
   const [csvData, setCsvData] = useState("");
   
+  // URL Import State
+  const [urlInput, setUrlInput] = useState("");
+
   // AI Scan State
   const [scannedFile, setScannedFile] = useState<File | null>(null);
   const [scanResult, setScanResult] = useState<Partial<Car> | null>(null);
@@ -77,6 +80,32 @@ export default function UploadPage() {
     }, 1500);
   };
 
+  const handleUrlSubmit = () => {
+    if (!urlInput.trim()) {
+        toast({ title: "Error", description: "Please enter a valid URL", variant: "destructive" });
+        return;
+    }
+
+    setLoading(true);
+    
+    // Simulate URL scraping
+    setTimeout(() => {
+        setLoading(false);
+        setScanResult({
+            make: "Ford",
+            model: "F-150",
+            year: "2024",
+            vin: "1FTEW1EP5MFA12345",
+            price: "58900",
+            trim: "XLT",
+            color: "Oxford White",
+            kilometers: "1200",
+            listingLink: urlInput
+        });
+        toast({ title: "Extraction Complete", description: "Vehicle data found on page" });
+    }, 2000);
+  };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
         setScannedFile(e.target.files[0]);
@@ -106,6 +135,7 @@ export default function UploadPage() {
     setNewCar({ ...newCar, ...scanResult });
     setScanResult(null);
     setScannedFile(null);
+    setUrlInput("");
     setActiveTab("manual");
     toast({ title: "Data Transferred", description: "Review details and save" });
   };
@@ -118,10 +148,11 @@ export default function UploadPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-        <TabsList className="grid grid-cols-3 w-full max-w-md bg-gray-100 p-1 rounded-xl h-auto">
+        <TabsList className="grid grid-cols-4 w-full max-w-2xl bg-gray-100 p-1 rounded-xl h-auto">
           <TabsTrigger value="manual" className="py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Manual Entry</TabsTrigger>
           <TabsTrigger value="csv" className="py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">Bulk CSV</TabsTrigger>
-          <TabsTrigger value="scan" className="py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">AI Scan (PDF/Img)</TabsTrigger>
+          <TabsTrigger value="url" className="py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">URL Import</TabsTrigger>
+          <TabsTrigger value="scan" className="py-3 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm">AI Scan (PDF)</TabsTrigger>
         </TabsList>
 
         {/* Manual Entry Tab */}
@@ -229,6 +260,90 @@ export default function UploadPage() {
                 </div>
             </CardContent>
            </Card>
+        </TabsContent>
+
+        {/* URL Import Tab */}
+        <TabsContent value="url" className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <Card className="border-0 shadow-sm ring-1 ring-gray-200">
+                <CardHeader>
+                    <CardTitle>URL Import</CardTitle>
+                    <CardDescription>Enter a listing URL (AutoTrader, Kijiji, etc.) to automatically extract vehicle details.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-8">
+                    
+                    {!scanResult && !loading && (
+                         <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label>Listing URL</Label>
+                                <div className="flex gap-3">
+                                    <Input 
+                                        placeholder="https://www.autotrader.ca/..." 
+                                        value={urlInput}
+                                        onChange={(e) => setUrlInput(e.target.value)}
+                                        className="h-12 text-lg"
+                                    />
+                                    <Button onClick={handleUrlSubmit} size="lg" className="px-8">
+                                        Fetch
+                                    </Button>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-gray-50 p-6 rounded-xl border border-dashed border-gray-200 text-center text-gray-500">
+                                <LinkIcon className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                                <p>Supported platforms: AutoTrader, Kijiji Autos, Facebook Marketplace, Dealership Websites</p>
+                            </div>
+                         </div>
+                    )}
+
+                    {loading && (
+                        <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                            <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+                            <div className="text-center">
+                                <p className="font-medium text-lg">Scanning Webpage...</p>
+                                <p className="text-gray-500 text-sm">Extracting vehicle specifications and pricing</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {scanResult && !loading && (
+                        <div className="bg-green-50 border border-green-100 rounded-xl p-6 space-y-6">
+                            <div className="flex items-start gap-4">
+                                <div className="bg-green-100 text-green-700 p-2 rounded-full">
+                                    <CheckCircle2 className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-green-900 text-lg">Extraction Successful</h3>
+                                    <p className="text-green-700">We found the following details on the page.</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div className="bg-white p-3 rounded-lg border border-green-100">
+                                    <span className="text-xs text-gray-500 uppercase">VIN</span>
+                                    <div className="font-mono font-medium">{scanResult.vin || "N/A"}</div>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border border-green-100">
+                                    <span className="text-xs text-gray-500 uppercase">Make</span>
+                                    <div className="font-medium">{scanResult.make}</div>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border border-green-100">
+                                    <span className="text-xs text-gray-500 uppercase">Model</span>
+                                    <div className="font-medium">{scanResult.model}</div>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border border-green-100">
+                                    <span className="text-xs text-gray-500 uppercase">Price</span>
+                                    <div className="font-medium">${Number(scanResult.price).toLocaleString()}</div>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-3 justify-end">
+                                <Button variant="outline" onClick={() => { setScanResult(null); }}>Discard</Button>
+                                <Button onClick={saveScannedCar}>Use This Data</Button>
+                            </div>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
         </TabsContent>
 
         {/* AI Scan Tab */}
