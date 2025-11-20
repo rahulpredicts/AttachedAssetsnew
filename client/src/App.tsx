@@ -8,6 +8,7 @@ import { Layout } from "@/components/layout";
 import NotFound from "@/pages/not-found";
 import Inventory from "@/pages/inventory";
 import UploadPage from "@/pages/upload";
+import AppraisalPage from "@/pages/appraisal";
 
 function Router() {
   return (
@@ -15,6 +16,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Inventory} />
         <Route path="/upload" component={UploadPage} />
+        <Route path="/appraisal" component={AppraisalPage} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
