@@ -14,20 +14,44 @@ import {
   AlertCircle, 
   Search,
   ArrowRight,
-  MapPin
+  MapPin,
+  QrCode
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+
+const CANADIAN_TRIMS = [
+  "CE", "LE", "XLE", "SE", "XSE", "Limited", "Platinum", // Toyota
+  "DX", "LX", "EX", "EX-L", "Touring", "Sport", "Si", "Type R", // Honda
+  "S", "SV", "SL", "SR", "Platinum", // Nissan
+  "Trendline", "Comfortline", "Highline", "Execline", "GTI", "R", // VW
+  "Essential", "Preferred", "Luxury", "Ultimate", "N Line", // Hyundai
+  "LX", "EX", "EX Premium", "SX", "SX Limited", // Kia
+  "GX", "GS", "GT", "GT-Line", "Signature", // Mazda
+  "Base", "Premium", "Limited", "Wilderness", "Premier", // Subaru
+  "WT", "LS", "LT", "RST", "LTZ", "High Country", // GM/Chevy
+  "XL", "XLT", "Lariat", "King Ranch", "Platinum", "Limited", // Ford
+  "Tradesman", "Big Horn", "Sport", "Rebel", "Laramie", "Limited", // Ram
+  "Other"
+];
+
+const PROVINCES = [
+  "AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YT"
+];
 
 export default function AppraisalPage() {
   const { dealerships } = useInventory();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
+    vin: "",
     make: "",
     model: "",
     year: "",
     kilometers: "",
     trim: "",
     postalCode: "",
+    province: "",
     radius: "50"
   });
   const [appraisal, setAppraisal] = useState<{
@@ -38,9 +62,39 @@ export default function AppraisalPage() {
     similarCars: any[];
   } | null>(null);
 
+  const [isDecoding, setIsDecoding] = useState(false);
+
   const allCars = useMemo(() => 
     dealerships.flatMap(d => d.inventory), 
   [dealerships]);
+
+  const handleDecodeVin = () => {
+    if (!formData.vin || formData.vin.length < 11) {
+        toast({ title: "Invalid VIN", description: "Please enter a valid 17-character VIN", variant: "destructive" });
+        return;
+    }
+
+    setIsDecoding(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+        // Mock decoding logic
+        const mockDecoded = {
+            make: "Toyota",
+            model: "RAV4",
+            year: "2023",
+            trim: "XLE"
+        };
+        
+        setFormData(prev => ({
+            ...prev,
+            ...mockDecoded
+        }));
+        
+        setIsDecoding(false);
+        toast({ title: "VIN Decoded", description: `Identified: ${mockDecoded.year} ${mockDecoded.make} ${mockDecoded.model}` });
+    }, 1000);
+  };
 
   const handleAppraise = () => {
     if (!formData.make || !formData.model) return;
@@ -53,8 +107,8 @@ export default function AppraisalPage() {
       (!formData.year || Math.abs(parseInt(car.year) - parseInt(formData.year)) <= 2)
     );
 
-    // Filter by trim if provided
-    if (formData.trim) {
+    // Filter by trim if provided and not "Other"
+    if (formData.trim && formData.trim !== "Other") {
         const trimMatches = similar.filter(car => car.trim.toLowerCase().includes(formData.trim.toLowerCase()));
         // If we have matches with trim, use them, otherwise fall back to just make/model
         if (trimMatches.length > 0) {
@@ -79,10 +133,11 @@ export default function AppraisalPage() {
         const yearFactor = formData.year ? (parseInt(formData.year) - 2010) * 1000 : 5000;
         const kmFactor = formData.kilometers ? Math.max(0, (150000 - parseInt(formData.kilometers)) * 0.05) : 2000;
         
-        // Mock regional adjustment based on postal code
+        // Mock regional adjustment based on postal code/province
         const regionFactor = formData.postalCode ? (formData.postalCode.length * 100) : 0;
+        const provinceFactor = formData.province === 'ON' || formData.province === 'BC' ? 1000 : 0;
         
-        estimatedRetail = basePrice + yearFactor + kmFactor + regionFactor;
+        estimatedRetail = basePrice + yearFactor + kmFactor + regionFactor + provinceFactor;
     } else {
         // Calculate based on real data
         const prices = similar.map(c => parseFloat(c.price));
@@ -131,9 +186,34 @@ export default function AppraisalPage() {
             <Card className="border-0 shadow-lg ring-1 ring-gray-100">
                 <CardHeader className="bg-gray-50/50 border-b border-gray-100 pb-4">
                     <CardTitle>Vehicle Details</CardTitle>
-                    <CardDescription>Enter vehicle specs to appraise</CardDescription>
+                    <CardDescription>Enter vehicle specs or VIN to appraise</CardDescription>
                 </CardHeader>
                 <CardContent className="p-6 space-y-4">
+                    
+                    {/* VIN Decoder Section */}
+                    <div className="space-y-2">
+                        <Label>VIN</Label>
+                        <div className="flex gap-2">
+                            <Input 
+                                placeholder="17-digit VIN" 
+                                value={formData.vin} 
+                                onChange={e => setFormData({...formData, vin: e.target.value.toUpperCase()})} 
+                                maxLength={17}
+                                className="font-mono uppercase"
+                            />
+                            <Button variant="secondary" onClick={handleDecodeVin} disabled={isDecoding}>
+                                {isDecoding ? (
+                                    <span className="animate-spin mr-2">⟳</span>
+                                ) : (
+                                    <QrCode className="w-4 h-4 mr-2" />
+                                )}
+                                Decode
+                            </Button>
+                        </div>
+                    </div>
+
+                    <Separator className="my-2" />
+
                     <div className="space-y-2">
                         <Label>Make *</Label>
                         <Input 
@@ -162,11 +242,16 @@ export default function AppraisalPage() {
                         </div>
                         <div className="space-y-2">
                             <Label>Trim</Label>
-                            <Input 
-                                placeholder="e.g. LE" 
-                                value={formData.trim} 
-                                onChange={e => setFormData({...formData, trim: e.target.value})} 
-                            />
+                            <Select value={formData.trim} onValueChange={(val) => setFormData({...formData, trim: val})}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select Trim" />
+                                </SelectTrigger>
+                                <SelectContent className="max-h-[300px]">
+                                    {CANADIAN_TRIMS.map(trim => (
+                                        <SelectItem key={trim} value={trim}>{trim}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
                     <div className="space-y-2">
@@ -184,6 +269,18 @@ export default function AppraisalPage() {
                     <div className="space-y-2">
                         <Label>Region & Market</Label>
                         <div className="grid grid-cols-2 gap-4">
+                             <div className="space-y-2">
+                                <Select value={formData.province} onValueChange={(val) => setFormData({...formData, province: val})}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Prov" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {PROVINCES.map(prov => (
+                                            <SelectItem key={prov} value={prov}>{prov}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                             <div className="space-y-2">
                                 <Input 
                                     placeholder="Postal Code" 
@@ -191,20 +288,20 @@ export default function AppraisalPage() {
                                     onChange={e => setFormData({...formData, postalCode: e.target.value})} 
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <Select value={formData.radius} onValueChange={(val) => setFormData({...formData, radius: val})}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Radius" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="25">25 km</SelectItem>
-                                        <SelectItem value="50">50 km</SelectItem>
-                                        <SelectItem value="100">100 km</SelectItem>
-                                        <SelectItem value="250">250 km</SelectItem>
-                                        <SelectItem value="500">500 km</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                        </div>
+                         <div className="space-y-2 mt-2">
+                            <Select value={formData.radius} onValueChange={(val) => setFormData({...formData, radius: val})}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Radius" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="25">25 km</SelectItem>
+                                    <SelectItem value="50">50 km</SelectItem>
+                                    <SelectItem value="100">100 km</SelectItem>
+                                    <SelectItem value="250">250 km</SelectItem>
+                                    <SelectItem value="500">500 km</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 
@@ -260,7 +357,7 @@ export default function AppraisalPage() {
                                 Comparable Vehicles
                             </CardTitle>
                             <CardDescription>
-                                Based on {formData.radius}km radius around {formData.postalCode || 'your location'}
+                                Based on {formData.radius}km radius around {formData.postalCode || 'your location'} {formData.province && `in ${formData.province}`}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -299,7 +396,7 @@ export default function AppraisalPage() {
                         <Calculator className="w-10 h-10 text-gray-300" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">Ready to Appraise</h3>
-                    <p className="max-w-md">Enter vehicle details, including trim and location, to generate a value estimate.</p>
+                    <p className="max-w-md">Enter vehicle details or decode VIN to generate a value estimate.</p>
                 </div>
             )}
         </div>
