@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useInventory } from "@/lib/inventory-context";
 import { Car, Dealership } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
@@ -19,21 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-
-const CANADIAN_TRIMS = [
-  "CE", "LE", "XLE", "SE", "XSE", "Limited", "Platinum", // Toyota
-  "DX", "LX", "EX", "EX-L", "Touring", "Sport", "Si", "Type R", // Honda
-  "S", "SV", "SL", "SR", "Platinum", // Nissan
-  "Trendline", "Comfortline", "Highline", "Execline", "GTI", "R", // VW
-  "Essential", "Preferred", "Luxury", "Ultimate", "N Line", // Hyundai
-  "LX", "EX", "EX Premium", "SX", "SX Limited", // Kia
-  "GX", "GS", "GT", "GT-Line", "Signature", // Mazda
-  "Base", "Premium", "Limited", "Wilderness", "Premier", // Subaru
-  "WT", "LS", "LT", "RST", "LTZ", "High Country", // GM/Chevy
-  "XL", "XLT", "Lariat", "King Ranch", "Platinum", "Limited", // Ford
-  "Tradesman", "Big Horn", "Sport", "Rebel", "Laramie", "Limited", // Ram
-  "Other"
-];
+import { fetchCanadianTrims, CANADIAN_TRIMS } from "@/lib/nhtsa";
 
 const POPULAR_MAKES = [
   "Acura", "Audi", "BMW", "Buick", "Cadillac", "Chevrolet", "Chrysler", "Dodge", "Fiat", "Ford", "GMC", "Honda", "Hyundai", "Infiniti", "Jaguar", "Jeep", "Kia", "Land Rover", "Lexus", "Lincoln", "Mazda", "Mercedes-Benz", "Mini", "Mitsubishi", "Nissan", "Porsche", "Ram", "Subaru", "Tesla", "Toyota", "Volkswagen", "Volvo"
@@ -62,6 +48,8 @@ export default function UploadPage() {
   const [features, setFeatures] = useState<string[]>([]);
   const [isDecoding, setIsDecoding] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [availableTrims, setAvailableTrims] = useState<string[]>(CANADIAN_TRIMS);
+  const [isLoadingTrims, setIsLoadingTrims] = useState(false);
 
   // Bulk CSV State
   const [csvData, setCsvData] = useState("");
@@ -72,6 +60,24 @@ export default function UploadPage() {
   // AI Scan State
   const [scannedFile, setScannedFile] = useState<File | null>(null);
   const [scanResult, setScanResult] = useState<Partial<Car> | null>(null);
+
+  useEffect(() => {
+    const loadTrims = async () => {
+        if (newCar.year && newCar.make && newCar.model && newCar.make !== "Other") {
+             setIsLoadingTrims(true);
+             const trims = await fetchCanadianTrims(newCar.year, newCar.make, newCar.model);
+             if (trims.length > 0) {
+                 setAvailableTrims(trims);
+             } else {
+                 setAvailableTrims(CANADIAN_TRIMS);
+             }
+             setIsLoadingTrims(false);
+        }
+    };
+    
+    const timer = setTimeout(loadTrims, 1000);
+    return () => clearTimeout(timer);
+  }, [newCar.year, newCar.make, newCar.model]);
 
   const handleDecodeVin = async () => {
     if (!newCar.vin || newCar.vin.length < 11) {
@@ -363,13 +369,16 @@ export default function UploadPage() {
                 <div className="space-y-2"><Label>Year</Label><Input placeholder="YYYY" type="number" value={newCar.year} onChange={(e) => setNewCar({...newCar, year: e.target.value})} /></div>
                 
                 <div className="space-y-2">
-                    <Label>Trim</Label>
+                    <Label>
+                        Trim
+                        {isLoadingTrims && <span className="ml-2 text-xs text-gray-400 animate-pulse">Fetching...</span>}
+                    </Label>
                     <Select value={newCar.trim} onValueChange={(val) => setNewCar({...newCar, trim: val})}>
                         <SelectTrigger>
                             <SelectValue placeholder="Select Trim" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[300px]">
-                            {CANADIAN_TRIMS.map(trim => (
+                            {availableTrims.map(trim => (
                                 <SelectItem key={trim} value={trim}>{trim}</SelectItem>
                             ))}
                         </SelectContent>

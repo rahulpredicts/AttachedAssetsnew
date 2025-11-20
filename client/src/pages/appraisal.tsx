@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useInventory } from "@/lib/inventory-context";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -31,21 +31,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-
-const CANADIAN_TRIMS = [
-  "CE", "LE", "XLE", "SE", "XSE", "Limited", "Platinum", // Toyota
-  "DX", "LX", "EX", "EX-L", "Touring", "Sport", "Si", "Type R", // Honda
-  "S", "SV", "SL", "SR", "Platinum", // Nissan
-  "Trendline", "Comfortline", "Highline", "Execline", "GTI", "R", // VW
-  "Essential", "Preferred", "Luxury", "Ultimate", "N Line", // Hyundai
-  "LX", "EX", "EX Premium", "SX", "SX Limited", // Kia
-  "GX", "GS", "GT", "GT-Line", "Signature", // Mazda
-  "Base", "Premium", "Limited", "Wilderness", "Premier", // Subaru
-  "WT", "LS", "LT", "RST", "LTZ", "High Country", // GM/Chevy
-  "XL", "XLT", "Lariat", "King Ranch", "Platinum", "Limited", // Ford
-  "Tradesman", "Big Horn", "Sport", "Rebel", "Laramie", "Limited", // Ram
-  "Other"
-];
+import { fetchCanadianTrims, CANADIAN_TRIMS } from "@/lib/nhtsa";
 
 const POPULAR_MAKES = [
   "Acura", "Audi", "BMW", "Buick", "Cadillac", "Chevrolet", "Chrysler", "Dodge", "Fiat", "Ford", "GMC", "Honda", "Hyundai", "Infiniti", "Jaguar", "Jeep", "Kia", "Land Rover", "Lexus", "Lincoln", "Mazda", "Mercedes-Benz", "Mini", "Mitsubishi", "Nissan", "Porsche", "Ram", "Subaru", "Tesla", "Toyota", "Volkswagen", "Volvo"
@@ -100,10 +86,32 @@ export default function AppraisalPage() {
   } | null>(null);
 
   const [isDecoding, setIsDecoding] = useState(false);
+  const [availableTrims, setAvailableTrims] = useState<string[]>(CANADIAN_TRIMS);
+  const [isLoadingTrims, setIsLoadingTrims] = useState(false);
 
   const allCars = useMemo(() => 
     dealerships.flatMap(d => d.inventory), 
   [dealerships]);
+
+  useEffect(() => {
+    const loadTrims = async () => {
+        if (formData.year && formData.make && formData.model && formData.make !== "Other") {
+             setIsLoadingTrims(true);
+             const trims = await fetchCanadianTrims(formData.year, formData.make, formData.model);
+             if (trims.length > 0) {
+                 setAvailableTrims(trims);
+                 // Optional: toast({ description: `Found ${trims.length} trims for ${formData.model}` });
+             } else {
+                 setAvailableTrims(CANADIAN_TRIMS);
+             }
+             setIsLoadingTrims(false);
+        }
+    };
+    
+    // Debounce slightly to avoid spamming while typing year
+    const timer = setTimeout(loadTrims, 1000);
+    return () => clearTimeout(timer);
+  }, [formData.year, formData.make, formData.model]);
 
   const handleDecodeVin = async () => {
     if (!formData.vin || formData.vin.length < 11) {
@@ -386,13 +394,16 @@ export default function AppraisalPage() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label>Trim</Label>
+                            <Label>
+                                Trim 
+                                {isLoadingTrims && <span className="ml-2 text-xs text-gray-400 animate-pulse">Fetching...</span>}
+                            </Label>
                             <Select value={formData.trim} onValueChange={(val) => setFormData({...formData, trim: val})}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select Trim" />
                                 </SelectTrigger>
                                 <SelectContent className="max-h-[300px]">
-                                    {CANADIAN_TRIMS.map(trim => (
+                                    {availableTrims.map(trim => (
                                         <SelectItem key={trim} value={trim}>{trim}</SelectItem>
                                     ))}
                                 </SelectContent>
