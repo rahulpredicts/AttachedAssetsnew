@@ -33,6 +33,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Label } from "@/components/ui/label";
 import { INITIAL_DEALERSHIPS, Dealership, Car } from "@/lib/mock-data";
 import { useToast } from "@/hooks/use-toast";
 
@@ -85,6 +86,7 @@ export default function Inventory() {
     listingLink: "",
     carfaxLink: "",
     notes: "",
+    dealershipId: "", // Added to support dealership selection
   });
 
   // Mock CRUD Operations
@@ -123,7 +125,13 @@ export default function Inventory() {
   };
 
   const addCar = () => {
-    if (!selectedDealership) return;
+    const targetDealershipId = selectedDealership?.id || newCar.dealershipId;
+
+    if (!targetDealershipId) {
+        toast({ title: "Error", description: "Please select a dealership first", variant: "destructive" });
+        return;
+    }
+
     if (!newCar.vin || !newCar.make || !newCar.model) {
       toast({ title: "Error", description: "Please fill in VIN, Make, and Model", variant: "destructive" });
       return;
@@ -132,22 +140,27 @@ export default function Inventory() {
     const car: Car = {
       ...newCar as Car,
       id: Math.random().toString(36).substr(2, 9),
-      dealershipId: selectedDealership.id
+      dealershipId: targetDealershipId
     };
 
     const updatedDealerships = dealerships.map(d => {
-      if (d.id === selectedDealership.id) {
+      if (d.id === targetDealershipId) {
         return { ...d, inventory: [...d.inventory, car] };
       }
       return d;
     });
 
     setDealerships(updatedDealerships);
-    setSelectedDealership(updatedDealerships.find(d => d.id === selectedDealership.id) || null);
+    
+    // If we are currently viewing the dealership we added to, update the view
+    if (selectedDealership?.id === targetDealershipId) {
+        setSelectedDealership(updatedDealerships.find(d => d.id === targetDealershipId) || null);
+    }
+
     setNewCar({
       vin: "", make: "", model: "", trim: "", year: "", color: "",
       price: "", kilometers: "", transmission: "", fuelType: "", bodyType: "",
-      listingLink: "", carfaxLink: "", notes: ""
+      listingLink: "", carfaxLink: "", notes: "", dealershipId: ""
     });
     setShowAddCar(false);
     toast({ title: "Success", description: "Car added to inventory" });
@@ -435,11 +448,10 @@ export default function Inventory() {
                         <CarIcon className="w-5 h-5 text-primary" />
                         {selectedDealership ? selectedDealership.name : "All Inventory"}
                     </CardTitle>
-                    {selectedDealership && (
-                        <Button onClick={() => setShowAddCar(true)} size="sm" className="gap-2">
-                            <Plus className="w-4 h-4" /> Add Car
-                        </Button>
-                    )}
+                    
+                    <Button onClick={() => setShowAddCar(true)} size="sm" className="gap-2">
+                        <Plus className="w-4 h-4" /> Add Car
+                    </Button>
                 </div>
             </CardHeader>
             <CardContent className="flex-1 p-0 overflow-hidden">
@@ -521,7 +533,12 @@ export default function Inventory() {
                             <div className="col-span-full flex flex-col items-center justify-center py-20 text-muted-foreground">
                                 <CarIcon className="w-16 h-16 mb-4 opacity-20" />
                                 <p className="text-lg font-medium">No cars found</p>
-                                <p className="text-sm opacity-60">Try adjusting your filters</p>
+                                <p className="text-sm opacity-60">
+                                    {selectedDealership ? "Add a car to this dealership" : "Select a dealership or add a car"}
+                                </p>
+                                <Button variant="link" onClick={() => setShowAddCar(true)}>
+                                    Add New Car
+                                </Button>
                             </div>
                         )}
                     </div>
@@ -529,27 +546,26 @@ export default function Inventory() {
             </CardContent>
           </Card>
         </div>
-      </div>
 
-      {/* Add Dealership Modal */}
-      <Dialog open={showAddDealership} onOpenChange={setShowAddDealership}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Dealership</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <Input placeholder="Dealership Name *" value={newDealership.name} onChange={(e) => setNewDealership({ ...newDealership, name: e.target.value })} />
-            <Input placeholder="Location (e.g., Montreal)" value={newDealership.location} onChange={(e) => setNewDealership({ ...newDealership, location: e.target.value })} />
-            <Input placeholder="Address *" value={newDealership.address} onChange={(e) => setNewDealership({ ...newDealership, address: e.target.value })} />
-            <Input placeholder="Postal Code" value={newDealership.postalCode} onChange={(e) => setNewDealership({ ...newDealership, postalCode: e.target.value })} />
-            <Input placeholder="Phone Number" value={newDealership.phone} onChange={(e) => setNewDealership({ ...newDealership, phone: e.target.value })} />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAddDealership(false)}>Cancel</Button>
-            <Button onClick={addDealership}>Add Dealership</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        {/* Add Dealership Modal */}
+        <Dialog open={showAddDealership} onOpenChange={setShowAddDealership}>
+            <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Add New Dealership</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+                <Input placeholder="Dealership Name *" value={newDealership.name} onChange={(e) => setNewDealership({ ...newDealership, name: e.target.value })} />
+                <Input placeholder="Location (e.g., Montreal)" value={newDealership.location} onChange={(e) => setNewDealership({ ...newDealership, location: e.target.value })} />
+                <Input placeholder="Address *" value={newDealership.address} onChange={(e) => setNewDealership({ ...newDealership, address: e.target.value })} />
+                <Input placeholder="Postal Code" value={newDealership.postalCode} onChange={(e) => setNewDealership({ ...newDealership, postalCode: e.target.value })} />
+                <Input placeholder="Phone Number" value={newDealership.phone} onChange={(e) => setNewDealership({ ...newDealership, phone: e.target.value })} />
+            </div>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setShowAddDealership(false)}>Cancel</Button>
+                <Button onClick={addDealership}>Add Dealership</Button>
+            </DialogFooter>
+            </DialogContent>
+        </Dialog>
 
        {/* Edit Dealership Modal */}
        <Dialog open={!!editingDealership} onOpenChange={(open) => !open && setEditingDealership(null)}>
@@ -573,14 +589,33 @@ export default function Inventory() {
         </DialogContent>
       </Dialog>
 
-      {/* Add/Edit Car Modal - Simplified for brevity, using same pattern */}
+      {/* Add/Edit Car Modal */}
       <Dialog open={showAddCar || !!editingCar} onOpenChange={(open) => { if(!open) { setShowAddCar(false); setEditingCar(null); }}}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{editingCar ? 'Edit Car' : 'Add Car'}</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4 py-4">
-            {/* We reuse newCar state for add, and editingCar state for edit. A bit messy but sticking to the port. */}
+            {/* Dealership Selection if not editing and no dealership selected */}
+            {!editingCar && !selectedDealership && (
+                <div className="col-span-2 space-y-2">
+                    <Label>Select Dealership *</Label>
+                    <Select 
+                        value={newCar.dealershipId} 
+                        onValueChange={(val) => setNewCar({ ...newCar, dealershipId: val })}
+                    >
+                        <SelectTrigger>
+                            <SelectValue placeholder="Choose a dealership" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {dealerships.map(d => (
+                                <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            )}
+
             {(() => {
                 const target = editingCar || newCar;
                 const setTarget = editingCar ? setEditingCar : setNewCar;
@@ -592,20 +627,20 @@ export default function Inventory() {
 
                 return (
                     <>
-                        <Input placeholder="VIN *" value={target.vin} onChange={(e) => update('vin', e.target.value)} />
-                        <Input placeholder="Make *" value={target.make} onChange={(e) => update('make', e.target.value)} />
-                        <Input placeholder="Model *" value={target.model} onChange={(e) => update('model', e.target.value)} />
-                        <Input placeholder="Year" value={target.year} onChange={(e) => update('year', e.target.value)} />
-                        <Input placeholder="Trim" value={target.trim} onChange={(e) => update('trim', e.target.value)} />
-                        <Input placeholder="Color" value={target.color} onChange={(e) => update('color', e.target.value)} />
-                        <Input placeholder="Price" type="number" value={target.price} onChange={(e) => update('price', e.target.value)} />
-                        <Input placeholder="Kilometers" type="number" value={target.kilometers} onChange={(e) => update('kilometers', e.target.value)} />
-                        <Input placeholder="Transmission" value={target.transmission} onChange={(e) => update('transmission', e.target.value)} />
-                        <Input placeholder="Fuel Type" value={target.fuelType} onChange={(e) => update('fuelType', e.target.value)} />
-                        <Input placeholder="Body Type" value={target.bodyType} onChange={(e) => update('bodyType', e.target.value)} />
-                        <Input placeholder="Listing URL" value={target.listingLink} onChange={(e) => update('listingLink', e.target.value)} />
-                        <Input placeholder="Carfax URL" value={target.carfaxLink} onChange={(e) => update('carfaxLink', e.target.value)} />
-                        <Input className="col-span-2" placeholder="Notes" value={target.notes} onChange={(e) => update('notes', e.target.value)} />
+                        <div className="space-y-2"><Input placeholder="VIN *" value={target.vin} onChange={(e) => update('vin', e.target.value)} /></div>
+                        <div className="space-y-2"><Input placeholder="Make *" value={target.make} onChange={(e) => update('make', e.target.value)} /></div>
+                        <div className="space-y-2"><Input placeholder="Model *" value={target.model} onChange={(e) => update('model', e.target.value)} /></div>
+                        <div className="space-y-2"><Input placeholder="Year" value={target.year} onChange={(e) => update('year', e.target.value)} /></div>
+                        <div className="space-y-2"><Input placeholder="Trim" value={target.trim} onChange={(e) => update('trim', e.target.value)} /></div>
+                        <div className="space-y-2"><Input placeholder="Color" value={target.color} onChange={(e) => update('color', e.target.value)} /></div>
+                        <div className="space-y-2"><Input placeholder="Price" type="number" value={target.price} onChange={(e) => update('price', e.target.value)} /></div>
+                        <div className="space-y-2"><Input placeholder="Kilometers" type="number" value={target.kilometers} onChange={(e) => update('kilometers', e.target.value)} /></div>
+                        <div className="space-y-2"><Input placeholder="Transmission" value={target.transmission} onChange={(e) => update('transmission', e.target.value)} /></div>
+                        <div className="space-y-2"><Input placeholder="Fuel Type" value={target.fuelType} onChange={(e) => update('fuelType', e.target.value)} /></div>
+                        <div className="space-y-2"><Input placeholder="Body Type" value={target.bodyType} onChange={(e) => update('bodyType', e.target.value)} /></div>
+                        <div className="space-y-2"><Input placeholder="Listing URL" value={target.listingLink} onChange={(e) => update('listingLink', e.target.value)} /></div>
+                        <div className="space-y-2"><Input placeholder="Carfax URL" value={target.carfaxLink} onChange={(e) => update('carfaxLink', e.target.value)} /></div>
+                        <div className="col-span-2 space-y-2"><Input placeholder="Notes" value={target.notes} onChange={(e) => update('notes', e.target.value)} /></div>
                     </>
                 )
             })()}
