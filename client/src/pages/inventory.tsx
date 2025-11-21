@@ -74,7 +74,7 @@ import {
   type Dealership
 } from "@/lib/api-hooks";
 import { decodeVIN, getTrimsForMake } from "@/lib/nhtsa";
-import { Loader2, QrCode } from "lucide-react";
+import { Loader2, QrCode, ExternalLink } from "lucide-react";
 
 const COMMON_COLORS = [
   "Black", "White", "Silver", "Gray", "Red", "Blue", 
@@ -903,6 +903,17 @@ export default function Inventory() {
                                     >
                                         {car.status === 'sold' ? 'Available' : 'Sold'}
                                     </Button>
+                                    {car.listingLink && (
+                                        <Button 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            className="h-7 w-7 p-0 hover:bg-purple-50 hover:text-purple-600" 
+                                            onClick={() => window.open(car.listingLink, '_blank')}
+                                            title="View Listing"
+                                        >
+                                            <ExternalLink className="w-3 h-3" />
+                                        </Button>
+                                    )}
                                     <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-blue-50 hover:text-blue-600" onClick={() => { setEditingCar({ ...car, dealershipId: car.dealershipId }); }}>
                                         <Edit2 className="w-3 h-3" />
                                     </Button>
