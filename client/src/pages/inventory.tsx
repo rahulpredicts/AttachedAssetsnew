@@ -57,6 +57,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
@@ -133,12 +134,9 @@ export default function Inventory() {
   const [filterVinStart, setFilterVinStart] = useState("");
   const [filterColor, setFilterColor] = useState("");
   const [filterTrim, setFilterTrim] = useState("");
-  const [filterYear, setFilterYear] = useState("");
-  const [filterYearMax, setFilterYearMax] = useState("");
-  const [filterPriceMin, setFilterPriceMin] = useState("");
-  const [filterPriceMax, setFilterPriceMax] = useState("");
-  const [filterKmsMin, setFilterKmsMin] = useState("");
-  const [filterKmsMax, setFilterKmsMax] = useState("");
+  const [filterYearRange, setFilterYearRange] = useState<[number, number]>([1995, 2025]);
+  const [filterPriceRange, setFilterPriceRange] = useState<[number, number]>([0, 200000]);
+  const [filterKmsRange, setFilterKmsRange] = useState<[number, number]>([0, 300000]);
   const [filterProvince, setFilterProvince] = useState("");
   
   // New Filters
@@ -525,12 +523,18 @@ export default function Inventory() {
     if (filterVinStart) cars = cars.filter(c => c.vin?.toUpperCase().startsWith(filterVinStart.toUpperCase()));
     if (filterColor) cars = cars.filter(c => c.color?.toLowerCase().includes(filterColor.toLowerCase()));
     if (filterTrim) cars = cars.filter(c => c.trim?.toLowerCase().includes(filterTrim.toLowerCase()));
-    if (filterYear) cars = cars.filter(c => c.year && parseInt(c.year.toString()) >= parseInt(filterYear));
-    if (filterYearMax) cars = cars.filter(c => c.year && parseInt(c.year.toString()) <= parseInt(filterYearMax));
-    if (filterPriceMin) cars = cars.filter(c => parseFloat(c.price || "0") >= parseFloat(filterPriceMin));
-    if (filterPriceMax) cars = cars.filter(c => parseFloat(c.price || "0") <= parseFloat(filterPriceMax));
-    if (filterKmsMin) cars = cars.filter(c => parseFloat(c.kilometers || "0") >= parseFloat(filterKmsMin));
-    if (filterKmsMax) cars = cars.filter(c => parseFloat(c.kilometers || "0") <= parseFloat(filterKmsMax));
+    // Year range filter (only apply if not at default full range)
+    if (filterYearRange[0] > 1995 || filterYearRange[1] < 2025) {
+      cars = cars.filter(c => c.year && parseInt(c.year.toString()) >= filterYearRange[0] && parseInt(c.year.toString()) <= filterYearRange[1]);
+    }
+    // Price range filter (only apply if not at default full range)
+    if (filterPriceRange[0] > 0 || filterPriceRange[1] < 200000) {
+      cars = cars.filter(c => parseFloat(c.price || "0") >= filterPriceRange[0] && parseFloat(c.price || "0") <= filterPriceRange[1]);
+    }
+    // Kilometers range filter (only apply if not at default full range)
+    if (filterKmsRange[0] > 0 || filterKmsRange[1] < 300000) {
+      cars = cars.filter(c => parseFloat(c.kilometers || "0") >= filterKmsRange[0] && parseFloat(c.kilometers || "0") <= filterKmsRange[1]);
+    }
     // @ts-ignore
     if (filterProvince) cars = cars.filter(c => c.dealershipProvince?.toLowerCase().includes(filterProvince.toLowerCase()));
 
@@ -574,12 +578,9 @@ export default function Inventory() {
     setFilterVinStart("");
     setFilterColor("");
     setFilterTrim("");
-    setFilterYear("");
-    setFilterYearMax("");
-    setFilterPriceMin("");
-    setFilterPriceMax("");
-    setFilterKmsMin("");
-    setFilterKmsMax("");
+    setFilterYearRange([1995, 2025]);
+    setFilterPriceRange([0, 200000]);
+    setFilterKmsRange([0, 300000]);
     setFilterProvince("");
     setFilterTransmission("");
     setFilterDrivetrain("");
@@ -731,29 +732,21 @@ export default function Inventory() {
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs text-gray-500">Min Year</Label>
-                                <Select value={filterYear || "all"} onValueChange={(val) => setFilterYear(val === "all" ? "" : val)}>
-                                    <SelectTrigger className="h-9"><SelectValue placeholder="No Min" /></SelectTrigger>
-                                    <SelectContent className="max-h-[300px]">
-                                        <SelectItem value="all">No Min</SelectItem>
-                                        {availableYears.map(year => (
-                                            <SelectItem key={year} value={year}>{year}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs text-gray-500">Max Year</Label>
-                                <Select value={filterYearMax || "all"} onValueChange={(val) => setFilterYearMax(val === "all" ? "" : val)}>
-                                    <SelectTrigger className="h-9"><SelectValue placeholder="No Max" /></SelectTrigger>
-                                    <SelectContent className="max-h-[300px]">
-                                        <SelectItem value="all">No Max</SelectItem>
-                                        {availableYears.map(year => (
-                                            <SelectItem key={year} value={year}>{year}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <Label className="text-xs text-gray-500">Year</Label>
+                                    <span className="text-xs font-semibold text-blue-600">
+                                        {filterYearRange[0]} - {filterYearRange[1]}
+                                    </span>
+                                </div>
+                                <Slider
+                                    min={1995}
+                                    max={2025}
+                                    step={1}
+                                    value={filterYearRange}
+                                    onValueChange={(value) => setFilterYearRange(value as [number, number])}
+                                    className="w-full"
+                                />
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-xs text-gray-500">VIN Contains</Label>
@@ -793,77 +786,39 @@ export default function Inventory() {
                             </div>
                         </div>
 
-                        {/* Price and Kilometers Filters */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 pt-4 border-t border-gray-100">
-                            <div className="space-y-2">
-                                <Label className="text-xs text-gray-500">Min Price</Label>
-                                <Select value={filterPriceMin || "all"} onValueChange={(val) => setFilterPriceMin(val === "all" ? "" : val)}>
-                                    <SelectTrigger className="h-9"><SelectValue placeholder="No Min" /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">No Min</SelectItem>
-                                        <SelectItem value="5000">$5,000</SelectItem>
-                                        <SelectItem value="10000">$10,000</SelectItem>
-                                        <SelectItem value="15000">$15,000</SelectItem>
-                                        <SelectItem value="20000">$20,000</SelectItem>
-                                        <SelectItem value="25000">$25,000</SelectItem>
-                                        <SelectItem value="30000">$30,000</SelectItem>
-                                        <SelectItem value="40000">$40,000</SelectItem>
-                                        <SelectItem value="50000">$50,000</SelectItem>
-                                        <SelectItem value="75000">$75,000</SelectItem>
-                                        <SelectItem value="100000">$100,000</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                        {/* Range Sliders for Price and Kilometers */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 pt-4 border-t border-gray-100">
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <Label className="text-xs text-gray-500">Price</Label>
+                                    <span className="text-xs font-semibold text-blue-600">
+                                        ${filterPriceRange[0].toLocaleString()} - ${filterPriceRange[1].toLocaleString()}
+                                    </span>
+                                </div>
+                                <Slider
+                                    min={0}
+                                    max={200000}
+                                    step={5000}
+                                    value={filterPriceRange}
+                                    onValueChange={(value) => setFilterPriceRange(value as [number, number])}
+                                    className="w-full"
+                                />
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs text-gray-500">Max Price</Label>
-                                <Select value={filterPriceMax || "all"} onValueChange={(val) => setFilterPriceMax(val === "all" ? "" : val)}>
-                                    <SelectTrigger className="h-9"><SelectValue placeholder="No Max" /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">No Max</SelectItem>
-                                        <SelectItem value="10000">$10,000</SelectItem>
-                                        <SelectItem value="15000">$15,000</SelectItem>
-                                        <SelectItem value="20000">$20,000</SelectItem>
-                                        <SelectItem value="25000">$25,000</SelectItem>
-                                        <SelectItem value="30000">$30,000</SelectItem>
-                                        <SelectItem value="40000">$40,000</SelectItem>
-                                        <SelectItem value="50000">$50,000</SelectItem>
-                                        <SelectItem value="75000">$75,000</SelectItem>
-                                        <SelectItem value="100000">$100,000</SelectItem>
-                                        <SelectItem value="150000">$150,000</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs text-gray-500">Min Kilometers</Label>
-                                <Select value={filterKmsMin || "all"} onValueChange={(val) => setFilterKmsMin(val === "all" ? "" : val)}>
-                                    <SelectTrigger className="h-9"><SelectValue placeholder="No Min" /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">No Min</SelectItem>
-                                        <SelectItem value="10000">10,000 km</SelectItem>
-                                        <SelectItem value="25000">25,000 km</SelectItem>
-                                        <SelectItem value="50000">50,000 km</SelectItem>
-                                        <SelectItem value="75000">75,000 km</SelectItem>
-                                        <SelectItem value="100000">100,000 km</SelectItem>
-                                        <SelectItem value="150000">150,000 km</SelectItem>
-                                        <SelectItem value="200000">200,000 km</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs text-gray-500">Max Kilometers</Label>
-                                <Select value={filterKmsMax || "all"} onValueChange={(val) => setFilterKmsMax(val === "all" ? "" : val)}>
-                                    <SelectTrigger className="h-9"><SelectValue placeholder="No Max" /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">No Max</SelectItem>
-                                        <SelectItem value="25000">25,000 km</SelectItem>
-                                        <SelectItem value="50000">50,000 km</SelectItem>
-                                        <SelectItem value="75000">75,000 km</SelectItem>
-                                        <SelectItem value="100000">100,000 km</SelectItem>
-                                        <SelectItem value="150000">150,000 km</SelectItem>
-                                        <SelectItem value="200000">200,000 km</SelectItem>
-                                        <SelectItem value="250000">250,000 km</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <Label className="text-xs text-gray-500">Kilometers</Label>
+                                    <span className="text-xs font-semibold text-blue-600">
+                                        {filterKmsRange[0].toLocaleString()} - {filterKmsRange[1].toLocaleString()} km
+                                    </span>
+                                </div>
+                                <Slider
+                                    min={0}
+                                    max={300000}
+                                    step={10000}
+                                    value={filterKmsRange}
+                                    onValueChange={(value) => setFilterKmsRange(value as [number, number])}
+                                    className="w-full"
+                                />
                             </div>
                         </div>
 
