@@ -115,9 +115,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validated = insertCarSchema.parse(req.body);
       
-      const existingCar = await storage.getCarByVin(validated.vin);
-      if (existingCar) {
-        return res.status(409).json({ error: "A vehicle with this VIN already exists" });
+      if (validated.vin) {
+        const existingCar = await storage.getCarByVin(validated.vin);
+        if (existingCar) {
+          return res.status(409).json({ error: "A vehicle with this VIN already exists" });
+        }
       }
       
       const car = await storage.createCar(validated);
