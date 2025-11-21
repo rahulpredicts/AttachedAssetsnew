@@ -27,6 +27,7 @@ export interface IStorage {
   getCarsByDealership(dealershipId: string): Promise<Car[]>;
   getCar(id: string): Promise<Car | undefined>;
   getCarByVin(vin: string): Promise<Car | undefined>;
+  getCarByStockNumber(stockNumber: string): Promise<Car | undefined>;
   createCar(car: InsertCar): Promise<Car>;
   updateCar(id: string, car: UpdateCar): Promise<Car | undefined>;
   deleteCar(id: string): Promise<boolean>;
@@ -80,6 +81,11 @@ export class DatabaseStorage implements IStorage {
 
   async getCarByVin(vin: string): Promise<Car | undefined> {
     const results = await db.select().from(schema.cars).where(eq(schema.cars.vin, vin));
+    return results[0];
+  }
+
+  async getCarByStockNumber(stockNumber: string): Promise<Car | undefined> {
+    const results = await db.select().from(schema.cars).where(eq(schema.cars.stockNumber, stockNumber));
     return results[0];
   }
 

@@ -111,6 +111,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/cars/stock/:stockNumber", async (req, res) => {
+    try {
+      const car = await storage.getCarByStockNumber(req.params.stockNumber);
+      res.json(car || null);
+    } catch (error) {
+      console.error("Error fetching car by stock number:", error);
+      res.status(500).json({ error: "Failed to fetch car" });
+    }
+  });
+
   app.post("/api/cars", async (req, res) => {
     try {
       const validated = insertCarSchema.parse(req.body);
@@ -119,6 +129,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const existingCar = await storage.getCarByVin(validated.vin);
         if (existingCar) {
           return res.status(409).json({ error: "A vehicle with this VIN already exists" });
+        }
+      }
+
+      if (validated.stockNumber) {
+        const existingCar = await storage.getCarByStockNumber(validated.stockNumber);
+        if (existingCar) {
+          return res.status(409).json({ error: "A vehicle with this Stock Number already exists" });
         }
       }
       
@@ -138,6 +155,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const existingCar = await storage.getCarByVin(validated.vin);
         if (existingCar && existingCar.id !== req.params.id) {
           return res.status(409).json({ error: "A vehicle with this VIN already exists" });
+        }
+      }
+
+      if (validated.stockNumber) {
+        const existingCar = await storage.getCarByStockNumber(validated.stockNumber);
+        if (existingCar && existingCar.id !== req.params.id) {
+          return res.status(409).json({ error: "A vehicle with this Stock Number already exists" });
         }
       }
       

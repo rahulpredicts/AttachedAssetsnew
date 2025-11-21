@@ -246,7 +246,19 @@ export default function UploadPage() {
       if (!vin || vin.length < 11) return null;
       
       // Check all cars for this VIN
-      const found = allCars.find(car => car.vin.toUpperCase() === vin.toUpperCase());
+      const found = allCars.find(car => car.vin && car.vin.toUpperCase() === vin.toUpperCase());
+      if (found) {
+          const dealership = dealerships.find(d => d.id === found.dealershipId);
+          return { ...found, dealershipName: dealership?.name } as Car & { dealershipName?: string };
+      }
+      return null;
+  };
+
+  const checkDuplicateStockNumber = (stockNumber: string): Car | null => {
+      if (!stockNumber || stockNumber.trim().length === 0) return null;
+      
+      // Check all cars for this stock number
+      const found = allCars.find(car => car.stockNumber && car.stockNumber.toLowerCase() === stockNumber.toLowerCase());
       if (found) {
           const dealership = dealerships.find(d => d.id === found.dealershipId);
           return { ...found, dealershipName: dealership?.name } as Car & { dealershipName?: string };
@@ -264,9 +276,19 @@ export default function UploadPage() {
         return;
     }
     
-    // Check for duplicates first
+    // Check for duplicate VIN first
     if (!ignoreDuplicate && newCar.vin) {
         const duplicate = checkDuplicateVin(newCar.vin);
+        if (duplicate) {
+            setDuplicateCar(duplicate);
+            setShowDuplicateAlert(true);
+            return;
+        }
+    }
+    
+    // Check for duplicate Stock Number
+    if (!ignoreDuplicate && newCar.stockNumber) {
+        const duplicate = checkDuplicateStockNumber(newCar.stockNumber);
         if (duplicate) {
             setDuplicateCar(duplicate);
             setShowDuplicateAlert(true);
