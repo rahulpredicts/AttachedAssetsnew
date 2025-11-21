@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Upload as UploadIcon, FileText, Image as ImageIcon, Plus, Loader2, CheckCircle2, AlertCircle, Link as LinkIcon, QrCode, CheckSquare, AlertTriangle } from "lucide-react";
+import { Upload as UploadIcon, FileText, Image as ImageIcon, Plus, Loader2, CheckCircle2, AlertCircle, Link as LinkIcon, QrCode, CheckSquare, AlertTriangle, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -243,6 +243,53 @@ export default function UploadPage() {
     } else {
         setFeatures([...features, feature]);
     }
+  };
+
+  const handleClearForm = () => {
+    // Preserve current dealership selection
+    const currentDealershipId = newCar.dealershipId;
+    
+    // Reset all form fields to initial state
+    setNewCar({
+      vin: "",
+      stockNumber: "",
+      condition: "used",
+      make: "",
+      model: "",
+      trim: "",
+      year: "",
+      color: "",
+      price: "",
+      kilometers: "",
+      transmission: "",
+      fuelType: "",
+      bodyType: "",
+      listingLink: "",
+      carfaxLink: "",
+      carfaxStatus: "unavailable",
+      notes: "",
+      dealershipId: currentDealershipId, // Preserve dealership selection
+      status: "available",
+      engineCylinders: "",
+      engineDisplacement: "",
+      drivetrain: "fwd",
+    });
+    
+    // Reset features
+    setFeatures([]);
+    
+    // Reset advanced section
+    setShowAdvanced(false);
+    
+    // Reset search fields
+    setSearchVin("");
+    setSearchStock("");
+    
+    // Reset duplicate state
+    setDuplicateCar(null);
+    setShowDuplicateAlert(false);
+    
+    toast({ title: "Form Cleared", description: "Vehicle fields have been reset" });
   };
 
   const checkDuplicateVin = (vin: string): Car | null => {
@@ -822,8 +869,22 @@ export default function UploadPage() {
                 <Textarea placeholder="Additional vehicle details..." value={newCar.notes} onChange={(e) => setNewCar({...newCar, notes: e.target.value})} className="min-h-[100px]" />
               </div>
 
-              <div className="flex justify-end pt-4">
-                <Button onClick={() => handleManualSubmit(false)} size="lg" className="w-full md:w-auto">
+              <div className="flex flex-col md:flex-row gap-3 justify-end pt-4">
+                <Button 
+                  onClick={handleClearForm} 
+                  variant="outline" 
+                  size="lg" 
+                  className="w-full md:w-auto"
+                  data-testid="button-clear-form"
+                >
+                    <X className="w-4 h-4 mr-2" /> Clear Form
+                </Button>
+                <Button 
+                  onClick={() => handleManualSubmit(false)} 
+                  size="lg" 
+                  className="w-full md:w-auto"
+                  data-testid="button-add-inventory"
+                >
                     <Plus className="w-4 h-4 mr-2" /> Add to Inventory
                 </Button>
               </div>
