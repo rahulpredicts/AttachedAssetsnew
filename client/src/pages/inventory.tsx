@@ -134,6 +134,7 @@ export default function Inventory() {
   const [filterColor, setFilterColor] = useState("");
   const [filterTrim, setFilterTrim] = useState("");
   const [filterYear, setFilterYear] = useState("");
+  const [filterYearMax, setFilterYearMax] = useState("");
   const [filterPriceMin, setFilterPriceMin] = useState("");
   const [filterPriceMax, setFilterPriceMax] = useState("");
   const [filterKmsMin, setFilterKmsMin] = useState("");
@@ -524,7 +525,8 @@ export default function Inventory() {
     if (filterVinStart) cars = cars.filter(c => c.vin?.toUpperCase().startsWith(filterVinStart.toUpperCase()));
     if (filterColor) cars = cars.filter(c => c.color?.toLowerCase().includes(filterColor.toLowerCase()));
     if (filterTrim) cars = cars.filter(c => c.trim?.toLowerCase().includes(filterTrim.toLowerCase()));
-    if (filterYear) cars = cars.filter(c => c.year?.toString().includes(filterYear));
+    if (filterYear) cars = cars.filter(c => c.year && parseInt(c.year.toString()) >= parseInt(filterYear));
+    if (filterYearMax) cars = cars.filter(c => c.year && parseInt(c.year.toString()) <= parseInt(filterYearMax));
     if (filterPriceMin) cars = cars.filter(c => parseFloat(c.price || "0") >= parseFloat(filterPriceMin));
     if (filterPriceMax) cars = cars.filter(c => parseFloat(c.price || "0") <= parseFloat(filterPriceMax));
     if (filterKmsMin) cars = cars.filter(c => parseFloat(c.kilometers || "0") >= parseFloat(filterKmsMin));
@@ -573,6 +575,7 @@ export default function Inventory() {
     setFilterColor("");
     setFilterTrim("");
     setFilterYear("");
+    setFilterYearMax("");
     setFilterPriceMin("");
     setFilterPriceMax("");
     setFilterKmsMin("");
@@ -729,11 +732,23 @@ export default function Inventory() {
                                 </Select>
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs text-gray-500">Year</Label>
+                                <Label className="text-xs text-gray-500">Min Year</Label>
                                 <Select value={filterYear || "all"} onValueChange={(val) => setFilterYear(val === "all" ? "" : val)}>
-                                    <SelectTrigger className="h-9"><SelectValue placeholder="Any Year" /></SelectTrigger>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="No Min" /></SelectTrigger>
                                     <SelectContent className="max-h-[300px]">
-                                        <SelectItem value="all">All Years</SelectItem>
+                                        <SelectItem value="all">No Min</SelectItem>
+                                        {availableYears.map(year => (
+                                            <SelectItem key={year} value={year}>{year}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Max Year</Label>
+                                <Select value={filterYearMax || "all"} onValueChange={(val) => setFilterYearMax(val === "all" ? "" : val)}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="No Max" /></SelectTrigger>
+                                    <SelectContent className="max-h-[300px]">
+                                        <SelectItem value="all">No Max</SelectItem>
                                         {availableYears.map(year => (
                                             <SelectItem key={year} value={year}>{year}</SelectItem>
                                         ))}
