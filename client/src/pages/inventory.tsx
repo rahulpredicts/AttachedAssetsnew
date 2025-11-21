@@ -778,6 +778,80 @@ export default function Inventory() {
                             </div>
                         </div>
 
+                        {/* Price and Kilometers Filters */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 pt-4 border-t border-gray-100">
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Min Price</Label>
+                                <Select value={filterPriceMin || "all"} onValueChange={(val) => setFilterPriceMin(val === "all" ? "" : val)}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="No Min" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">No Min</SelectItem>
+                                        <SelectItem value="5000">$5,000</SelectItem>
+                                        <SelectItem value="10000">$10,000</SelectItem>
+                                        <SelectItem value="15000">$15,000</SelectItem>
+                                        <SelectItem value="20000">$20,000</SelectItem>
+                                        <SelectItem value="25000">$25,000</SelectItem>
+                                        <SelectItem value="30000">$30,000</SelectItem>
+                                        <SelectItem value="40000">$40,000</SelectItem>
+                                        <SelectItem value="50000">$50,000</SelectItem>
+                                        <SelectItem value="75000">$75,000</SelectItem>
+                                        <SelectItem value="100000">$100,000</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Max Price</Label>
+                                <Select value={filterPriceMax || "all"} onValueChange={(val) => setFilterPriceMax(val === "all" ? "" : val)}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="No Max" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">No Max</SelectItem>
+                                        <SelectItem value="10000">$10,000</SelectItem>
+                                        <SelectItem value="15000">$15,000</SelectItem>
+                                        <SelectItem value="20000">$20,000</SelectItem>
+                                        <SelectItem value="25000">$25,000</SelectItem>
+                                        <SelectItem value="30000">$30,000</SelectItem>
+                                        <SelectItem value="40000">$40,000</SelectItem>
+                                        <SelectItem value="50000">$50,000</SelectItem>
+                                        <SelectItem value="75000">$75,000</SelectItem>
+                                        <SelectItem value="100000">$100,000</SelectItem>
+                                        <SelectItem value="150000">$150,000</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Min Kilometers</Label>
+                                <Select value={filterKmsMin || "all"} onValueChange={(val) => setFilterKmsMin(val === "all" ? "" : val)}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="No Min" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">No Min</SelectItem>
+                                        <SelectItem value="10000">10,000 km</SelectItem>
+                                        <SelectItem value="25000">25,000 km</SelectItem>
+                                        <SelectItem value="50000">50,000 km</SelectItem>
+                                        <SelectItem value="75000">75,000 km</SelectItem>
+                                        <SelectItem value="100000">100,000 km</SelectItem>
+                                        <SelectItem value="150000">150,000 km</SelectItem>
+                                        <SelectItem value="200000">200,000 km</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs text-gray-500">Max Kilometers</Label>
+                                <Select value={filterKmsMax || "all"} onValueChange={(val) => setFilterKmsMax(val === "all" ? "" : val)}>
+                                    <SelectTrigger className="h-9"><SelectValue placeholder="No Max" /></SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">No Max</SelectItem>
+                                        <SelectItem value="25000">25,000 km</SelectItem>
+                                        <SelectItem value="50000">50,000 km</SelectItem>
+                                        <SelectItem value="75000">75,000 km</SelectItem>
+                                        <SelectItem value="100000">100,000 km</SelectItem>
+                                        <SelectItem value="150000">150,000 km</SelectItem>
+                                        <SelectItem value="200000">200,000 km</SelectItem>
+                                        <SelectItem value="250000">250,000 km</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
                         {/* Dropdown Filters */}
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6 pt-4 border-t border-gray-100">
                             <div className="space-y-2">
