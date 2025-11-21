@@ -151,6 +151,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validated = updateCarSchema.parse(req.body);
       
+      // Ensure at least VIN or Stock Number is provided
+      const hasVin = validated.vin && validated.vin.trim() !== '';
+      const hasStockNumber = validated.stockNumber && validated.stockNumber.trim() !== '';
+      if (!hasVin && !hasStockNumber) {
+        return res.status(400).json({ error: "At least one of VIN or Stock Number must be provided" });
+      }
+      
       if (validated.vin) {
         const existingCar = await storage.getCarByVin(validated.vin);
         if (existingCar && existingCar.id !== req.params.id) {

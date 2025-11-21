@@ -17,6 +17,8 @@ export interface Car {
   id: string;
   dealershipId: string;
   vin: string;
+  stockNumber?: string;
+  condition: string;
   make: string;
   model: string;
   trim: string;

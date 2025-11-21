@@ -37,6 +37,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Collapsible,
   CollapsibleContent,
@@ -78,6 +80,12 @@ const COMMON_COLORS = [
   "Black", "White", "Silver", "Gray", "Red", "Blue", 
   "Brown", "Green", "Beige", "Gold", "Orange", "Yellow", 
   "Purple", "Other"
+];
+
+const FEATURES_LIST = [
+  "Navigation", "Sunroof/Moonroof", "Leather Seats", "Heated Seats", "Backup Camera", 
+  "Bluetooth", "Apple CarPlay", "Android Auto", "Blind Spot Monitor", "Adaptive Cruise Control",
+  "Lane Departure Warning", "Third Row Seating", "Tow Package", "Remote Start"
 ];
 
 export default function Inventory() {
@@ -129,6 +137,9 @@ export default function Inventory() {
   // VIN Decoder state for edit dialog
   const [isDecodingEditCar, setIsDecodingEditCar] = useState(false);
   const [availableEditTrims, setAvailableEditTrims] = useState<string[]>([]);
+  const [editFeatures, setEditFeatures] = useState<string[]>([]);
+  const [editFeaturesChanged, setEditFeaturesChanged] = useState(false);
+  const [showEditAdvanced, setShowEditAdvanced] = useState(false);
 
   // Form states
   const [newDealership, setNewDealership] = useState<Partial<Dealership>>({
@@ -187,15 +198,72 @@ export default function Inventory() {
 
   const handleUpdateCar = () => {
       if (!editingCar) return;
+      
+      // Validate VIN or Stock Number (at least one required)
+      const hasVin = editingCar.vin && editingCar.vin.trim() !== '';
+      const hasStockNumber = editingCar.stockNumber && editingCar.stockNumber.trim() !== '';
+      if (!hasVin && !hasStockNumber) {
+        toast({
+          title: "Missing Identifier",
+          description: "Please provide either a VIN or Stock Number",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Validate required fields (matching add form validation)
+      const requiredFields = [
+        { field: editingCar.dealershipId, name: 'Dealership' },
+        { field: editingCar.make, name: 'Make' },
+        { field: editingCar.model, name: 'Model' },
+        { field: editingCar.year, name: 'Year' },
+        { field: editingCar.trim, name: 'Trim' },
+        { field: editingCar.price, name: 'Price' },
+        { field: editingCar.kilometers, name: 'Kilometers' },
+        { field: editingCar.color, name: 'Color' },
+        { field: editingCar.transmission, name: 'Transmission' },
+        { field: editingCar.fuelType, name: 'Fuel Type' },
+        { field: editingCar.bodyType, name: 'Body Type' },
+        { field: editingCar.condition, name: 'Condition' }
+      ];
+      // Optional fields: listing URL, Carfax link, notes, drivetrain, engine specs, features
+      
+      const missingFields = requiredFields.filter(({ field }) => !field || field.trim() === '');
+      if (missingFields.length > 0) {
+        toast({
+          title: "Missing Required Fields",
+          description: `Please fill in: ${missingFields.map(f => f.name).join(', ')}`,
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Only include features if they were actually changed
+      const updateData = editFeaturesChanged 
+        ? { ...editingCar, features: editFeatures }
+        : { ...editingCar };
+      
       updateCarMutation.mutate({
           id: editingCar.id,
-          data: editingCar
+          data: updateData
       }, {
           onSuccess: () => {
               setEditingCar(null);
               setAvailableEditTrims([]);
+              setEditFeatures([]);
+              setEditFeaturesChanged(false);
+              setShowEditAdvanced(false);
           }
       });
+  };
+
+  const toggleEditFeature = (feature: string) => {
+    setEditFeaturesChanged(true);
+    if (editFeatures.includes(feature)) {
+      setEditFeatures(editFeatures.filter(f => f !== feature));
+    } else {
+      setEditFeatures([...editFeatures, feature]);
+    }
   };
   
   // Auto-populate trims when make changes in edit dialog
@@ -207,6 +275,14 @@ export default function Inventory() {
       setAvailableEditTrims([]);
     }
   }, [editingCar?.make]);
+
+  // Initialize editFeatures when editingCar changes
+  useEffect(() => {
+    if (editingCar) {
+      setEditFeatures(editingCar.features || []);
+      setEditFeaturesChanged(false);
+    }
+  }, [editingCar?.id]);
   
   const handleDecodeEditCarVin = async () => {
     if (!editingCar || !editingCar.vin || editingCar.vin.length < 11) {
@@ -943,12 +1019,20 @@ export default function Inventory() {
       </Dialog>
 
       {/* Edit Car Dialog */}
-      <Dialog open={!!editingCar} onOpenChange={(open) => !open && setEditingCar(null)}>
+      <Dialog open={!!editingCar} onOpenChange={(open) => {
+        if (!open) {
+          setEditingCar(null);
+          setEditFeatures([]);
+          setEditFeaturesChanged(false);
+          setShowEditAdvanced(false);
+        }
+      }}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Edit Vehicle</DialogTitle>
           </DialogHeader>
           {editingCar && (
+            <ScrollArea className="max-h-[600px] pr-4">
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <Label>VIN</Label>
@@ -966,6 +1050,27 @@ export default function Inventory() {
               </div>
               
               <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label>Stock Number</Label>
+                  <Input
+                    placeholder="Stock #"
+                    value={editingCar.stockNumber || ""}
+                    onChange={(e) => setEditingCar({ ...editingCar, stockNumber: e.target.value })}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label>Condition</Label>
+                  <Select value={editingCar.condition || "used"} onValueChange={(val: any) => setEditingCar({ ...editingCar, condition: val })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Condition" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="new">New</SelectItem>
+                      <SelectItem value="used">Used</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
                 <div className="grid gap-2">
                   <Label>Make</Label>
                   <Input
@@ -989,20 +1094,11 @@ export default function Inventory() {
                 </div>
                 <div className="grid gap-2">
                   <Label>Trim</Label>
-                  <Select value={editingCar.trim} onValueChange={(val) => setEditingCar({ ...editingCar, trim: val })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Trim" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[300px]">
-                      {availableEditTrims.length > 0 ? (
-                        availableEditTrims.map(trim => (
-                          <SelectItem key={trim} value={trim}>{trim}</SelectItem>
-                        ))
-                      ) : (
-                        <SelectItem value="Base">Base</SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    placeholder="e.g. LX, EX, Touring"
+                    value={editingCar.trim}
+                    onChange={(e) => setEditingCar({ ...editingCar, trim: e.target.value })}
+                  />
                 </div>
                  <div className="grid gap-2">
                   <Label>Price</Label>
@@ -1028,6 +1124,51 @@ export default function Inventory() {
                         {COMMON_COLORS.map(color => (
                             <SelectItem key={color} value={color}>{color}</SelectItem>
                         ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label>Transmission</Label>
+                  <Select value={editingCar.transmission || ""} onValueChange={(val) => setEditingCar({ ...editingCar, transmission: val })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Transmission" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="automatic">Automatic</SelectItem>
+                      <SelectItem value="manual">Manual</SelectItem>
+                      <SelectItem value="cvt">CVT</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label>Fuel Type</Label>
+                  <Select value={editingCar.fuelType || ""} onValueChange={(val) => setEditingCar({ ...editingCar, fuelType: val })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Fuel Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="gasoline">Gasoline</SelectItem>
+                      <SelectItem value="diesel">Diesel</SelectItem>
+                      <SelectItem value="electric">Electric</SelectItem>
+                      <SelectItem value="hybrid">Hybrid</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label>Body Type</Label>
+                  <Select value={editingCar.bodyType || ""} onValueChange={(val) => setEditingCar({ ...editingCar, bodyType: val })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Body Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sedan">Sedan</SelectItem>
+                      <SelectItem value="suv">SUV</SelectItem>
+                      <SelectItem value="truck">Truck</SelectItem>
+                      <SelectItem value="van">Van</SelectItem>
+                      <SelectItem value="coupe">Coupe</SelectItem>
+                      <SelectItem value="hatchback">Hatchback</SelectItem>
+                      <SelectItem value="convertible">Convertible</SelectItem>
+                      <SelectItem value="wagon">Wagon</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1058,21 +1199,95 @@ export default function Inventory() {
                   </Select>
                 </div>
               </div>
+              
+              <Collapsible open={showEditAdvanced} onOpenChange={setShowEditAdvanced}>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" className="w-full">
+                    {showEditAdvanced ? <ChevronUp className="w-4 h-4 mr-2" /> : <ChevronDown className="w-4 h-4 mr-2" />}
+                    Advanced Specs & Features
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-4 space-y-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="grid gap-2">
+                      <Label>Drivetrain</Label>
+                      <Select value={editingCar.drivetrain || "fwd"} onValueChange={(val) => setEditingCar({ ...editingCar, drivetrain: val })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Drivetrain" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="fwd">FWD</SelectItem>
+                          <SelectItem value="rwd">RWD</SelectItem>
+                          <SelectItem value="awd">AWD</SelectItem>
+                          <SelectItem value="4wd">4WD</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label>Engine Cylinders</Label>
+                      <Input
+                        placeholder="e.g. 4, 6, 8"
+                        value={editingCar.engineCylinders || ""}
+                        onChange={(e) => setEditingCar({ ...editingCar, engineCylinders: e.target.value })}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label>Engine Displacement (L)</Label>
+                      <Input
+                        placeholder="e.g. 2.0, 3.5"
+                        value={editingCar.engineDisplacement || ""}
+                        onChange={(e) => setEditingCar({ ...editingCar, engineDisplacement: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label>Key Features</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      {FEATURES_LIST.map(feature => (
+                        <div key={feature} className="flex items-center space-x-2">
+                          <Checkbox 
+                            id={`edit-${feature}`} 
+                            checked={editFeatures.includes(feature)}
+                            onCheckedChange={() => toggleEditFeature(feature)}
+                          />
+                          <label htmlFor={`edit-${feature}`} className="text-sm font-medium leading-none cursor-pointer">
+                            {feature}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+              
               <div className="grid gap-2">
                 <Label>Listing URL</Label>
                 <Input
+                  placeholder="https://..."
                   value={editingCar.listingLink}
                   onChange={(e) => setEditingCar({ ...editingCar, listingLink: e.target.value })}
                 />
               </div>
+              <div className="grid gap-2">
+                <Label>Carfax URL</Label>
+                <Input
+                  placeholder="https://..."
+                  value={editingCar.carfaxLink}
+                  onChange={(e) => setEditingCar({ ...editingCar, carfaxLink: e.target.value })}
+                />
+              </div>
                <div className="grid gap-2">
                 <Label>Notes</Label>
-                <Input
+                <Textarea
+                  placeholder="Additional vehicle details..."
                   value={editingCar.notes}
                   onChange={(e) => setEditingCar({ ...editingCar, notes: e.target.value })}
+                  className="min-h-[80px]"
                 />
               </div>
             </div>
+            </ScrollArea>
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditingCar(null)}>Cancel</Button>
