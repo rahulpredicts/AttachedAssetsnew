@@ -221,7 +221,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (vinMatch) extracted.vin = vinMatch[0].toUpperCase();
 
       // Extract Price - prioritize selling price, red color indicators, or prominent prices
-      let priceMatch = html.match(/(?:Selling|Sale|Final|Current)?\s*(?:Price|Amount)[\s:]?\$[\s]?([\d,]+(?:\.\d{2})?)/i);
+      let priceMatch = html.match(/[Ss]elling\s*[Pp]rice[\s:]?\$[\s]?([\d,]+(?:\.\d{2})?)/);
+      if (!priceMatch) priceMatch = html.match(/(?:Selling|Sale|Final|Current)?\s*(?:Price|Amount)[\s:]?\$[\s]?([\d,]+(?:\.\d{2})?)/i);
       if (!priceMatch) priceMatch = html.match(/color\s*[:=]\s*["']?red["']?[^>]*>[^<]*\$[\s]?([\d,]+(?:\.\d{2})?)/i);
       if (!priceMatch) priceMatch = html.match(/style\s*=\s*["'][^"']*color\s*:\s*red[^"']*["'][^>]*>[^<]*\$[\s]?([\d,]+(?:\.\d{2})?)/i);
       if (!priceMatch) priceMatch = html.match(/<strong>[^<]*\$[\s]?([\d,]+(?:\.\d{2})?)[^<]*<\/strong>/i);
@@ -235,8 +236,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!kmsMatch) kmsMatch = html.match(/(\d+(?:,\d+)?)\s*(?:km|kilometers|miles|mi)\b/i);
       if (kmsMatch) extracted.kilometers = kmsMatch[1].replace(/,/g, "");
 
-      // Extract Stock Number - try multiple patterns
-      let stockMatch = html.match(/Stock\s*(?:Number|#|:)?\s*[:=]?\s*([A-Za-z0-9\-_]+)/i);
+      // Extract Stock Number - try multiple patterns including hash format (#26102B)
+      let stockMatch = html.match(/#\s*([A-Za-z0-9\-_]+)\b/); // Hash prefix pattern like #26102B
+      if (!stockMatch) stockMatch = html.match(/Stock\s*(?:Number|#|:)?\s*[:=]?\s*([A-Za-z0-9\-_]+)/i);
       if (!stockMatch) stockMatch = html.match(/SKU\s*[:=]?\s*([A-Za-z0-9\-_]+)/i);
       if (!stockMatch) stockMatch = html.match(/Stock\s*([A-Za-z0-9\-_]+)/i);
       if (!stockMatch) stockMatch = html.match(/>([A-Z0-9]{4,10})<\/.*>.*?(?:Stock|SKU)/i);
