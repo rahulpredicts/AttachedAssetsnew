@@ -721,6 +721,37 @@ export default function UploadPage() {
                 </div>
               </div>
 
+              <div className="bg-green-50 p-4 rounded-xl border border-green-100">
+                <Label className="text-green-900 mb-3 block font-semibold">Extract from Listing URL</Label>
+                <p className="text-sm text-green-700 mb-3">Paste a vehicle listing URL to automatically extract details</p>
+                <div className="flex gap-2">
+                  <Input 
+                    placeholder="Paste vehicle listing URL (e.g., https://example.com/listing/12345)"
+                    value={urlInput}
+                    onChange={(e) => setUrlInput(e.target.value)}
+                    data-testid="input-listing-url"
+                  />
+                  <Button 
+                    onClick={handleScrapeUrl}
+                    disabled={isScrapingUrl || !urlInput.trim()}
+                    className="whitespace-nowrap"
+                    data-testid="button-scrape-url"
+                  >
+                    {isScrapingUrl ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        Scraping...
+                      </>
+                    ) : (
+                      <>
+                        <LinkIcon className="w-4 h-4 mr-2" />
+                        Extract
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+
               <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
                 <Label className="text-blue-900 mb-2 block">Select Dealership *</Label>
                 <Select 
