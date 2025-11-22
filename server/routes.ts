@@ -228,9 +228,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const kmsMatch = html.match(/(\d+(?:,\d+)?)\s*(?:km|kilometers|miles|mi)\b/i);
       if (kmsMatch) extracted.kilometers = kmsMatch[1].replace(/,/g, "");
 
-      // Extract Stock Number
-      const stockMatch = html.match(/Stock\s*[#:]?\s*([A-Z0-9\-]+)/i);
-      if (stockMatch) extracted.stockNumber = stockMatch[1];
+      // Extract Stock Number - try multiple patterns
+      let stockMatch = html.match(/Stock\s*(?:Number|#|:)?\s*[:=]?\s*([A-Za-z0-9\-_]+)/i);
+      if (!stockMatch) stockMatch = html.match(/SKU\s*[:=]?\s*([A-Za-z0-9\-_]+)/i);
+      if (!stockMatch) stockMatch = html.match(/Stock\s*([A-Za-z0-9\-_]+)/i);
+      if (!stockMatch) stockMatch = html.match(/>([A-Z0-9]{4,10})<\/.*>.*?(?:Stock|SKU)/i);
+      if (stockMatch) extracted.stockNumber = stockMatch[1].trim();
 
       // Extract Color
       const colorMatch = html.match(/(Black|White|Silver|Gray|Red|Blue|Brown|Green|Beige|Gold|Orange|Yellow|Purple|Charcoal|Burgundy|Maroon|Navy|Teal|Cyan|Lime|Pearl)/i);
