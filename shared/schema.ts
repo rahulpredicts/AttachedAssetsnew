@@ -17,6 +17,7 @@ export const dealerships = pgTable("dealerships", {
 export const cars = pgTable("cars", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   dealershipId: varchar("dealership_id").notNull().references(() => dealerships.id, { onDelete: 'cascade' }),
+  dealershipName: text("dealership_name").notNull().default(""),
   vin: text("vin"),
   stockNumber: text("stock_number"),
   condition: text("condition").notNull(),
