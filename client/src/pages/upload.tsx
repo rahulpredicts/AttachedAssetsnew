@@ -91,6 +91,7 @@ export default function UploadPage() {
   
   // URL Import State
   const [urlInput, setUrlInput] = useState("");
+  const [isScrapingUrl, setIsScrapingUrl] = useState(false);
 
   // AI Scan State
   const [scannedFile, setScannedFile] = useState<File | null>(null);
@@ -123,6 +124,54 @@ export default function UploadPage() {
     const timer = setTimeout(fetchTrims, 500);
     return () => clearTimeout(timer);
   }, [newCar.year, newCar.make, newCar.model]);
+
+  const handleScrapeUrl = async () => {
+    if (!urlInput.trim()) {
+      toast({ title: "URL Required", description: "Please enter a listing URL", variant: "destructive" });
+      return;
+    }
+
+    setIsScrapingUrl(true);
+    try {
+      const res = await fetch("/api/scrape-listing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: urlInput })
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        toast({ title: "Scraping Failed", description: error.error, variant: "destructive" });
+        setIsScrapingUrl(false);
+        return;
+      }
+
+      const extracted = await res.json();
+      
+      // Auto-fill form fields
+      setNewCar((prev) => ({
+        ...prev,
+        year: extracted.year || prev.year,
+        make: extracted.make || prev.make,
+        model: extracted.model || prev.model,
+        trim: extracted.trim || prev.trim,
+        kilometers: extracted.kilometers || prev.kilometers,
+        color: extracted.color || prev.color,
+        price: extracted.price || prev.price,
+        vin: extracted.vin || prev.vin,
+        stockNumber: extracted.stockNumber || prev.stockNumber,
+        listingLink: urlInput // Store the URL as listing link
+      }));
+
+      toast({ title: "Success", description: `Extracted ${Object.keys(extracted).length} vehicle details from URL`, variant: "default" });
+      setUrlInput("");
+    } catch (error) {
+      console.error("Error scraping URL:", error);
+      toast({ title: "Error", description: "Failed to scrape URL. Please check the link and try again.", variant: "destructive" });
+    } finally {
+      setIsScrapingUrl(false);
+    }
+  };
 
   const handleDecodeVin = async () => {
     if (!newCar.vin || newCar.vin.length < 11) {

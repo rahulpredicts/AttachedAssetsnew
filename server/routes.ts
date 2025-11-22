@@ -196,6 +196,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Scrape vehicle listing URL
+  app.post("/api/scrape-listing", async (req, res) => {
+    try {
+      const { url } = req.body;
+      if (!url) {
+        return res.status(400).json({ error: "URL is required" });
+      }
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        return res.status(400).json({ error: "Failed to fetch URL" });
+      }
+
+      const html = await response.text();
+      const extracted: any = {};
+
+      // Extract Year (4 digits)
+      const yearMatch = html.match(/\b(19|20)\d{2}\b/);
+      if (yearMatch) extracted.year = yearMatch[0];
+
+      // Extract VIN (17 characters, uppercase letters and numbers)
+      const vinMatch = html.match(/\b([A-HJ-NPR-Z0-9]{17})\b/i);
+      if (vinMatch) extracted.vin = vinMatch[0].toUpperCase();
+
+      // Extract Price (dollar amounts)
+      const priceMatch = html.match(/\$[\s]?([\d,]+(?:\.\d{2})?)/);
+      if (priceMatch) extracted.price = priceMatch[1].replace(/,/g, "");
+
+      // Extract Mileage/Kilometers
+      const kmsMatch = html.match(/(\d+(?:,\d+)?)\s*(?:km|kilometers|miles|mi)\b/i);
+      if (kmsMatch) extracted.kilometers = kmsMatch[1].replace(/,/g, "");
+
+      // Extract Stock Number
+      const stockMatch = html.match(/Stock\s*[#:]?\s*([A-Z0-9\-]+)/i);
+      if (stockMatch) extracted.stockNumber = stockMatch[1];
+
+      // Extract Color
+      const colorMatch = html.match(/(Black|White|Silver|Gray|Red|Blue|Brown|Green|Beige|Gold|Orange|Yellow|Purple|Charcoal|Burgundy|Maroon|Navy|Teal|Cyan|Lime|Pearl)/i);
+      if (colorMatch) extracted.color = colorMatch[0];
+
+      // Extract common Make/Model patterns
+      const makeModelMatch = html.match(/(Acura|Alfa Romeo|Aston Martin|Audi|Bentley|BMW|Buick|Cadillac|Chevrolet|Chrysler|Dodge|Ferrari|Fiat|Ford|Genesis|GMC|Honda|Hyundai|Infiniti|Jaguar|Jeep|Kia|Lamborghini|Land Rover|Lexus|Lincoln|Maserati|Mazda|McLaren|Mercedes-Benz|MINI|Mitsubishi|Nissan|Porsche|Ram|Rolls-Royce|Subaru|Tesla|Toyota|Volkswagen|Volvo)\s+([A-Za-z0-9\s\-]+)(?:\s|,|<)/i);
+      if (makeModelMatch) {
+        extracted.make = makeModelMatch[1];
+        extracted.model = makeModelMatch[2]?.trim();
+      }
+
+      res.json(extracted);
+    } catch (error) {
+      console.error("Error scraping listing:", error);
+      res.status(500).json({ error: "Failed to scrape listing URL" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
