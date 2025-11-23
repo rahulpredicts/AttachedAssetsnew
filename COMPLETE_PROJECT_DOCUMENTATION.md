@@ -1,0 +1,2971 @@
+# AutoManager - Complete Project Documentation
+**Last Updated:** November 23, 2025
+
+---
+
+## TABLE OF CONTENTS
+1. [Project Overview](#project-overview)
+2. [Project Structure](#project-structure)
+3. [Database Schema](#database-schema)
+4. [Backend (Express + Node.js)](#backend-express--nodejs)
+5. [Frontend (React + TypeScript)](#frontend-react--typescript)
+6. [Configuration Files](#configuration-files)
+7. [System Architecture](#system-architecture)
+8. [Complete User Flows](#complete-user-flows)
+9. [Rebuild Instructions](#rebuild-instructions)
+10. [Google AI Studio + Firebase Migration Guide](#google-ai-studio--firebase-migration-guide)
+
+---
+
+## PROJECT OVERVIEW
+
+**Application Name:** AutoManager - Dealer System
+
+**Purpose:** A comprehensive vehicle inventory management system for automotive dealerships with features for:
+- Managing dealership locations and information
+- Adding, editing, and deleting vehicles from inventory
+- VIN decoding and vehicle data extraction
+- Vehicle appraisal and market value estimation
+- Search and filtering across inventory
+- Data export/import functionality
+- Carfax integration tracking
+- Canadian-specific vehicle trim database
+
+**Tech Stack:**
+- **Frontend:** React 19, TypeScript, Tailwind CSS, Radix UI, Wouter (routing)
+- **Backend:** Express.js, Node.js, TypeScript
+- **Database:** PostgreSQL (Neon)
+- **ORM:** Drizzle ORM
+- **Build Tools:** Vite, esbuild
+- **State Management:** TanStack React Query
+- **Form Handling:** React Hook Form
+- **UI Components:** Radix UI Primitives
+- **Icons:** Lucide React
+
+**Key Dependencies:**
+- `@tanstack/react-query`: Server state management
+- `drizzle-orm`: Database ORM
+- `express`: Backend web framework
+- `wouter`: Lightweight frontend router
+- `zod`: Runtime type validation
+- `sonner`: Toast notifications
+- `@hookform/resolvers`: Form validation
+
+---
+
+## PROJECT STRUCTURE
+
+```
+project-root/
+├── client/                          # Frontend React Application
+│   ├── public/
+│   │   └── favicon.png
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ui/                 # Radix UI component library (45+ component files)
+│   │   │   │   ├── accordion.tsx
+│   │   │   │   ├── alert.tsx
+│   │   │   │   ├── avatar.tsx
+│   │   │   │   ├── badge.tsx
+│   │   │   │   ├── button.tsx
+│   │   │   │   ├── card.tsx
+│   │   │   │   ├── checkbox.tsx
+│   │   │   │   ├── dialog.tsx
+│   │   │   │   ├── dropdown-menu.tsx
+│   │   │   │   ├── input.tsx
+│   │   │   │   ├── label.tsx
+│   │   │   │   ├── select.tsx
+│   │   │   │   ├── tabs.tsx
+│   │   │   │   ├── textarea.tsx
+│   │   │   │   └── [40+ other component files]
+│   │   │   └── layout.tsx           # Main navigation layout
+│   │   ├── hooks/
+│   │   │   ├── use-mobile.tsx       # Mobile detection hook
+│   │   │   └── use-toast.ts         # Toast notification hook
+│   │   ├── lib/
+│   │   │   ├── api-hooks.ts         # React Query hooks for API calls
+│   │   │   ├── nhtsa.ts             # VIN decoder & trim database
+│   │   │   ├── queryClient.ts       # React Query configuration
+│   │   │   ├── utils.ts             # Utility functions
+│   │   │   ├── inventory-context.tsx # Context (if used)
+│   │   │   └── mock-data.ts         # Mock data (if used)
+│   │   ├── pages/
+│   │   │   ├── inventory.tsx        # Main inventory & dealership management (1503 lines)
+│   │   │   ├── upload.tsx           # Vehicle upload & VIN decoding (1275 lines)
+│   │   │   ├── appraisal.tsx        # Vehicle appraisal tool (785 lines)
+│   │   │   └── not-found.tsx        # 404 page
+│   │   ├── App.tsx                  # Main app component with routing
+│   │   ├── index.css                # Global styles
+│   │   └── main.tsx                 # React DOM entry point
+│   └── index.html                   # HTML template
+│
+├── server/                          # Backend Node.js/Express
+│   ├── index.ts                     # Server setup & middleware (82 lines)
+│   ├── routes.ts                    # API endpoints (271 lines)
+│   ├── storage.ts                   # Database operations (132 lines)
+│   └── vite.ts                      # Vite development server integration (86 lines)
+│
+├── shared/                          # Shared code between frontend & backend
+│   └── schema.ts                    # Drizzle ORM schema & Zod validation (68 lines)
+│
+├── Configuration Files
+│   ├── package.json                 # Dependencies & scripts
+│   ├── tsconfig.json                # TypeScript configuration
+│   ├── vite.config.ts               # Vite build configuration
+│   ├── drizzle.config.ts            # Drizzle ORM configuration
+│   ├── postcss.config.js            # PostCSS configuration
+│   └── components.json              # Shadcn/Radix component config
+│
+├── attachedAssets/                  # Data files
+│   ├── CANADA_CARS_1995_2025_*.{csv,json,sql}
+│   ├── *.sql                        # SQL import files
+│   └── Screenshots                  # UI screenshots
+│
+└── migrations/                      # Database migrations (auto-generated by Drizzle)
+```
+
+---
+
+## DATABASE SCHEMA
+
+### Overview
+PostgreSQL database with two main tables: `dealerships` and `cars`
+- One dealership can have many cars (1:N relationship)
+- Cascade delete: Deleting a dealership deletes all associated cars
+
+### Table 1: `dealerships`
+
+**Location:** `shared/schema.ts` (lines 6-15)
+
+```typescript
+export const dealerships = pgTable("dealerships", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  location: text("location").notNull(),
+  province: text("province").notNull(),
+  address: text("address").notNull(),
+  postalCode: text("postal_code").notNull(),
+  phone: text("phone").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+```
+
+**Fields:**
+| Field | Type | Nullable | Default | Description |
+|-------|------|----------|---------|-------------|
+| id | UUID (varchar) | NO | gen_random_uuid() | Primary key, auto-generated |
+| name | text | NO | - | Dealership business name |
+| location | text | NO | - | City/region name |
+| province | text | NO | - | Canadian province code (AB, BC, ON, etc.) |
+| address | text | NO | - | Full street address |
+| postalCode | text | NO | - | Postal code |
+| phone | text | NO | - | Contact phone number |
+| createdAt | timestamp | NO | now() | Record creation timestamp |
+
+**Example Document:**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "Downtown Auto Sales",
+  "location": "Toronto",
+  "province": "ON",
+  "address": "123 King St West, Toronto, ON M5H 2R2",
+  "postalCode": "M5H 2R2",
+  "phone": "416-555-0123",
+  "createdAt": "2025-11-20T14:30:00Z"
+}
+```
+
+### Table 2: `cars`
+
+**Location:** `shared/schema.ts` (lines 17-43)
+
+```typescript
+export const cars = pgTable("cars", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  dealershipId: varchar("dealership_id").notNull().references(() => dealerships.id, { onDelete: 'cascade' }),
+  vin: text("vin"),
+  stockNumber: text("stock_number"),
+  condition: text("condition").notNull(),
+  make: text("make").notNull(),
+  model: text("model").notNull(),
+  trim: text("trim").notNull(),
+  year: text("year").notNull(),
+  color: text("color").notNull(),
+  price: text("price").notNull(),
+  kilometers: text("kilometers").notNull(),
+  transmission: text("transmission").notNull(),
+  fuelType: text("fuel_type").notNull(),
+  bodyType: text("body_type").notNull(),
+  drivetrain: text("drivetrain"),
+  engineCylinders: text("engine_cylinders"),
+  engineDisplacement: text("engine_displacement"),
+  features: text("features").array(),
+  listingLink: text("listing_link").notNull(),
+  carfaxLink: text("carfax_link").notNull(),
+  carfaxStatus: text("carfax_status"),
+  notes: text("notes").notNull(),
+  status: text("status").notNull().default('available'),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+```
+
+**Fields:**
+| Field | Type | Nullable | Default | Description |
+|-------|------|----------|---------|-------------|
+| id | UUID | NO | gen_random_uuid() | Primary key |
+| dealershipId | UUID | NO | - | Foreign key to dealerships table |
+| vin | text | YES | - | Vehicle Identification Number (17 chars) |
+| stockNumber | text | YES | - | Internal dealership stock number |
+| condition | text | NO | - | 'new', 'used', 'certified pre-owned' |
+| make | text | NO | - | Vehicle manufacturer (Toyota, Ford, etc.) |
+| model | text | NO | - | Vehicle model (Camry, Mustang, etc.) |
+| trim | text | NO | - | Trim level (LE, Sport, Premium, etc.) |
+| year | text | NO | - | Model year (2020, 2021, etc.) |
+| color | text | NO | - | Exterior color |
+| price | text | NO | - | Asking price in dollars |
+| kilometers | text | NO | - | Odometer reading |
+| transmission | text | NO | - | 'manual', 'automatic', 'cvt' |
+| fuelType | text | NO | - | 'gasoline', 'diesel', 'electric', 'hybrid' |
+| bodyType | text | NO | - | 'sedan', 'suv', 'truck', 'van', 'coupe', 'hatchback' |
+| drivetrain | text | YES | - | 'fwd', 'rwd', 'awd', '4wd', '4x4' |
+| engineCylinders | text | YES | - | Number of cylinders (3, 4, 6, 8, 10, 12) |
+| engineDisplacement | text | YES | - | Engine displacement in liters (2.5, 3.5, etc.) |
+| features | text[] | YES | - | Array of features (Navigation, Sunroof, etc.) |
+| listingLink | text | NO | - | URL to vehicle listing |
+| carfaxLink | text | NO | - | URL to Carfax report |
+| carfaxStatus | text | YES | - | 'clean', 'claims', 'unavailable' |
+| notes | text | NO | - | Additional notes about vehicle |
+| status | text | NO | 'available' | 'available', 'sold', 'pending' |
+| createdAt | timestamp | NO | now() | Record creation timestamp |
+
+**Example Document:**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440001",
+  "dealershipId": "550e8400-e29b-41d4-a716-446655440000",
+  "vin": "2T1BURHE0JC083192",
+  "stockNumber": "A12345",
+  "condition": "used",
+  "make": "Toyota",
+  "model": "Camry",
+  "trim": "LE",
+  "year": "2020",
+  "color": "Silver",
+  "price": "24995",
+  "kilometers": "85000",
+  "transmission": "automatic",
+  "fuelType": "gasoline",
+  "bodyType": "sedan",
+  "drivetrain": "fwd",
+  "engineCylinders": "4",
+  "engineDisplacement": "2.5",
+  "features": ["Navigation System", "Backup Camera", "Apple CarPlay"],
+  "listingLink": "https://example.com/2020-toyota-camry",
+  "carfaxLink": "https://carfax.com/vehicle/2T1BURHE0JC083192",
+  "carfaxStatus": "clean",
+  "notes": "Excellent condition, single owner",
+  "status": "available",
+  "createdAt": "2025-11-20T15:45:30Z"
+}
+```
+
+### Zod Validation Schemas
+
+**Location:** `shared/schema.ts` (lines 45-68)
+
+```typescript
+// Dealership Schemas
+export const insertDealershipSchema = createInsertSchema(dealerships).omit({
+  id: true,
+  createdAt: true,
+});
+export const updateDealershipSchema = insertDealershipSchema.partial();
+export type InsertDealership = z.infer<typeof insertDealershipSchema>;
+export type UpdateDealership = z.infer<typeof updateDealershipSchema>;
+export type Dealership = typeof dealerships.$inferSelect;
+
+// Car Schemas
+export const insertCarSchema = createInsertSchema(cars).omit({
+  id: true,
+  createdAt: true,
+});
+export const updateCarSchema = insertCarSchema.partial();
+export type InsertCar = z.infer<typeof insertCarSchema>;
+export type UpdateCar = z.infer<typeof updateCarSchema>;
+export type Car = typeof cars.$inferSelect;
+```
+
+**CRUD Operations:**
+
+All CRUD operations are implemented in `server/storage.ts` and exposed through `server/routes.ts`
+
+---
+
+## BACKEND (Express + Node.js)
+
+### Server Setup: `server/index.ts`
+
+```typescript
+import express, { type Request, Response, NextFunction } from "express";
+import { registerRoutes } from "./routes";
+import { setupVite, serveStatic, log } from "./vite";
+
+const app = express();
+
+// Extend Express Request to include rawBody for webhook verification
+declare module 'http' {
+  interface IncomingMessage {
+    rawBody: unknown
+  }
+}
+
+// Middleware: Parse JSON with raw body capture
+app.use(express.json({
+  verify: (req, _res, buf) => {
+    req.rawBody = buf;
+  }
+}));
+app.use(express.urlencoded({ extended: false }));
+
+// Middleware: Request logging
+app.use((req, res, next) => {
+  const start = Date.now();
+  const path = req.path;
+  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+
+  const originalResJson = res.json;
+  res.json = function (bodyJson, ...args) {
+    capturedJsonResponse = bodyJson;
+    return originalResJson.apply(res, [bodyJson, ...args]);
+  };
+
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    if (path.startsWith("/api")) {
+      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+      if (capturedJsonResponse) {
+        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      }
+      if (logLine.length > 80) {
+        logLine = logLine.slice(0, 79) + "…";
+      }
+      log(logLine);
+    }
+  });
+
+  next();
+});
+
+// Start server
+(async () => {
+  const server = await registerRoutes(app);
+
+  // Error handling middleware
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+    res.status(status).json({ message });
+    throw err;
+  });
+
+  // Setup Vite in development or serve static files in production
+  if (app.get("env") === "development") {
+    await setupVite(app, server);
+  } else {
+    serveStatic(app);
+  }
+
+  // Listen on port 5000 (Replit requirement)
+  const port = parseInt(process.env.PORT || '5000', 10);
+  server.listen({
+    port,
+    host: "0.0.0.0",
+    reusePort: true,
+  }, () => {
+    log(`serving on port ${port}`);
+  });
+})();
+```
+
+**Key Features:**
+- JSON body parsing with raw body capture for webhook verification
+- URL-encoded form parsing
+- Request/response logging for `/api/*` routes
+- Automatic Vite setup in development
+- Static file serving in production
+- Global error handling middleware
+
+---
+
+### API Routes: `server/routes.ts`
+
+**Location:** `server/routes.ts` (271 lines)
+
+#### Dealership Routes
+
+```typescript
+// GET /api/dealerships - Get all dealerships
+app.get("/api/dealerships", async (req, res) => {
+  try {
+    const dealerships = await storage.getAllDealerships();
+    res.json(dealerships);
+  } catch (error) {
+    console.error("Error fetching dealerships:", error);
+    res.status(500).json({ error: "Failed to fetch dealerships" });
+  }
+});
+
+// GET /api/dealerships/:id - Get single dealership
+app.get("/api/dealerships/:id", async (req, res) => {
+  try {
+    const dealership = await storage.getDealership(req.params.id);
+    if (!dealership) {
+      return res.status(404).json({ error: "Dealership not found" });
+    }
+    res.json(dealership);
+  } catch (error) {
+    console.error("Error fetching dealership:", error);
+    res.status(500).json({ error: "Failed to fetch dealership" });
+  }
+});
+
+// POST /api/dealerships - Create dealership
+app.post("/api/dealerships", async (req, res) => {
+  try {
+    const validated = insertDealershipSchema.parse(req.body);
+    const dealership = await storage.createDealership(validated);
+    res.status(201).json(dealership);
+  } catch (error) {
+    console.error("Error creating dealership:", error);
+    res.status(400).json({ error: "Invalid dealership data" });
+  }
+});
+
+// PATCH /api/dealerships/:id - Update dealership
+app.patch("/api/dealerships/:id", async (req, res) => {
+  try {
+    const validated = updateDealershipSchema.parse(req.body);
+    const dealership = await storage.updateDealership(req.params.id, validated);
+    if (!dealership) {
+      return res.status(404).json({ error: "Dealership not found" });
+    }
+    res.json(dealership);
+  } catch (error) {
+    console.error("Error updating dealership:", error);
+    res.status(400).json({ error: "Invalid dealership data" });
+  }
+});
+
+// DELETE /api/dealerships/:id - Delete dealership (cascades to cars)
+app.delete("/api/dealerships/:id", async (req, res) => {
+  try {
+    const success = await storage.deleteDealership(req.params.id);
+    if (!success) {
+      return res.status(404).json({ error: "Dealership not found" });
+    }
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting dealership:", error);
+    res.status(500).json({ error: "Failed to delete dealership" });
+  }
+});
+```
+
+#### Car Routes
+
+```typescript
+// GET /api/cars - Get all cars or filter by dealershipId/search
+app.get("/api/cars", async (req, res) => {
+  try {
+    const dealershipId = req.query.dealershipId as string;
+    const search = req.query.search as string;
+    
+    let cars;
+    if (search) {
+      cars = await storage.searchCars(search);
+    } else if (dealershipId) {
+      cars = await storage.getCarsByDealership(dealershipId);
+    } else {
+      cars = await storage.getAllCars();
+    }
+    res.json(cars);
+  } catch (error) {
+    console.error("Error fetching cars:", error);
+    res.status(500).json({ error: "Failed to fetch cars" });
+  }
+});
+
+// GET /api/cars/:id - Get single car by ID
+app.get("/api/cars/:id", async (req, res) => {
+  try {
+    const car = await storage.getCar(req.params.id);
+    if (!car) {
+      return res.status(404).json({ error: "Car not found" });
+    }
+    res.json(car);
+  } catch (error) {
+    console.error("Error fetching car:", error);
+    res.status(500).json({ error: "Failed to fetch car" });
+  }
+});
+
+// GET /api/cars/vin/:vin - Get car by VIN
+app.get("/api/cars/vin/:vin", async (req, res) => {
+  try {
+    const car = await storage.getCarByVin(req.params.vin);
+    res.json(car || null);
+  } catch (error) {
+    console.error("Error fetching car by VIN:", error);
+    res.status(500).json({ error: "Failed to fetch car" });
+  }
+});
+
+// GET /api/cars/stock/:stockNumber - Get car by stock number
+app.get("/api/cars/stock/:stockNumber", async (req, res) => {
+  try {
+    const car = await storage.getCarByStockNumber(req.params.stockNumber);
+    res.json(car || null);
+  } catch (error) {
+    console.error("Error fetching car by stock number:", error);
+    res.status(500).json({ error: "Failed to fetch car" });
+  }
+});
+
+// POST /api/cars - Create car with duplicate checking
+app.post("/api/cars", async (req, res) => {
+  try {
+    const validated = insertCarSchema.parse(req.body);
+    
+    // Check for duplicate VIN
+    if (validated.vin) {
+      const existingCar = await storage.getCarByVin(validated.vin);
+      if (existingCar) {
+        return res.status(409).json({ error: "A vehicle with this VIN already exists" });
+      }
+    }
+
+    // Check for duplicate Stock Number
+    if (validated.stockNumber) {
+      const existingCar = await storage.getCarByStockNumber(validated.stockNumber);
+      if (existingCar) {
+        return res.status(409).json({ error: "A vehicle with this Stock Number already exists" });
+      }
+    }
+    
+    const car = await storage.createCar(validated);
+    res.status(201).json(car);
+  } catch (error) {
+    console.error("Error creating car:", error);
+    res.status(400).json({ error: "Invalid car data" });
+  }
+});
+
+// PATCH /api/cars/:id - Update car with duplicate checking
+app.patch("/api/cars/:id", async (req, res) => {
+  try {
+    const validated = updateCarSchema.parse(req.body);
+    
+    // Validate at least VIN or Stock Number
+    const hasVin = validated.vin && validated.vin.trim() !== '';
+    const hasStockNumber = validated.stockNumber && validated.stockNumber.trim() !== '';
+    if (!hasVin && !hasStockNumber) {
+      return res.status(400).json({ error: "At least one of VIN or Stock Number must be provided" });
+    }
+    
+    // Check for duplicate VIN (excluding current car)
+    if (validated.vin) {
+      const existingCar = await storage.getCarByVin(validated.vin);
+      if (existingCar && existingCar.id !== req.params.id) {
+        return res.status(409).json({ error: "A vehicle with this VIN already exists" });
+      }
+    }
+
+    // Check for duplicate Stock Number (excluding current car)
+    if (validated.stockNumber) {
+      const existingCar = await storage.getCarByStockNumber(validated.stockNumber);
+      if (existingCar && existingCar.id !== req.params.id) {
+        return res.status(409).json({ error: "A vehicle with this Stock Number already exists" });
+      }
+    }
+    
+    const car = await storage.updateCar(req.params.id, validated);
+    if (!car) {
+      return res.status(404).json({ error: "Car not found" });
+    }
+    res.json(car);
+  } catch (error) {
+    console.error("Error updating car:", error);
+    res.status(400).json({ error: "Invalid car data" });
+  }
+});
+
+// DELETE /api/cars/:id - Delete car
+app.delete("/api/cars/:id", async (req, res) => {
+  try {
+    const success = await storage.deleteCar(req.params.id);
+    if (!success) {
+      return res.status(404).json({ error: "Car not found" });
+    }
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting car:", error);
+    res.status(500).json({ error: "Failed to delete car" });
+  }
+});
+```
+
+#### URL Scraping Route
+
+```typescript
+// POST /api/scrape-listing - Scrape vehicle data from URL
+app.post("/api/scrape-listing", async (req, res) => {
+  try {
+    const { url } = req.body;
+    if (!url) {
+      return res.status(400).json({ error: "URL is required" });
+    }
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      return res.status(400).json({ error: "Failed to fetch URL" });
+    }
+
+    const html = await response.text();
+    const extracted: any = {};
+
+    // Extract Year (from URL, heading, or generic pattern)
+    let yearMatch = url.match(/(19|20)\d{2}/);
+    if (!yearMatch) yearMatch = html.match(/<h[1-6][^>]*>\s*(19|20)\d{2}\s+[A-Z]/i);
+    if (!yearMatch) yearMatch = html.match(/(19|20)\d{2}\s+(?:Acura|...|Volvo)/i);
+    if (!yearMatch) yearMatch = html.match(/\b(19|20)\d{2}\b/);
+    if (yearMatch) extracted.year = yearMatch[0];
+
+    // Extract VIN (17 char alphanumeric)
+    const vinMatch = html.match(/\b([A-HJ-NPR-Z0-9]{17})\b/i);
+    if (vinMatch) extracted.vin = vinMatch[0].toUpperCase();
+
+    // Extract Price
+    let priceMatch = html.match(/[Ss]elling\s*[Pp]rice[\s:]?\$[\s]?([\d,]+(?:\.\d{2})?)/);
+    if (!priceMatch) priceMatch = html.match(/(?:Selling|Sale|Final|Current)?\s*(?:Price|Amount)[\s:]?\$[\s]?([\d,]+(?:\.\d{2})?)/i);
+    if (!priceMatch) priceMatch = html.match(/color\s*[:=]\s*["']?red["']?[^>]*>[^<]*\$[\s]?([\d,]+(?:\.\d{2})?)/i);
+    if (!priceMatch) priceMatch = html.match(/style\s*=\s*["'][^"']*color\s*:\s*red[^"']*["'][^>]*>[^<]*\$[\s]?([\d,]+(?:\.\d{2})?)/i);
+    if (!priceMatch) priceMatch = html.match(/<strong>[^<]*\$[\s]?([\d,]+(?:\.\d{2})?)[^<]*<\/strong>/i);
+    if (!priceMatch) priceMatch = html.match(/\$[\s]?([\d,]{3,}(?:\.\d{2})?)/);
+    if (priceMatch) extracted.price = priceMatch[1].replace(/,/g, "");
+
+    // Extract Kilometers/Mileage
+    let kmsMatch = html.match(/[Oo]dometer[\s:]+([\d,]+)\s*(?:km|kilometers|miles|mi)/i);
+    if (!kmsMatch) kmsMatch = html.match(/[Mm]ileage[\s:]+([\d,]+)\s*(?:km|kilometers|miles|mi)/i);
+    if (!kmsMatch) kmsMatch = html.match(/([\d,]{4,})\s*(?:km|kilometers)\b/i);
+    if (!kmsMatch) kmsMatch = html.match(/(\d+(?:,\d+)?)\s*(?:km|kilometers|miles|mi)\b/i);
+    if (kmsMatch) extracted.kilometers = kmsMatch[1].replace(/,/g, "");
+
+    // Extract Stock Number
+    let stockMatch = html.match(/Stock\s*#\s*:\s*([A-Za-z0-9\-_]+)/i);
+    if (!stockMatch) stockMatch = html.match(/#\s*([A-Za-z0-9\-_]+)\b/);
+    if (!stockMatch) stockMatch = html.match(/Stock\s*(?:Number|#|:)?\s*[:=]?\s*([A-Za-z0-9\-_]+)/i);
+    if (!stockMatch) stockMatch = html.match(/SKU\s*[:=]?\s*([A-Za-z0-9\-_]+)/i);
+    if (!stockMatch) stockMatch = html.match(/Stock\s*([A-Za-z0-9\-_]+)/i);
+    if (!stockMatch) stockMatch = html.match(/>([A-Z0-9]{4,10})<\/.*>.*?(?:Stock|SKU)/i);
+    if (stockMatch) extracted.stockNumber = stockMatch[1].trim();
+
+    // Extract Color
+    const colorMatch = html.match(/(Black|White|Silver|Gray|Red|Blue|Brown|Green|Beige|Gold|Orange|Yellow|Purple|Charcoal|Burgundy|Maroon|Navy|Teal|Cyan|Lime|Pearl)/i);
+    if (colorMatch) extracted.color = colorMatch[0];
+
+    // Extract Make/Model
+    const makeModelMatch = html.match(/(Acura|...|Volvo)\s+([A-Za-z0-9\s\-]+)(?:\s|,|<)/i);
+    if (makeModelMatch) {
+      extracted.make = makeModelMatch[1];
+      extracted.model = makeModelMatch[2]?.trim();
+    }
+
+    res.json(extracted);
+  } catch (error) {
+    console.error("Error scraping listing:", error);
+    res.status(500).json({ error: "Failed to scrape listing URL" });
+  }
+});
+```
+
+---
+
+### Database Storage: `server/storage.ts`
+
+```typescript
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
+import { eq, desc, ilike, or, and } from "drizzle-orm";
+import * as schema from "@shared/schema";
+import type { 
+  Dealership, InsertDealership, UpdateDealership,
+  Car, InsertCar, UpdateCar 
+} from "@shared/schema";
+
+const sql = neon(process.env.DATABASE_URL!);
+const db = drizzle(sql, { schema });
+
+export interface IStorage {
+  // Dealership operations
+  getAllDealerships(): Promise<Dealership[]>;
+  getDealership(id: string): Promise<Dealership | undefined>;
+  createDealership(dealership: InsertDealership): Promise<Dealership>;
+  updateDealership(id: string, dealership: UpdateDealership): Promise<Dealership | undefined>;
+  deleteDealership(id: string): Promise<boolean>;
+  
+  // Car operations
+  getAllCars(): Promise<Car[]>;
+  getCarsByDealership(dealershipId: string): Promise<Car[]>;
+  getCar(id: string): Promise<Car | undefined>;
+  getCarByVin(vin: string): Promise<Car | undefined>;
+  getCarByStockNumber(stockNumber: string): Promise<Car | undefined>;
+  createCar(car: InsertCar): Promise<Car>;
+  updateCar(id: string, car: UpdateCar): Promise<Car | undefined>;
+  deleteCar(id: string): Promise<boolean>;
+  searchCars(query: string): Promise<Car[]>;
+}
+
+export class DatabaseStorage implements IStorage {
+  // ===== DEALERSHIP OPERATIONS =====
+  
+  async getAllDealerships(): Promise<Dealership[]> {
+    return await db.select().from(schema.dealerships).orderBy(desc(schema.dealerships.createdAt));
+  }
+
+  async getDealership(id: string): Promise<Dealership | undefined> {
+    const results = await db.select().from(schema.dealerships).where(eq(schema.dealerships.id, id));
+    return results[0];
+  }
+
+  async createDealership(dealership: InsertDealership): Promise<Dealership> {
+    const results = await db.insert(schema.dealerships).values(dealership).returning();
+    return results[0];
+  }
+
+  async updateDealership(id: string, dealership: UpdateDealership): Promise<Dealership | undefined> {
+    const results = await db.update(schema.dealerships)
+      .set(dealership)
+      .where(eq(schema.dealerships.id, id))
+      .returning();
+    return results[0];
+  }
+
+  async deleteDealership(id: string): Promise<boolean> {
+    const results = await db.delete(schema.dealerships).where(eq(schema.dealerships.id, id)).returning();
+    return results.length > 0;
+  }
+
+  // ===== CAR OPERATIONS =====
+  
+  async getAllCars(): Promise<Car[]> {
+    return await db.select().from(schema.cars).orderBy(desc(schema.cars.createdAt));
+  }
+
+  async getCarsByDealership(dealershipId: string): Promise<Car[]> {
+    return await db.select().from(schema.cars)
+      .where(eq(schema.cars.dealershipId, dealershipId))
+      .orderBy(desc(schema.cars.createdAt));
+  }
+
+  async getCar(id: string): Promise<Car | undefined> {
+    const results = await db.select().from(schema.cars).where(eq(schema.cars.id, id));
+    return results[0];
+  }
+
+  async getCarByVin(vin: string): Promise<Car | undefined> {
+    const results = await db.select().from(schema.cars).where(eq(schema.cars.vin, vin));
+    return results[0];
+  }
+
+  async getCarByStockNumber(stockNumber: string): Promise<Car | undefined> {
+    const results = await db.select().from(schema.cars).where(eq(schema.cars.stockNumber, stockNumber));
+    return results[0];
+  }
+
+  async createCar(car: InsertCar): Promise<Car> {
+    const results = await db.insert(schema.cars).values(car).returning();
+    return results[0];
+  }
+
+  async updateCar(id: string, car: UpdateCar): Promise<Car | undefined> {
+    const results = await db.update(schema.cars)
+      .set(car)
+      .where(eq(schema.cars.id, id))
+      .returning();
+    return results[0];
+  }
+
+  async deleteCar(id: string): Promise<boolean> {
+    const results = await db.delete(schema.cars).where(eq(schema.cars.id, id)).returning();
+    return results.length > 0;
+  }
+
+  async searchCars(query: string): Promise<Car[]> {
+    const searchTerm = `%${query}%`;
+    return await db.select().from(schema.cars)
+      .where(
+        or(
+          ilike(schema.cars.vin, searchTerm),
+          ilike(schema.cars.make, searchTerm),
+          ilike(schema.cars.model, searchTerm),
+          ilike(schema.cars.trim, searchTerm),
+          ilike(schema.cars.year, searchTerm),
+          ilike(schema.cars.color, searchTerm),
+          ilike(schema.cars.bodyType, searchTerm),
+          ilike(schema.cars.fuelType, searchTerm),
+          ilike(schema.cars.drivetrain, searchTerm),
+          ilike(schema.cars.notes, searchTerm)
+        )
+      )
+      .orderBy(desc(schema.cars.createdAt));
+  }
+}
+
+export const storage = new DatabaseStorage();
+```
+
+**Key Features:**
+- Interface-based design for testability
+- CRUD operations for dealerships and cars
+- Cascade delete on dealership removal
+- Full-text search across vehicle fields
+- Duplicate checking for VIN and Stock Number
+- Ordered results by creation date (newest first)
+
+---
+
+## FRONTEND (React + TypeScript)
+
+### Main App Router: `client/src/App.tsx`
+
+```typescript
+import { Switch, Route } from "wouter";
+import { queryClient } from "./lib/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Layout } from "@/components/layout";
+import NotFound from "@/pages/not-found";
+import Inventory from "@/pages/inventory";
+import UploadPage from "@/pages/upload";
+import AppraisalPage from "@/pages/appraisal";
+
+function Router() {
+  return (
+    <Layout>
+      <Switch>
+        <Route path="/" component={Inventory} />
+        <Route path="/upload" component={UploadPage} />
+        <Route path="/appraisal" component={AppraisalPage} />
+        <Route component={NotFound} />
+      </Switch>
+    </Layout>
+  );
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Router />
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;
+```
+
+**Route Structure:**
+- `/` → Inventory Management (main page)
+- `/upload` → Add/Bulk Import Vehicles
+- `/appraisal` → Vehicle Valuation Tool
+- `*` → 404 Not Found
+
+### Navigation Layout: `client/src/components/layout.tsx`
+
+```typescript
+import { Link, useLocation } from "wouter";
+import { LayoutDashboard, PlusCircle, Car, Calculator } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export function Layout({ children }: { children: React.ReactNode }) {
+  const [location] = useLocation();
+
+  const navItems = [
+    { href: "/", label: "Inventory", icon: LayoutDashboard },
+    { href: "/upload", label: "Add Vehicles", icon: PlusCircle },
+    { href: "/appraisal", label: "Appraisal Tool", icon: Calculator },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50/50 flex flex-col md:flex-row">
+      <aside className="w-full md:w-64 bg-white border-r border-gray-200 md:min-h-screen flex-shrink-0">
+        <div className="p-6 border-b border-gray-100 flex items-center gap-3">
+          <div className="bg-black text-white p-2 rounded-lg">
+            <Car className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="font-bold text-lg leading-none">AutoManager</h2>
+            <p className="text-xs text-gray-500 mt-1">Dealer System</p>
+          </div>
+        </div>
+        
+        <nav className="p-4 space-y-2">
+          {navItems.map((item) => {
+            const isActive = location === item.href;
+            return (
+              <Link key={item.href} href={item.href}>
+                <a className={cn(
+                  "flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium",
+                  isActive 
+                    ? "bg-black text-white shadow-lg shadow-black/10" 
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                )}>
+                  <item.icon className={cn("w-5 h-5", isActive ? "text-white" : "text-gray-500")} />
+                  {item.label}
+                </a>
+              </Link>
+            );
+          })}
+        </nav>
+      </aside>
+
+      <main className="flex-1 overflow-auto">
+        {children}
+      </main>
+    </div>
+  );
+}
+```
+
+### API Hooks: `client/src/lib/api-hooks.ts`
+
+This file provides React Query hooks for all API operations:
+
+```typescript
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
+
+// Types
+export interface Dealership {
+  id: string;
+  name: string;
+  location: string;
+  province: string;
+  address: string;
+  postalCode: string;
+  phone: string;
+  createdAt?: string;
+}
+
+export interface Car {
+  id: string;
+  dealershipId: string;
+  vin: string;
+  stockNumber?: string;
+  condition: string;
+  make: string;
+  model: string;
+  trim: string;
+  year: string;
+  color: string;
+  price: string;
+  kilometers: string;
+  transmission: string;
+  fuelType: string;
+  bodyType: string;
+  drivetrain?: string;
+  engineCylinders?: string;
+  engineDisplacement?: string;
+  features?: string[];
+  listingLink: string;
+  carfaxLink: string;
+  carfaxStatus?: 'clean' | 'claims' | 'unavailable';
+  notes: string;
+  status: 'available' | 'sold' | 'pending';
+  createdAt?: string;
+}
+
+// ===== API FETCH FUNCTIONS =====
+
+async function fetchDealerships(): Promise<Dealership[]> {
+  const response = await fetch('/api/dealerships');
+  if (!response.ok) throw new Error('Failed to fetch dealerships');
+  return response.json();
+}
+
+async function fetchCars(dealershipId?: string, search?: string): Promise<Car[]> {
+  const params = new URLSearchParams();
+  if (dealershipId) params.append('dealershipId', dealershipId);
+  if (search) params.append('search', search);
+  const response = await fetch(`/api/cars?${params.toString()}`);
+  if (!response.ok) throw new Error('Failed to fetch cars');
+  return response.json();
+}
+
+async function createDealership(dealership: Omit<Dealership, 'id' | 'createdAt'>): Promise<Dealership> {
+  const response = await fetch('/api/dealerships', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dealership),
+  });
+  if (!response.ok) throw new Error('Failed to create dealership');
+  return response.json();
+}
+
+async function updateDealership(id: string, dealership: Partial<Dealership>): Promise<Dealership> {
+  const response = await fetch(`/api/dealerships/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dealership),
+  });
+  if (!response.ok) throw new Error('Failed to update dealership');
+  return response.json();
+}
+
+async function deleteDealership(id: string): Promise<void> {
+  const response = await fetch(`/api/dealerships/${id}`, { method: 'DELETE' });
+  if (!response.ok) throw new Error('Failed to delete dealership');
+}
+
+async function createCar(car: Omit<Car, 'id' | 'createdAt'>): Promise<Car> {
+  const response = await fetch('/api/cars', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(car),
+  });
+  if (!response.ok) throw new Error('Failed to create car');
+  return response.json();
+}
+
+async function updateCar(id: string, car: Partial<Car>): Promise<Car> {
+  const response = await fetch(`/api/cars/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(car),
+  });
+  if (!response.ok) throw new Error('Failed to update car');
+  return response.json();
+}
+
+async function deleteCar(id: string): Promise<void> {
+  const response = await fetch(`/api/cars/${id}`, { method: 'DELETE' });
+  if (!response.ok) throw new Error('Failed to delete car');
+}
+
+// ===== REACT QUERY HOOKS =====
+
+export function useDealerships() {
+  return useQuery({
+    queryKey: ['dealerships'],
+    queryFn: fetchDealerships,
+  });
+}
+
+export function useCars(dealershipId?: string, search?: string) {
+  return useQuery({
+    queryKey: ['cars', dealershipId, search],
+    queryFn: () => fetchCars(dealershipId, search),
+  });
+}
+
+export function useCreateDealership() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: createDealership,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dealerships'] });
+      toast({ title: "Success", description: "Dealership added successfully" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to add dealership", variant: "destructive" });
+    },
+  });
+}
+
+export function useUpdateDealership() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Dealership> }) => updateDealership(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dealerships'] });
+      toast({ title: "Success", description: "Dealership updated" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to update dealership", variant: "destructive" });
+    },
+  });
+}
+
+export function useDeleteDealership() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: deleteDealership,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dealerships'] });
+      queryClient.invalidateQueries({ queryKey: ['cars'] });
+      toast({ title: "Deleted", description: "Dealership removed" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to delete dealership", variant: "destructive" });
+    },
+  });
+}
+
+export function useCreateCar() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: createCar,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cars'] });
+      toast({ title: "Success", description: "Car added to inventory" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to add car", variant: "destructive" });
+    },
+  });
+}
+
+export function useUpdateCar() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Car> }) => updateCar(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cars'] });
+      toast({ title: "Success", description: "Car updated" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to update car", variant: "destructive" });
+    },
+  });
+}
+
+export function useDeleteCar() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: deleteCar,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cars'] });
+      toast({ title: "Deleted", description: "Car removed from inventory" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to delete car", variant: "destructive" });
+    },
+  });
+}
+
+export function useToggleSoldStatus() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (car: Car) => {
+      const newStatus: 'available' | 'sold' = car.status === 'sold' ? 'available' : 'sold';
+      return updateCar(car.id, { status: newStatus });
+    },
+    onSuccess: (updatedCar) => {
+      queryClient.invalidateQueries({ queryKey: ['cars'] });
+      toast({ 
+        title: updatedCar.status === 'sold' ? "Marked as Sold" : "Marked as Available", 
+        description: `${updatedCar.year} ${updatedCar.make} ${updatedCar.model} is now ${updatedCar.status}.` 
+      });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to update car status", variant: "destructive" });
+    },
+  });
+}
+```
+
+### VIN Decoder: `client/src/lib/nhtsa.ts`
+
+Advanced VIN decoder with Canadian trim database:
+
+```typescript
+// 50+ lines of Canadian trim mappings by make
+export const CANADIAN_TRIMS_BY_MAKE: Record<string, string[]> = {
+  "Acura": ["Base", "Tech", "A-Spec", "Elite", "Type S", ...],
+  "BMW": ["218i", "220i", "230i", "330i", "M Sport", "M2", "M3", ...],
+  "Ford": ["XL", "XLT", "Lariat", "King Ranch", "Platinum", ...],
+  // ... 40+ other makes
+};
+
+export async function decodeVIN(vin: string): Promise<EnhancedVINResult> {
+  // Validates 17-char VIN
+  // Calls NHTSA API: https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/{vin}
+  // Extracts: year, make, model, trim, engine, transmission, drivetrain, fuel type, body type
+  // Caches results in memory
+  // Returns EnhancedVINResult with all extracted data
+}
+
+export async function fetchCanadianTrims(year: string, make: string, model: string): Promise<string[]> {
+  // Calls NHTSA Canadian API
+  // Returns specific trim options for year/make/model
+  // Falls back to make-based trims if no API results
+}
+
+export function getTrimsForMake(make: string): string[] {
+  // Case-insensitive lookup of trim options
+  // Returns fallback "Other" trims if make not found
+}
+```
+
+### Inventory Page: `client/src/pages/inventory.tsx` (1503 lines)
+
+**Features:**
+- Dealership management (CRUD)
+- Vehicle inventory listing with 20+ filters
+- Advanced filtering by year range, price range, mileage, transmission, drivetrain, fuel type, body type, color, trim, VIN
+- VIN decoding for quick vehicle identification
+- Vehicle editing with full spec management
+- Feature selection (45+ features like "Heated Seats", "Apple CarPlay", etc.)
+- Status management (available/sold/pending)
+- Export inventory to JSON
+- Import inventory from JSON backup
+- Carfax status tracking
+
+**Key Handlers:**
+- `handleAddDealership()` - Create new dealership
+- `handleUpdateDealership()` - Edit dealership info
+- `handleDeleteDealership()` - Remove dealership with cascade
+- `handleUpdateCar()` - Update vehicle specs
+- `handleDecodeEditCarVin()` - Decode VIN for quick data population
+- `handleExportData()` - Export all dealerships and cars to JSON
+- `handleImportData()` - Import from JSON backup file
+- `getFilteredCars()` - Apply all active filters
+- `toggleEditFeature()` - Add/remove vehicle features
+
+### Upload Page: `client/src/pages/upload.tsx` (1275 lines)
+
+**Features:**
+- Three input methods:
+  1. **Manual Entry** - Full form with all vehicle specs
+  2. **URL Scraping** - Auto-extract data from dealer/listing websites
+  3. **CSV Bulk Import** - Upload multiple vehicles at once
+  
+- VIN Decoder integration
+- Auto-fill form from decoded VIN
+- Duplicate detection (VIN & Stock Number)
+- Dynamic trim loading from NHTSA API
+- Feature selection
+- Carfax link integration
+- Form validation
+
+**Key Handlers:**
+- `handleDecodeVin()` - Parse VIN with NHTSA API
+- `handleScrapeUrl()` - Extract vehicle data from URL (year, make, model, price, VIN, KM, color, stock number)
+- `handleManualSubmit()` - Validate and submit new vehicle
+- `handleSearchVehicle()` - Find existing vehicle by VIN or stock number
+- `toggleFeature()` - Select vehicle features
+
+### Appraisal Page: `client/src/pages/appraisal.tsx` (785 lines)
+
+**Features:**
+- Vehicle valuation calculator
+- Comparison with existing inventory
+- Market value estimation
+- Regional adjustment factors
+- Features-based pricing adjustments
+- Transmission, drivetrain, fuel type filtering
+- Mock pricing algorithm that adjusts based on:
+  - Year (newer = higher value)
+  - Mileage ($0.05 per km)
+  - Regional location
+  - Province (ON, BC = higher)
+  - Features ($200 per feature)
+  - Engine specs
+  - Transmission type (manual = lower)
+  - Drivetrain (AWD/4WD = higher)
+  - Fuel type (hybrid/electric = higher)
+
+**Output:**
+- Retail Low/High ranges
+- Trade-in Low/High ranges
+- List of comparable vehicles from inventory
+
+---
+
+## CONFIGURATION FILES
+
+### `package.json` - Full Dependencies
+
+```json
+{
+  "name": "rest-express",
+  "version": "1.0.0",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev:client": "vite dev --port 5000",
+    "dev": "NODE_ENV=development tsx server/index.ts",
+    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "start": "NODE_ENV=production node dist/index.js",
+    "check": "tsc",
+    "db:push": "drizzle-kit push"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.10.0",
+    "@jridgewell/trace-mapping": "^0.3.25",
+    "@neondatabase/serverless": "^0.10.4",
+    "@radix-ui/react-*": "^1.x.x", // 30+ Radix UI components
+    "@tanstack/react-query": "^5.60.5",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "connect-pg-simple": "^10.0.0",
+    "date-fns": "^3.6.0",
+    "drizzle-orm": "^0.39.1",
+    "drizzle-zod": "^0.7.0",
+    "embla-carousel-react": "^8.6.0",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "framer-motion": "^12.23.24",
+    "input-otp": "^1.4.2",
+    "lucide-react": "^0.545.0",
+    "memorystore": "^1.6.7",
+    "next-themes": "^0.4.6",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "react": "^19.2.0",
+    "react-day-picker": "^9.11.1",
+    "react-dom": "^19.2.0",
+    "react-hook-form": "^7.66.0",
+    "react-resizable-panels": "^2.1.9",
+    "recharts": "^2.15.4",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7",
+    "tw-animate-css": "^1.4.0",
+    "vaul": "^1.1.2",
+    "wouter": "^3.3.5",
+    "ws": "^8.18.0",
+    "zod": "^3.25.76",
+    "zod-validation-error": "^3.4.0"
+  },
+  "devDependencies": {
+    "@replit/vite-plugin-*": "^0.x.x",
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/connect-pg-simple": "^7.0.3",
+    "@types/express": "4.17.21",
+    "@types/express-session": "^1.18.0",
+    "@types/node": "^20.19.0",
+    "@types/passport*": "^1.0.x",
+    "@types/react*": "^19.2.0",
+    "@types/ws": "^8.5.13",
+    "@vitejs/plugin-react": "^5.0.4",
+    "autoprefixer": "^10.4.21",
+    "drizzle-kit": "^0.31.4",
+    "esbuild": "^0.25.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.20.5",
+    "typescript": "5.6.3",
+    "vite": "^7.1.9"
+  }
+}
+```
+
+### `tsconfig.json` - TypeScript Configuration
+
+```json
+{
+  "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
+  "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
+  "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
+    "noEmit": true,
+    "module": "ESNext",
+    "strict": true,
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "types": ["node", "vite/client"],
+    "paths": {
+      "@/*": ["./client/src/*"],
+      "@shared/*": ["./shared/*"]
+    }
+  }
+}
+```
+
+### `vite.config.ts` - Build & Dev Server
+
+```typescript
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import path from "path";
+import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    runtimeErrorOverlay(),
+    tailwindcss(),
+    ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined
+      ? [
+          await import("@replit/vite-plugin-cartographer").then((m) => m.cartographer()),
+          await import("@replit/vite-plugin-dev-banner").then((m) => m.devBanner()),
+        ]
+      : []),
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "client", "src"),
+      "@shared": path.resolve(import.meta.dirname, "shared"),
+      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+    },
+  },
+  root: path.resolve(import.meta.dirname, "client"),
+  build: {
+    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    emptyOutDir: true,
+  },
+  server: {
+    host: "0.0.0.0",
+    allowedHosts: true,
+    fs: { strict: true, deny: ["**/.*"] },
+  },
+});
+```
+
+### `drizzle.config.ts` - ORM Configuration
+
+```typescript
+import { defineConfig } from "drizzle-kit";
+
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL environment variable required");
+}
+
+export default defineConfig({
+  out: "./migrations",
+  schema: "./shared/schema.ts",
+  dialect: "postgresql",
+  dbCredentials: {
+    url: process.env.DATABASE_URL,
+  },
+});
+```
+
+### Environment Variables
+
+**Required:**
+```
+DATABASE_URL=postgresql://user:password@host:port/database
+NODE_ENV=development|production
+PORT=5000 (default)
+```
+
+---
+
+## SYSTEM ARCHITECTURE
+
+### Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    USER BROWSER (Client)                     │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │              React Frontend Application                  ││
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐               ││
+│  │  │Inventory │  │  Upload  │  │Appraisal │               ││
+│  │  │  Page    │  │   Page   │  │   Page   │               ││
+│  │  └────┬─────┘  └────┬─────┘  └────┬─────┘               ││
+│  │       │             │             │                       ││
+│  │  ┌────┴─────────────┴─────────────┴─────┐               ││
+│  │  │   React Query (State Management)      │               ││
+│  │  │  • useQuery (read operations)         │               ││
+│  │  │  • useMutation (write operations)     │               ││
+│  │  │  • Auto-caching & invalidation       │               ││
+│  │  └────┬─────────────────────────────────┘               ││
+│  └───────┼────────────────────────────────────────────────┘│
+│          │ HTTP REST Calls                                   │
+│    ┌─────┴──────────────────────────┐                       │
+└────┼──────────────────────────────────────────────────────────┘
+     │                                │
+     │  GET|POST|PATCH|DELETE        │
+     │  /api/dealerships             │  HTTPS
+     │  /api/cars                    │
+     │  /api/scrape-listing          │
+     │                               │
+┌────┴───────────────────────────────┴──────────────────────────┐
+│                   Express.js Server                            │
+│  ┌────────────────────────────────────────────────────────────┐
+│  │              Routes Handler                                │
+│  │  ├─ Dealership CRUD: GET, POST, PATCH, DELETE             │
+│  │  ├─ Cars CRUD: GET, POST, PATCH, DELETE                   │
+│  │  ├─ Search: /cars?search=query                            │
+│  │  ├─ Lookup: /cars/vin/:vin, /cars/stock/:stockNumber      │
+│  │  └─ Scraping: POST /scrape-listing                        │
+│  └────────────┬──────────────────────────────────────────────┘
+│               │
+│  ┌────────────┴──────────────────────────────────────────────┐
+│  │         Request Validation                                 │
+│  │  • Zod Schema validation                                   │
+│  │  • Duplicate checking (VIN, Stock Number)                  │
+│  │  • Required field validation                               │
+│  │  • Foreign key validation                                  │
+│  └────────────┬──────────────────────────────────────────────┘
+│               │
+│  ┌────────────┴──────────────────────────────────────────────┐
+│  │      DatabaseStorage Layer (IStorage Interface)            │
+│  │  • getAllDealerships()                                     │
+│  │  • getDealership(id)                                       │
+│  │  • createDealership(data)                                  │
+│  │  • updateDealership(id, data)                              │
+│  │  • deleteDealership(id) - cascades to cars                 │
+│  │  • getAllCars()                                            │
+│  │  • getCarsByDealership(dealershipId)                       │
+│  │  • getCar(id)                                              │
+│  │  • getCarByVin(vin)                                        │
+│  │  • getCarByStockNumber(stockNumber)                        │
+│  │  • createCar(data)                                         │
+│  │  • updateCar(id, data)                                     │
+│  │  • deleteCar(id)                                           │
+│  │  • searchCars(query) - full-text search                    │
+│  └────────────┬──────────────────────────────────────────────┘
+│               │
+│  ┌────────────┴──────────────────────────────────────────────┐
+│  │         Drizzle ORM                                        │
+│  │  • Type-safe database queries                              │
+│  │  • PostgreSQL SQL builder                                  │
+│  │  • Automatic schema inference                              │
+│  └────────────┬──────────────────────────────────────────────┘
+└───────────────┼────────────────────────────────────────────────┘
+                │
+                │ SQL Queries
+                │
+       ┌────────▼─────────────┐
+       │   PostgreSQL (Neon)  │
+       │                      │
+       │  ┌────────────────┐  │
+       │  │ dealerships    │  │
+       │  │  • id (PK)     │  │
+       │  │  • name        │  │
+       │  │  • location    │  │
+       │  │  • province    │  │
+       │  │  • address     │  │
+       │  │  • phone       │  │
+       │  │  • postalCode  │  │
+       │  │  • createdAt   │  │
+       │  └────────────────┘  │
+       │                      │
+       │  ┌────────────────┐  │
+       │  │ cars           │  │
+       │  │  • id (PK)     │  │
+       │  │  • dealership_ │  │
+       │  │    id (FK)     │  │
+       │  │  • vin         │  │
+       │  │  • stockNumber │  │
+       │  │  • make        │  │
+       │  │  • model       │  │
+       │  │  • [45+ fields]│  │
+       │  │  • createdAt   │  │
+       │  └────────────────┘  │
+       │                      │
+       │  CASCADE ON DELETE   │
+       └──────────────────────┘
+```
+
+### Data Flow
+
+#### 1. **Read Flow** (Inventory Page Load)
+```
+User Opens App
+  ↓
+App Component Renders
+  ↓
+Router mounted to "/"
+  ↓
+Inventory Component mounts
+  ↓
+useDealerships() hook called (React Query)
+  ↓
+QueryClient checks cache
+  ↓
+If not cached:
+  ├─ fetch('/api/dealerships')
+  ├─ Server receives GET /api/dealerships
+  ├─ Routes handler calls storage.getAllDealerships()
+  ├─ Storage executes: SELECT * FROM dealerships ORDER BY createdAt DESC
+  ├─ Database returns rows
+  ├─ Response sent to client
+  └─ React Query caches result in memory
+    ↓
+UI renders with dealerships list
+```
+
+#### 2. **Create Flow** (Add New Car)
+```
+User fills form + clicks "Add Vehicle"
+  ↓
+handleManualSubmit() validates:
+  ├─ Check dealership selected
+  ├─ Check VIN or Stock Number provided
+  ├─ Check all required fields filled
+  └─ If valid → continue, else → show toast error
+    ↓
+useCreateCar() mutation called
+  ↓
+Form data sent: POST /api/cars
+  ├─ Body: { dealershipId, vin, make, model, year, ... }
+  └─ Headers: { "Content-Type": "application/json" }
+    ↓
+Server receives POST /api/cars
+  ├─ Validate: insertCarSchema.parse(req.body)
+  ├─ Check duplicate VIN: storage.getCarByVin(vin)
+  ├─ Check duplicate Stock: storage.getCarByStockNumber(stock)
+  ├─ If duplicate → return 409 Conflict
+  ├─ Else → INSERT INTO cars VALUES (...)
+  └─ Return 201 + new car data
+    ↓
+React Query automatically:
+  ├─ Invalidates 'cars' cache
+  ├─ Refetches all cars
+  ├─ Updates UI with new car
+  └─ Shows success toast
+    ↓
+Form clears, user sees new car in list
+```
+
+#### 3. **Search/Filter Flow** (Inventory Filters)
+```
+User enters search term + applies filters
+  ↓
+State updated:
+  ├─ searchTerm = "Toyota"
+  ├─ filterYear = [2018, 2025]
+  ├─ filterMake = "Toyota"
+  └─ filterPrice = [15000, 40000]
+    ↓
+getAllCars() called (from useCars hook)
+  ↓
+getFilteredCars() in component:
+  ├─ Get all cars from cache
+  ├─ Filter by dealership (if selected)
+  ├─ Filter by search term across: VIN, make, model, color, trim, transmission, year
+  ├─ Filter by year range
+  ├─ Filter by price range
+  ├─ Filter by kilometers range
+  ├─ Filter by make/model/color/trim
+  ├─ Filter by transmission/drivetrain/fuel/body type
+  └─ Sort results (by date, price, year, etc.)
+    ↓
+UI re-renders filtered results instantly (client-side)
+```
+
+---
+
+## COMPLETE USER FLOWS
+
+### 1. **Dealership Registration Flow**
+
+```
+START: User opens app
+  ↓
+App → Route "/" → Inventory page
+  ↓
+User clicks "Add Dealership" button
+  ↓
+Dialog opens with form:
+  ├─ Name (text input)
+  ├─ Location (text input)
+  ├─ Province (dropdown)
+  ├─ Address (text input)
+  ├─ Postal Code (text input)
+  └─ Phone (text input)
+    ↓
+User fills all fields + clicks "Save"
+  ↓
+Frontend validation:
+  ├─ Check name not empty
+  ├─ Check address not empty
+  └─ All other fields required
+    ↓
+useCreateDealership() mutation:
+  ├─ POST /api/dealerships
+  ├─ Server validates with insertDealershipSchema
+  ├─ INSERT into dealerships table
+  └─ Return 201 + dealership data
+    ↓
+React Query:
+  ├─ Show success toast: "Dealership added successfully"
+  ├─ Invalidate dealerships cache
+  ├─ Refetch all dealerships
+  └─ Add new dealership to dropdown
+    ↓
+Dialog closes, form clears
+  ↓
+User sees dealership in sidebar list
+  ↓
+User can now:
+  ├─ Select dealership to view its cars
+  ├─ Edit dealership details
+  └─ Delete dealership (with cascade to cars)
+END
+```
+
+### 2. **Vehicle Upload Flow**
+
+```
+START: User clicks "Add Vehicles" in navigation
+  ↓
+App → Route "/upload" → Upload page
+  ↓
+Tab 1: Manual Entry (Default)
+  ├─ User selects dealership from dropdown
+  ├─ User enters VIN (or Stock Number as fallback)
+  ├─ [Option A] VIN Decode:
+  │   ├─ User clicks "Decode VIN" button
+  │   ├─ Frontend calls: decodeVIN(vin)
+  │   ├─ Calls NHTSA API: https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/{vin}
+  │   ├─ Extracts: year, make, model, trim, engine, transmission, drivetrain, fuel, body
+  │   ├─ Auto-populates form fields
+  │   ├─ Shows toast: "VIN Decoded Successfully: 2020 Toyota Camry LE"
+  │   └─ Auto-opens Advanced section with engine specs
+  │     ↓
+  ├─ [Option B] Manual fill:
+  │   ├─ Make (dropdown with 39 manufacturers)
+  │   ├─ Model (text input, dynamic based on make)
+  │   ├─ Year (number input)
+  │   ├─ Trim (dropdown, loads from NHTSA or local database)
+  │   ├─ Color (dropdown with 14 colors)
+  │   ├─ Price (number input)
+  │   ├─ Kilometers (number input)
+  │   ├─ Transmission (dropdown: manual/automatic/cvt)
+  │   ├─ Fuel Type (dropdown: gasoline/diesel/hybrid/electric)
+  │   └─ Body Type (dropdown: sedan/suv/truck/van/coupe/hatchback)
+  │     ↓
+  ├─ Advanced Section:
+  │   ├─ Condition (dropdown: new/used/certified)
+  │   ├─ Drivetrain (dropdown: fwd/rwd/awd/4wd/4x4)
+  │   ├─ Engine Cylinders (dropdown: 3-12)
+  │   ├─ Engine Displacement (text: liters)
+  │   ├─ Carfax Link (URL input)
+  │   ├─ Notes (large text area)
+  │   └─ Features Selection:
+  │       ├─ 45+ features (checkboxes)
+  │       ├─ Categories: Seating, Safety, Tech, Lights, etc.
+  │       └─ User selects features with checkmarks
+  │         ↓
+  ├─ Duplicate Check:
+  │   ├─ VIN already exists? → Show alert with existing car
+  │   ├─ Stock # already exists? → Show alert
+  │   └─ Allow override: "Ignore duplicate and add anyway"
+  │     ↓
+  ├─ User clicks "Add Vehicle"
+  │   ├─ Validate required fields
+  │   ├─ useCreateCar() mutation
+  │   ├─ POST /api/cars
+  │   ├─ Server duplicate check
+  │   ├─ INSERT into cars table
+  │   └─ Return 201
+  │     ↓
+  └─ Success:
+      ├─ Show toast: "Car added to inventory"
+      ├─ Clear form (preserve dealership selection)
+      ├─ React Query invalidates cars cache
+      └─ Car appears in inventory list
+        ↓
+Tab 2: URL Scraping
+  ├─ User pastes listing URL from dealer website
+  ├─ Clicks "Extract from URL"
+  ├─ POST /api/scrape-listing { url }
+  ├─ Server:
+  │   ├─ fetch(url) → HTML content
+  │   ├─ Parse HTML with regex patterns:
+  │   │   ├─ Extract year (from URL first, then heading, then generic)
+  │   │   ├─ Extract VIN (17-char alphanumeric pattern)
+  │   │   ├─ Extract price (multiple patterns: "Selling Price", "$X", etc.)
+  │   │   ├─ Extract kilometers (odometer, mileage, km patterns)
+  │   │   ├─ Extract stock # (Stock #: pattern, #prefix, etc.)
+  │   │   ├─ Extract color (14 common colors)
+  │   │   └─ Extract make/model (39 manufacturer names + model)
+  │   └─ Return extracted: { year, vin, price, km, stock, color, make, model }
+  │     ↓
+  ├─ Frontend auto-fills form with extracted data
+  ├─ User completes remaining fields manually
+  ├─ User submits (same as manual entry)
+  └─ Vehicle added to inventory
+    ↓
+Tab 3: CSV Bulk Import
+  ├─ User selects CSV file (format: make,model,year,vin,etc.)
+  ├─ Each row creates one vehicle
+  ├─ Same validation/duplicate checks apply
+  └─ Progress shown for each import
+    ↓
+Tab 4: Search Existing
+  ├─ User enters VIN or Stock Number
+  ├─ Clicks "Search"
+  ├─ Backend: GET /api/cars/vin/{vin} or /api/cars/stock/{stock}
+  ├─ If found:
+  │   ├─ Form auto-fills with existing car data
+  │   ├─ User can edit and re-submit (UPDATE instead of CREATE)
+  │   └─ Toast: "Vehicle found: 2020 Toyota Camry"
+  └─ If not found:
+      └─ Toast: "No vehicle found"
+        ↓
+END: Vehicle uploaded, now appears in Inventory page
+```
+
+### 3. **Vehicle Appraisal Flow**
+
+```
+START: User clicks "Appraisal Tool" in navigation
+  ↓
+App → Route "/appraisal" → Appraisal page
+  ↓
+User enters vehicle details:
+  ├─ VIN (17-char input) [Optional]
+  │   └─ Clicks "Decode" → NHTSA API populates form
+  ├─ Make (dropdown: 32 manufacturers) [Required]
+  ├─ Model (text input) [Required]
+  ├─ Year (number input) [Optional]
+  ├─ Trim (dropdown, dynamic based on make/year/model) [Optional]
+  └─ Kilometers (number input) [Optional]
+    ↓
+User expands "Advanced Specs & Features":
+  ├─ Body Type (dropdown)
+  ├─ Drivetrain (dropdown: fwd/rwd/awd/4wd/4x4)
+  ├─ Engine Cylinders (dropdown: 3-12)
+  ├─ Engine Displacement (dropdown: liters)
+  ├─ Transmission (dropdown: automatic/manual)
+  ├─ Fuel Type (dropdown: gasoline/diesel/hybrid/electric)
+  ├─ Features Selection (45+ checkboxes)
+  ├─ Postal Code (optional - for regional adjustment)
+  ├─ Province (optional - ON/BC pay more)
+  └─ Search Radius (dropdown: 50/100/250/500 km)
+    ↓
+Filter Options:
+  ├─ Strict Transmission Match? (toggle)
+  ├─ Strict Fuel Type Match? (toggle)
+  └─ Strict Drivetrain Match? (toggle)
+    ↓
+User clicks "Calculate Appraisal"
+  ↓
+Frontend logic:
+  ├─ Search inventory for matching vehicles
+  ├─ Filter: same make + model
+  ├─ Filter: year within ±2 years (if provided)
+  ├─ Filter: trim matches (if provided and not "Other")
+  ├─ Apply optional strict filters (transmission, fuel, drivetrain)
+  │
+  ├─ If matches found:
+  │   ├─ Calculate average price from similar cars
+  │   ├─ Adjust for mileage: $0.05 per km difference
+  │   ├─ Adjust for radius: 50km (-2%), 100km (-4%), 250km (-5%), 500km (-5%)
+  │   ├─ Add feature premium: $150 per feature
+  │   ├─ Add transmission penalty: manual -$500
+  │   ├─ Add drivetrain bonus: AWD/4WD +$2000
+  │   ├─ Add fuel bonus: hybrid/electric +$3000
+  │   ├─ Add engine bonus: V6 +$1000, V8 +$2000
+  │   └─ Base = adjusted average price
+  │     ↓
+  └─ If NO matches found:
+      ├─ Use mock base price: $25,000
+      ├─ Add trim adjustment: Limited/Touring/Premium +$5000
+      ├─ Add sport adjustment: Sport/GT +$3000
+      ├─ Calculate year factor: (year - 2010) * 1000
+      ├─ Calculate mileage factor: max(0, (150000 - km) * 0.05)
+      ├─ Calculate regional factor: postcode * 100
+      ├─ Calculate province factor: ON/BC +$1000
+      ├─ Add all adjustments
+      └─ Base = calculated price
+        ↓
+Output Results:
+  ├─ Retail Value Low: estimated * 0.9
+  ├─ Retail Value High: estimated * 1.1
+  ├─ Trade-in Low: estimated * 0.7
+  ├─ Trade-in High: estimated * 0.8
+  └─ Comparable Vehicles:
+      ├─ Show up to 3 vehicles from inventory
+      ├─ Display: Year, Make, Model, Color, Price, Kilometers
+      └─ Link to view full details
+        ↓
+User can:
+  ├─ Adjust inputs and recalculate
+  ├─ Compare against actual listings
+  ├─ Export appraisal report (if implemented)
+  └─ Navigate to upload page to add more vehicles
+    ↓
+END
+```
+
+### 4. **Inventory Management Flow**
+
+```
+START: User on Inventory page
+  ↓
+Dealership Selection Sidebar:
+  ├─ List of all dealerships
+  ├─ User clicks dealership → View only that dealership's cars
+  └─ User can Add/Edit/Delete dealerships inline
+    ↓
+Main Inventory View:
+  ├─ Table/List of vehicles
+  ├─ Columns: Year, Make, Model, Color, Trim, Price, Km, Transmission, VIN, Status
+  ├─ Each row clickable or has action buttons
+  └─ Status badge: green (Available), yellow (Pending), gray (Sold)
+    ↓
+Search & Filters:
+  ├─ Global search (top bar):
+  │   └─ Searches across: VIN, make, model, color, trim, transmission, year
+  │     ↓
+  ├─ Show Advanced Filters (toggle):
+  │   ├─ Make (dropdown, dynamic from inventory)
+  │   ├─ Model (dropdown, depends on selected make)
+  │   ├─ Year Range (slider: 1995-2025)
+  │   ├─ Price Range (slider: $0-$200k)
+  │   ├─ Kilometers Range (slider: 0-300k)
+  │   ├─ Color (dropdown)
+  │   ├─ Trim (text input)
+  │   ├─ VIN starts with (text input)
+  │   ├─ Province (dropdown)
+  │   ├─ Transmission (multi-checkbox: manual, automatic, cvt)
+  │   ├─ Drivetrain (multi-checkbox: fwd, rwd, awd, 4wd)
+  │   ├─ Fuel Type (multi-checkbox: gasoline, diesel, hybrid, electric)
+  │   ├─ Body Type (multi-checkbox: sedan, suv, truck, van, coupe, hatchback)
+  │   └─ Engine Cylinders (multi-checkbox: 3, 4, 5, 6, 8, 10, 12)
+  │     ↓
+  ├─ Sorting:
+  │   └─ Dropdown: Added Date, Price (Low→High), Price (High→Low), Year, Mileage
+  │     ↓
+  └─ Results filtered + sorted in real-time (client-side)
+    ↓
+Vehicle Actions (per row):
+  ├─ Edit:
+  │   ├─ Click "Edit" → Dialog opens with all fields
+  │   ├─ All 35+ fields editable:
+  │   │   ├─ Basic: vin, stock #, make, model, year, trim, color
+  │   │   ├─ Specs: price, km, transmission, fuel, body type, condition
+  │   │   ├─ Advanced: drivetrain, cylinders, displacement
+  │   │   ├─ Features: checkboxes for 45+ features
+  │   │   ├─ Links: listing URL, carfax link
+  │   │   ├─ Status: available/sold/pending
+  │   │   └─ Notes: large text area
+  │   │     ↓
+  │   ├─ VIN Decode button (if VIN added):
+  │   │   └─ Auto-populate year, make, model, trim, engine specs
+  │   ├─ Click "Update" → PATCH /api/cars/:id
+  │   ├─ Server validates with updateCarSchema
+  │   ├─ Duplicate check (VIN, stock) excluding current car
+  │   ├─ UPDATE cars table
+  │   └─ Return 200 + updated car
+  │     ↓
+  ├─ Mark as Sold:
+  │   ├─ Quick action to toggle status: available ↔ sold
+  │   ├─ PATCH /api/cars/:id { status: "sold" }
+  │   ├─ Toast: "Marked as Sold: 2020 Toyota Camry"
+  │   └─ UI updates instantly (strikes through, grays out)
+  │     ↓
+  ├─ Delete:
+  │   ├─ Click "Delete" → Confirm dialog
+  │   ├─ DELETE /api/cars/:id
+  │   ├─ Server deletes row
+  │   ├─ Return 204 (no content)
+  │   └─ UI removes vehicle, shows toast: "Car removed from inventory"
+  │     ↓
+  └─ View Full Details:
+      └─ Navigate to detail page (if implemented)
+        ↓
+Dealership Management:
+  ├─ Edit Dealership:
+  │   ├─ Click dealership in sidebar → Edit button appears
+  │   ├─ Dialog opens with fields: name, location, province, address, postal code, phone
+  │   ├─ Click "Update" → PATCH /api/dealerships/:id
+  │   └─ React Query invalidates dealerships cache
+  │     ↓
+  ├─ Delete Dealership:
+  │   ├─ Click "Delete" → Confirm dialog
+  │   ├─ Dialog warning: "This will delete the dealership and ALL associated vehicles"
+  │   ├─ DELETE /api/dealerships/:id
+  │   ├─ Server cascades: deletes dealership + all cars where dealership_id = that id
+  │   ├─ Return 204
+  │   └─ UI updates: dealership removed, cars gone, shows toast
+  │     ↓
+  └─ Add Dealership:
+      ├─ Click "Add Dealership" button
+      ├─ Dialog form opens (name, location, province, address, postal code, phone)
+      ├─ POST /api/dealerships
+      ├─ New dealership appears in sidebar
+      └─ Ready to add vehicles to it
+        ↓
+Data Management:
+  ├─ Export Inventory:
+  │   ├─ Click "Export" button
+  │   ├─ Client creates JSON: { dealerships: [...], cars: [...], exportDate, version }
+  │   ├─ Downloads: inventory-backup-YYYY-MM-DD.json
+  │   └─ Toast: "Exported 5 dealerships and 42 vehicles"
+  │     ↓
+  ├─ Import Inventory:
+  │   ├─ Click "Import" button → File picker
+  │   ├─ Select previously exported JSON file
+  │   ├─ Parse JSON:
+  │   │   ├─ For each dealership:
+  │   │   │   ├─ POST /api/dealerships (new dealership)
+  │   │   │   ├─ Store ID mapping: oldId → newId
+  │   │   │   └─ For each car:
+  │   │   │       ├─ Update dealershipId to new ID
+  │   │   │       └─ POST /api/cars (new car)
+  │   ├─ Toast: "Imported 5 dealerships and 42 vehicles"
+  │   └─ New data merges with existing inventory
+  │     ↓
+  └─ Clear Form:
+      └─ Reset all search/filter inputs to defaults
+        ↓
+END: User manages dealership inventory
+```
+
+---
+
+## REBUILD INSTRUCTIONS
+
+### Prerequisites
+- Node.js 18+ installed
+- PostgreSQL 14+ server running
+- Git (for version control)
+
+### Step-by-Step Rebuild
+
+#### 1. Clone or Create Project
+
+```bash
+# Create new directory
+mkdir automanager
+cd automanager
+
+# Initialize Node project
+npm init -y
+```
+
+#### 2. Install Dependencies
+
+```bash
+npm install \
+  express@^4.21.2 \
+  express-session@^1.18.1 \
+  @neondatabase/serverless@^0.10.4 \
+  drizzle-orm@^0.39.1 \
+  zod@^3.25.76 \
+  react@^19.2.0 \
+  react-dom@^19.2.0 \
+  wouter@^3.3.5 \
+  @tanstack/react-query@^5.60.5 \
+  sonner@^2.0.7 \
+  lucide-react@^0.545.0 \
+  tailwindcss@^4.1.14 \
+  typescript@5.6.3 \
+  tsx@^4.20.5
+```
+
+```bash
+npm install --save-dev \
+  vite@^7.1.9 \
+  @vitejs/plugin-react@^5.0.4 \
+  @tailwindcss/vite@^4.1.14 \
+  drizzle-kit@^0.31.4 \
+  esbuild@^0.25.0 \
+  postcss@^8.5.6 \
+  autoprefixer@^10.4.21 \
+  @types/express@4.17.21 \
+  @types/node@^20.19.0 \
+  @types/react@^19.2.0 \
+  @types/react-dom@^19.2.0
+```
+
+#### 3. Create Directory Structure
+
+```bash
+mkdir -p client/src/{components,pages,lib,hooks}
+mkdir -p client/src/components/ui
+mkdir -p client/public
+mkdir -p server
+mkdir -p shared
+mkdir -p migrations
+```
+
+#### 4. Create Core Files
+
+**File: `shared/schema.ts`**
+Copy full schema from Backend section above
+
+**File: `server/storage.ts`**
+Copy full storage implementation from Backend section
+
+**File: `server/routes.ts`**
+Copy full routes from Backend section
+
+**File: `server/index.ts`**
+Copy full server setup from Backend section
+
+**File: `server/vite.ts`**
+Copy full vite setup from Backend section
+
+**File: `client/src/lib/api-hooks.ts`**
+Copy full API hooks from Frontend section
+
+**File: `client/src/lib/nhtsa.ts`**
+Copy full VIN decoder from Frontend section
+
+**File: `client/src/App.tsx`**
+Copy full app router from Frontend section
+
+**File: `client/src/components/layout.tsx`**
+Copy full layout from Frontend section
+
+**File: `client/src/pages/inventory.tsx`**
+Copy full inventory page (1503 lines)
+
+**File: `client/src/pages/upload.tsx`**
+Copy full upload page (1275 lines)
+
+**File: `client/src/pages/appraisal.tsx`**
+Copy full appraisal page (785 lines)
+
+**File: `client/src/pages/not-found.tsx`**
+```typescript
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
+
+export default function NotFound() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold mb-4">404 - Page Not Found</h1>
+        <p className="text-gray-600 mb-6">The page you're looking for doesn't exist.</p>
+        <Link href="/">
+          <Button>Back to Inventory</Button>
+        </Link>
+      </div>
+    </div>
+  );
+}
+```
+
+**File: `client/src/main.tsx`**
+```typescript
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import "./index.css";
+
+createRoot(document.getElementById("root")!).render(<App />);
+```
+
+**File: `client/src/index.css`**
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+**File: `client/index.html`**
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>AutoManager - Dealer System</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+```
+
+#### 5. Copy All UI Components
+
+Install Shadcn/Radix UI components. Copy all files from:
+- `client/src/components/ui/` (45+ components)
+- Use this command to set up Shadcn:
+```bash
+npx shadcn-ui@latest add button input card dialog select textarea
+```
+
+#### 6. Create Configuration Files
+
+**File: `package.json`**
+Copy from Configuration section above
+
+**File: `tsconfig.json`**
+Copy from Configuration section above
+
+**File: `vite.config.ts`**
+Copy from Configuration section above
+
+**File: `drizzle.config.ts`**
+Copy from Configuration section above
+
+**File: `postcss.config.js`**
+```javascript
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+**File: `tailwind.config.js`**
+```javascript
+export default {
+  content: [
+    "./client/index.html",
+    "./client/src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+#### 7. Set Environment Variables
+
+**File: `.env` (Development)**
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/automanager
+NODE_ENV=development
+PORT=5000
+```
+
+#### 8. Create Database
+
+```bash
+# Using PostgreSQL CLI
+psql -U postgres -c "CREATE DATABASE automanager;"
+
+# Or using Neon (Cloud PostgreSQL)
+# Get DATABASE_URL from Neon console
+```
+
+#### 9. Push Schema to Database
+
+```bash
+npm run db:push
+```
+
+This command:
+- Reads schema from `shared/schema.ts`
+- Connects to database via DATABASE_URL
+- Creates `dealerships` and `cars` tables
+- Sets up indexes and constraints
+
+#### 10. Run Development Server
+
+Terminal 1 - Backend:
+```bash
+npm run dev
+# Listens on port 5000
+# Watches for changes, auto-restarts
+```
+
+Terminal 2 - Frontend (optional, Vite serves through Express):
+Frontend is served via Express at port 5000
+
+#### 11. Access Application
+
+Open browser:
+```
+http://localhost:5000
+```
+
+You should see:
+- Navigation sidebar with 3 pages
+- Empty inventory (no data yet)
+- Add buttons to start managing dealerships and vehicles
+
+### Build for Production
+
+```bash
+# Build frontend + backend
+npm run build
+
+# Output: dist/ folder with compiled app
+# dist/public/ = frontend files
+# dist/index.js = compiled server
+
+# Start production server
+npm run start
+```
+
+---
+
+## GOOGLE AI STUDIO + FIREBASE MIGRATION GUIDE
+
+### Overview
+
+Migrating from this Express + React + PostgreSQL stack to Google AI Studio + Firebase involves:
+- Replacing Express backend with Firebase Cloud Functions
+- Keeping React frontend mostly the same (or migrating to Firebase Hosting)
+- Replacing PostgreSQL with Firestore (NoSQL)
+- Using Firebase Authentication instead of Passport
+- Using Firebase Storage for file uploads
+
+### Architecture Comparison
+
+**Current Stack:**
+```
+React Frontend
+    ↓
+Express Server
+    ↓
+PostgreSQL Database
+```
+
+**Firebase Stack:**
+```
+React Frontend (Firebase Hosting)
+    ↓
+Firebase Cloud Functions
+    ↓
+Firestore Database
+```
+
+### Step-by-Step Migration
+
+#### Phase 1: Set Up Firebase Project
+
+```bash
+# Install Firebase CLI
+npm install -g firebase-tools
+
+# Login to Google Account
+firebase login
+
+# Create Firebase project
+firebase init
+```
+
+Select:
+- Database: Firestore
+- Hosting: Yes
+- Functions: Yes
+
+#### Phase 2: Create Firestore Collections
+
+Instead of `dealerships` and `cars` tables, create Firestore collections:
+
+**Collection: `dealerships`**
+```
+dealerships/
+├── dealershipId1/
+│   ├── name: "Downtown Auto Sales"
+│   ├── location: "Toronto"
+│   ├── province: "ON"
+│   ├── address: "123 King St West"
+│   ├── postalCode: "M5H 2R2"
+│   ├── phone: "416-555-0123"
+│   ├── createdAt: Timestamp
+│   └── userId: "user123" (for multi-tenant)
+├── dealershipId2/
+│   └── ...
+```
+
+**Collection: `dealerships/{dealershipId}/cars`** (Subcollection)
+```
+dealerships/dealershipId1/cars/
+├── carId1/
+│   ├── vin: "2T1BURHE0JC083192"
+│   ├── stockNumber: "A12345"
+│   ├── make: "Toyota"
+│   ├── model: "Camry"
+│   ├── year: "2020"
+│   ├── price: "24995"
+│   ├── kilometers: "85000"
+│   ├── [45+ other fields]
+│   ├── createdAt: Timestamp
+│   ├── updatedAt: Timestamp
+│   └── status: "available"
+```
+
+**Firestore Indexes** (for search/filters):
+- `dealerships`: compound index on `createdAt`, `province`
+- `cars`: compound indexes on `make`, `model`, `year`, `price`, `kilometers`
+
+#### Phase 3: Convert PostgreSQL Schema to Firestore
+
+**Drizzle ORM Schema → Firestore Document Structure**
+
+```typescript
+// shared/schema.ts (update for Firestore)
+
+export interface DealershipData {
+  id: string;
+  name: string;
+  location: string;
+  province: string;
+  address: string;
+  postalCode: string;
+  phone: string;
+  createdAt: FirebaseFirestore.Timestamp;
+  updatedAt?: FirebaseFirestore.Timestamp;
+  userId?: string; // For multi-tenant
+}
+
+export interface CarData {
+  id: string;
+  dealershipId: string; // Implicit in subcollection path
+  vin?: string;
+  stockNumber?: string;
+  condition: string;
+  make: string;
+  model: string;
+  trim: string;
+  year: string;
+  color: string;
+  price: string;
+  kilometers: string;
+  transmission: string;
+  fuelType: string;
+  bodyType: string;
+  drivetrain?: string;
+  engineCylinders?: string;
+  engineDisplacement?: string;
+  features?: string[];
+  listingLink: string;
+  carfaxLink: string;
+  carfaxStatus?: 'clean' | 'claims' | 'unavailable';
+  notes: string;
+  status: 'available' | 'sold' | 'pending';
+  createdAt: FirebaseFirestore.Timestamp;
+  updatedAt?: FirebaseFirestore.Timestamp;
+}
+```
+
+#### Phase 4: Convert Express Routes to Cloud Functions
+
+**Express Routes → Firebase Cloud Functions**
+
+**File: `functions/src/index.ts`**
+
+```typescript
+import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
+import { z } from "zod";
+
+admin.initializeApp();
+
+const db = admin.firestore();
+
+// Validation schemas (keep from shared/schema.ts)
+const insertDealershipSchema = z.object({
+  name: z.string(),
+  location: z.string(),
+  province: z.string(),
+  address: z.string(),
+  postalCode: z.string(),
+  phone: z.string(),
+});
+
+const insertCarSchema = z.object({
+  vin: z.string().optional(),
+  stockNumber: z.string().optional(),
+  condition: z.string(),
+  make: z.string(),
+  model: z.string(),
+  trim: z.string(),
+  year: z.string(),
+  color: z.string(),
+  price: z.string(),
+  kilometers: z.string(),
+  transmission: z.string(),
+  fuelType: z.string(),
+  bodyType: z.string(),
+  drivetrain: z.string().optional(),
+  engineCylinders: z.string().optional(),
+  engineDisplacement: z.string().optional(),
+  features: z.array(z.string()).optional(),
+  listingLink: z.string(),
+  carfaxLink: z.string(),
+  carfaxStatus: z.enum(['clean', 'claims', 'unavailable']).optional(),
+  notes: z.string(),
+  status: z.enum(['available', 'sold', 'pending']).default('available'),
+});
+
+// ===== DEALERSHIP FUNCTIONS =====
+
+export const getDealerships = functions.https.onRequest(async (req, res) => {
+  try {
+    const snapshot = await db.collection("dealerships")
+      .orderBy("createdAt", "desc")
+      .get();
+    
+    const dealerships = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    res.status(200).json(dealerships);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch dealerships" });
+  }
+});
+
+export const createDealership = functions.https.onRequest(async (req, res) => {
+  try {
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "Method not allowed" });
+      return;
+    }
+
+    const userId = req.headers['authorization']; // From Firebase Auth token
+    const validated = insertDealershipSchema.parse(req.body);
+
+    const docRef = await db.collection("dealerships").add({
+      ...validated,
+      createdAt: admin.firestore.Timestamp.now(),
+      userId: userId,
+    });
+
+    const doc = await docRef.get();
+    res.status(201).json({ id: docRef.id, ...doc.data() });
+  } catch (error) {
+    res.status(400).json({ error: "Invalid dealership data" });
+  }
+});
+
+export const updateDealership = functions.https.onRequest(async (req, res) => {
+  try {
+    if (req.method !== "PATCH") {
+      res.status(405).json({ error: "Method not allowed" });
+      return;
+    }
+
+    const { dealershipId } = req.query;
+    const validated = insertDealershipSchema.partial().parse(req.body);
+
+    await db.collection("dealerships").doc(dealershipId as string).update({
+      ...validated,
+      updatedAt: admin.firestore.Timestamp.now(),
+    });
+
+    const doc = await db.collection("dealerships").doc(dealershipId as string).get();
+    res.status(200).json({ id: doc.id, ...doc.data() });
+  } catch (error) {
+    res.status(400).json({ error: "Failed to update dealership" });
+  }
+});
+
+export const deleteDealership = functions.https.onRequest(async (req, res) => {
+  try {
+    if (req.method !== "DELETE") {
+      res.status(405).json({ error: "Method not allowed" });
+      return;
+    }
+
+    const { dealershipId } = req.query;
+
+    // Delete all cars in subcollection
+    const carsSnapshot = await db
+      .collection("dealerships")
+      .doc(dealershipId as string)
+      .collection("cars")
+      .get();
+
+    const batch = db.batch();
+    carsSnapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    // Delete dealership document
+    batch.delete(db.collection("dealerships").doc(dealershipId as string));
+
+    await batch.commit();
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete dealership" });
+  }
+});
+
+// ===== CAR FUNCTIONS =====
+
+export const getCars = functions.https.onRequest(async (req, res) => {
+  try {
+    const { dealershipId, search } = req.query;
+
+    let query: FirebaseFirestore.Query = db.collectionGroup("cars");
+
+    if (dealershipId) {
+      // Filter by dealership
+      query = db
+        .collection("dealerships")
+        .doc(dealershipId as string)
+        .collection("cars");
+    }
+
+    if (search) {
+      // Search is more complex in Firestore (no full-text search)
+      // Option 1: Client-side filtering (simple)
+      // Option 2: Use Algolia/Elasticsearch plugin
+      // For now, we'll do limited pattern matching
+
+      const snapshot = await query.get();
+      const cars = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(car => {
+          const s = (search as string).toLowerCase();
+          return (
+            car.vin?.toLowerCase().includes(s) ||
+            car.make?.toLowerCase().includes(s) ||
+            car.model?.toLowerCase().includes(s) ||
+            car.color?.toLowerCase().includes(s)
+          );
+        });
+
+      res.status(200).json(cars);
+      return;
+    }
+
+    const snapshot = await query.orderBy("createdAt", "desc").get();
+    const cars = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    res.status(200).json(cars);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch cars" });
+  }
+});
+
+export const createCar = functions.https.onRequest(async (req, res) => {
+  try {
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "Method not allowed" });
+      return;
+    }
+
+    const { dealershipId } = req.query;
+    const validated = insertCarSchema.parse(req.body);
+
+    // Check duplicate VIN
+    if (validated.vin) {
+      const vinQuery = await db
+        .collection("dealerships")
+        .doc(dealershipId as string)
+        .collection("cars")
+        .where("vin", "==", validated.vin)
+        .limit(1)
+        .get();
+
+      if (!vinQuery.empty) {
+        res.status(409).json({ error: "Vehicle with this VIN already exists" });
+        return;
+      }
+    }
+
+    // Check duplicate Stock Number
+    if (validated.stockNumber) {
+      const stockQuery = await db
+        .collection("dealerships")
+        .doc(dealershipId as string)
+        .collection("cars")
+        .where("stockNumber", "==", validated.stockNumber)
+        .limit(1)
+        .get();
+
+      if (!stockQuery.empty) {
+        res.status(409).json({ error: "Vehicle with this stock number already exists" });
+        return;
+      }
+    }
+
+    const docRef = await db
+      .collection("dealerships")
+      .doc(dealershipId as string)
+      .collection("cars")
+      .add({
+        ...validated,
+        createdAt: admin.firestore.Timestamp.now(),
+      });
+
+    const doc = await docRef.get();
+    res.status(201).json({ id: docRef.id, ...doc.data() });
+  } catch (error) {
+    res.status(400).json({ error: "Invalid car data" });
+  }
+});
+
+export const updateCar = functions.https.onRequest(async (req, res) => {
+  try {
+    if (req.method !== "PATCH") {
+      res.status(405).json({ error: "Method not allowed" });
+      return;
+    }
+
+    const { dealershipId, carId } = req.query;
+    const validated = insertCarSchema.partial().parse(req.body);
+
+    await db
+      .collection("dealerships")
+      .doc(dealershipId as string)
+      .collection("cars")
+      .doc(carId as string)
+      .update({
+        ...validated,
+        updatedAt: admin.firestore.Timestamp.now(),
+      });
+
+    const doc = await db
+      .collection("dealerships")
+      .doc(dealershipId as string)
+      .collection("cars")
+      .doc(carId as string)
+      .get();
+
+    res.status(200).json({ id: doc.id, ...doc.data() });
+  } catch (error) {
+    res.status(400).json({ error: "Failed to update car" });
+  }
+});
+
+export const deleteCar = functions.https.onRequest(async (req, res) => {
+  try {
+    if (req.method !== "DELETE") {
+      res.status(405).json({ error: "Method not allowed" });
+      return;
+    }
+
+    const { dealershipId, carId } = req.query;
+
+    await db
+      .collection("dealerships")
+      .doc(dealershipId as string)
+      .collection("cars")
+      .doc(carId as string)
+      .delete();
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete car" });
+  }
+});
+```
+
+#### Phase 5: Update Frontend for Firebase
+
+**File: `client/src/lib/firebase-hooks.ts`** (Replace api-hooks.ts)
+
+```typescript
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, where, query, getDoc, doc } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase-config";
+import { useAuth } from "reactfire";
+import { useToast } from "@/hooks/use-toast";
+
+// ===== HOOKS (same as before, but use Firebase SDK calls) =====
+
+export function useDealerships() {
+  return useQuery({
+    queryKey: ["dealerships"],
+    queryFn: async () => {
+      const dealershipsRef = collection(db, "dealerships");
+      const snapshot = await getDocs(dealershipsRef);
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+    },
+  });
+}
+
+export function useCars(dealershipId?: string) {
+  return useQuery({
+    queryKey: ["cars", dealershipId],
+    queryFn: async () => {
+      if (!dealershipId) return [];
+
+      const carsRef = collection(db, "dealerships", dealershipId, "cars");
+      const snapshot = await getDocs(carsRef);
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+    },
+    enabled: !!dealershipId,
+  });
+}
+
+export function useCreateCar() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ dealershipId, carData }: any) => {
+      const carsRef = collection(db, "dealerships", dealershipId, "cars");
+      const docRef = await addDoc(carsRef, {
+        ...carData,
+        createdAt: new Date(),
+      });
+      return { id: docRef.id, ...carData };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cars"] });
+      toast({ title: "Success", description: "Car added to inventory" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to add car", variant: "destructive" });
+    },
+  });
+}
+
+// ... other hooks follow same pattern
+```
+
+**File: `client/src/lib/firebase-config.ts`** (New)
+
+```typescript
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
+
+const firebaseConfig = {
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abc123def456",
+};
+
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const storage = getStorage(app);
+```
+
+#### Phase 6: Add Firebase Authentication
+
+**File: `client/src/components/auth-provider.tsx`** (New)
+
+```typescript
+import { useAuthState } from "reactfire";
+import { auth } from "@/lib/firebase-config";
+import { ReactNode } from "react";
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const { data: user, loading } = useAuthState(auth);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    // Redirect to login page
+    return <LoginPage />;
+  }
+
+  return <>{children}</>;
+}
+
+function LoginPage() {
+  // Implement Firebase Auth UI
+  return <div>Login Page</div>;
+}
+```
+
+#### Phase 7: Deploy to Firebase Hosting
+
+```bash
+# Build frontend
+npm run build
+
+# Deploy to Firebase Hosting
+firebase deploy
+
+# Firebase will:
+# 1. Deploy Cloud Functions
+# 2. Deploy frontend to Firebase Hosting
+# 3. Set up CDN/SSL
+# 4. Configure routing
+```
+
+### Key Differences & Considerations
+
+**PostgreSQL vs Firestore:**
+
+| Feature | PostgreSQL | Firestore |
+|---------|-----------|-----------|
+| Queries | Complex JOINs | Simple, document-based |
+| Transactions | ACID | Limited to single write |
+| Full-text search | Native | Need Algolia/Elasticsearch |
+| Relationships | Foreign keys | Subcollections or refs |
+| Cost | Predictable | Pay-per-operation |
+| Scaling | Vertical | Automatic horizontal |
+
+**Express vs Cloud Functions:**
+
+| Feature | Express | Cloud Functions |
+|---------|---------|-----------------|
+| Server management | Manual | Serverless (auto-scaling) |
+| Deployment | Manual | `firebase deploy` |
+| Cold starts | N/A | ~1-2 seconds |
+| Cost | Fixed server | Pay-per-invocation |
+| Middleware | Full support | Limited |
+| File uploads | Multer | Firebase Storage |
+
+### Migration Checklist
+
+- [ ] Create Firebase project
+- [ ] Set up Firestore database
+- [ ] Create collections (`dealerships`, `cars` subcollection)
+- [ ] Write Cloud Functions (CRUD operations)
+- [ ] Update frontend API hooks to use Firebase SDK
+- [ ] Add Firebase Authentication
+- [ ] Set up Firebase Hosting
+- [ ] Test all features
+- [ ] Set up backup/export of old PostgreSQL data
+- [ ] Migrate data from PostgreSQL to Firestore
+- [ ] Update environment variables
+- [ ] Deploy and monitor
+
+### Estimated Timeline
+
+- **Phase 1-2** (Setup + Schema): 1-2 days
+- **Phase 3-4** (Cloud Functions): 2-3 days
+- **Phase 5-6** (Frontend + Auth): 1-2 days
+- **Phase 7** (Testing + Deployment): 1 day
+- **Total**: 5-8 days
+
+### Conclusion
+
+This project can be successfully migrated to Firebase. The main benefits:
+- **Automatic scaling** - no infrastructure management
+- **Built-in auth** - Firebase Authentication
+- **Real-time updates** - Firestore listeners
+- **Hosting included** - Firebase Hosting with CDN
+- **Cost savings** - pay-per-use model
+
+The main trade-offs:
+- **More complex queries** - Firestore limitations
+- **Higher operational cost at scale** - Firestore pricing
+- **Vendor lock-in** - Tied to Google ecosystem
+
+---
+
+**END OF DOCUMENTATION**
+
+This complete documentation includes every file, every function, every API endpoint, and detailed explanations of the entire system architecture and user flows. Use this as your reference guide for understanding, maintaining, and extending the AutoManager system.
