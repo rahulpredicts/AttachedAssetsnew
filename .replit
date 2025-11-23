@@ -29,6 +29,10 @@ localPort = 43609
 externalPort = 3002
 
 [[ports]]
+localPort = 44179
+externalPort = 4200
+
+[[ports]]
 localPort = 44397
 externalPort = 3001
 
@@ -58,3 +62,8 @@ waitForPort = 5000
 
 [agent]
 mockupState = "FULLSTACK"
+
+[userenv]
+
+[userenv.shared]
+BROWSERACT_API_KEY = "app-PsPkVR9garlKfMNeGKH6RodP"
