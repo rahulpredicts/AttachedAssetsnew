@@ -143,7 +143,111 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(car);
     } catch (error) {
       console.error("Error creating car:", error);
-      res.status(400).json({ error: "Invalid car data" });
+      const errorMsg = error instanceof Error ? error.message : 'Invalid car data';
+      res.status(400).json({ error: errorMsg });
+    }
+  });
+
+  // Bulk CSV import endpoint - more lenient validation
+  app.post("/api/cars/bulk-import", async (req, res) => {
+    try {
+      const cars = req.body.cars || [];
+      const dealershipId = req.body.dealershipId;
+
+      if (!dealershipId) {
+        return res.status(400).json({ error: "Dealership ID is required" });
+      }
+
+      if (!Array.isArray(cars) || cars.length === 0) {
+        return res.status(400).json({ error: "No cars provided" });
+      }
+
+      const results = [];
+      for (const car of cars) {
+        try {
+          // Provide defaults for required fields
+          const carData = {
+            dealershipId: dealershipId,
+            vin: car.vin || "",
+            stockNumber: car.stockNumber || "",
+            condition: car.condition || "used",
+            make: car.make || "Unknown",
+            model: car.model || "Unknown",
+            trim: car.trim || "",
+            year: car.year || "",
+            color: car.color || "",
+            price: car.price || "0",
+            kilometers: car.kilometers || "0",
+            transmission: car.transmission || "",
+            fuelType: car.fuelType || "",
+            bodyType: car.bodyType || "",
+            drivetrain: car.drivetrain || "fwd",
+            engineCylinders: car.engineCylinders || "",
+            engineDisplacement: car.engineDisplacement || "",
+            features: car.features || [],
+            listingLink: car.listingLink || "",
+            carfaxLink: car.carfaxLink || "",
+            carfaxStatus: car.carfaxStatus || "unavailable",
+            notes: car.notes || "",
+            status: 'available'
+          };
+
+          const validated = insertCarSchema.parse(carData);
+          
+          // Check for duplicates
+          if (validated.vin) {
+            const existingCar = await storage.getCarByVin(validated.vin);
+            if (existingCar) {
+              results.push({
+                car: `${carData.year} ${carData.make} ${carData.model}`,
+                success: false,
+                error: "VIN already exists"
+              });
+              continue;
+            }
+          }
+
+          if (validated.stockNumber) {
+            const existingCar = await storage.getCarByStockNumber(validated.stockNumber);
+            if (existingCar) {
+              results.push({
+                car: `${carData.year} ${carData.make} ${carData.model}`,
+                success: false,
+                error: "Stock number already exists"
+              });
+              continue;
+            }
+          }
+
+          const createdCar = await storage.createCar(validated);
+          results.push({
+            car: `${carData.year} ${carData.make} ${carData.model}`,
+            success: true,
+            id: createdCar.id
+          });
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+          results.push({
+            car: `${car.year || ''} ${car.make || 'Unknown'} ${car.model || ''}`.trim(),
+            success: false,
+            error: errorMsg
+          });
+        }
+      }
+
+      const successCount = results.filter(r => r.success).length;
+      const failureCount = results.filter(r => !r.success).length;
+
+      res.json({
+        totalProcessed: cars.length,
+        successCount,
+        failureCount,
+        results
+      });
+    } catch (error) {
+      console.error("Error in bulk import:", error);
+      const errorMsg = error instanceof Error ? error.message : 'Bulk import failed';
+      res.status(400).json({ error: errorMsg });
     }
   });
 

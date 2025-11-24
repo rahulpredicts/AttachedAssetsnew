@@ -308,54 +308,78 @@ export default function UploadPage() {
     }
 
     setIsSavingCsv(true);
-    let savedCount = 0;
-    let errorCount = 0;
 
-    for (const row of csvRows) {
-      try {
-        const carData = {
+    try {
+      // Map CSV rows to car data with flexible column name handling
+      const carsToImport = csvRows.map(row => ({
+        vin: (row.vin || row['17-digit vin'] || row['vin (17 digits)'] || "").trim(),
+        stockNumber: (row['stock number'] || row.stock || row['stock #'] || row.stocknumber || "").trim(),
+        condition: (row.condition || "used").trim(),
+        make: (row.make || "").trim(),
+        model: (row.model || "").trim(),
+        trim: (row.trim || row.edition || "").trim(),
+        year: (row.year || "").trim(),
+        color: (row.color || row.exterior || "").trim(),
+        price: (row.price || row['selling price'] || row['list price'] || "0").toString().trim(),
+        kilometers: (row.kilometers || row.mileage || row.km || row.odometer || "0").toString().trim(),
+        transmission: (row.transmission || row.trans || "").trim(),
+        fuelType: (row['fuel type'] || row.fuel || row.fueltype || "").trim(),
+        bodyType: (row['body type'] || row.body || row.bodytype || "").trim(),
+        features: [],
+        listingLink: (row['listing url'] || row.url || row.link || "").trim(),
+        carfaxLink: (row['carfax link'] || row.carfax || "").trim(),
+        notes: (row.notes || row.description || "").trim(),
+      }));
+
+      console.log("Sending to bulk import:", {
+        dealershipId: selectedDealershipCsv,
+        carCount: carsToImport.length
+      });
+
+      const response = await fetch('/api/cars/bulk-import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           dealershipId: selectedDealershipCsv,
-          vin: row.vin || row['17-digit vin'] || "",
-          stockNumber: row['stock number'] || row.stock || row['stock #'] || "",
-          condition: row.condition || "used",
-          make: row.make || "",
-          model: row.model || "",
-          trim: row.trim || row.edition || "",
-          year: row.year || "",
-          color: row.color || row.exterior || "",
-          price: row.price || row['selling price'] || "",
-          kilometers: row.kilometers || row.mileage || row.km || "",
-          transmission: row.transmission || "",
-          fuelType: row['fuel type'] || row.fuel || "",
-          bodyType: row['body type'] || row.body || "",
-          features: [],
-          listingLink: row['listing url'] || row.url || "",
-          carfaxLink: row['carfax link'] || "",
-          carfaxStatus: "unavailable" as const,
-          notes: row.notes || "",
-          status: 'available' as const
-        };
+          cars: carsToImport
+        })
+      });
 
-        await createCarMutation.mutateAsync(carData);
-        savedCount++;
-      } catch (error) {
-        console.error("Error saving car:", error);
-        errorCount++;
+      const result = await response.json();
+      
+      if (response.ok) {
+        console.log("Bulk import result:", result);
+        toast({ 
+          title: `✓ Upload Complete!`, 
+          description: `Successfully added ${result.successCount}/${result.totalProcessed} vehicles to database`, 
+          variant: result.failureCount === 0 ? "default" : "destructive" 
+        });
+
+        // Show details if there were failures
+        if (result.failureCount > 0) {
+          console.log("Failed vehicles:", result.results.filter((r: any) => !r.success));
+        }
+      } else {
+        toast({ 
+          title: "Upload Failed", 
+          description: result.error || "Failed to upload vehicles", 
+          variant: "destructive" 
+        });
       }
+    } catch (error) {
+      console.error("Error uploading CSV:", error);
+      toast({ 
+        title: "Upload Error", 
+        description: error instanceof Error ? error.message : "Failed to upload CSV", 
+        variant: "destructive" 
+      });
+    } finally {
+      setCsvData("");
+      setCsvRows([]);
+      setSelectedDealershipCsv("");
+      if (csvFileInputRef.current) csvFileInputRef.current.value = "";
+      setIsSavingCsv(false);
     }
-
-    toast({ 
-      title: "Upload Complete", 
-      description: `Added ${savedCount} vehicles (${errorCount} failed)`, 
-      variant: errorCount === 0 ? "default" : "destructive" 
-    });
-    
-    setCsvData("");
-    setCsvRows([]);
-    setSelectedDealershipCsv("");
-    if (csvFileInputRef.current) csvFileInputRef.current.value = "";
-    
-    setIsSavingCsv(false);
   };
 
   const handleBulkSaveAll = async () => {
