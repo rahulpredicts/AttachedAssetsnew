@@ -337,8 +337,8 @@ export default function UploadPage() {
         fuelType: (row['fuel type'] || row.fuel || row.fueltype || "").trim(),
         bodyType: (row['body type'] || row.body || row.bodytype || "").trim(),
         features: [],
-        listingLink: (row['listing url'] || row.url || row.link || "").trim(),
-        carfaxLink: (row['carfax link'] || row.carfax || "").trim(),
+        listingLink: (row.listing_link || row['listing_link'] || row['listing url'] || row.url || row.link || "").trim(),
+        carfaxLink: (row.carfax_link || row['carfax_link'] || row['carfax link'] || row.carfax || "").trim(),
         notes: (row.notes || row.description || "").trim(),
       }));
 
