@@ -797,6 +797,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const anthropic = new Anthropic({ apiKey });
 
+      // Truncate content to avoid token limit (roughly 100k chars = ~25k tokens for content)
+      // Leave room for prompt instructions and response
+      const maxChars = 100000;
+      const truncatedContent = textContent.length > maxChars 
+        ? textContent.substring(0, maxChars) + "\n\n[... content truncated ...]"
+        : textContent;
+
       const prompt = `You are a data extraction expert. I have text content from vehicle listings that needs to be parsed into a CSV file.
 
 Extract ALL vehicles from the text and create a CSV with these EXACT columns (in this order):
@@ -812,7 +819,7 @@ Rules:
 - Wrap values in quotes if they contain commas
 
 Text content to parse:
-${textContent}
+${truncatedContent}
 
 Return ONLY the CSV data, nothing else:`;
 
