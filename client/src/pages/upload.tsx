@@ -1563,7 +1563,7 @@ export default function UploadPage() {
                         <SelectTrigger className="bg-white border-blue-200 h-11">
                             <SelectValue placeholder="Choose a dealership" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-h-[300px]">
                             {dealerships.map(d => (
                                 <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
                             ))}
