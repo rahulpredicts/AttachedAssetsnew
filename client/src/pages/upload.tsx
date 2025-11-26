@@ -1553,8 +1553,22 @@ export default function UploadPage() {
         <TabsContent value="csv" className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
            <Card className="border-0 shadow-sm ring-1 ring-gray-200">
             <CardHeader>
-                <CardTitle>Bulk CSV Upload</CardTitle>
-                <CardDescription>Upload a CSV file or paste CSV data. Supports: VIN, Make, Model, Year, Price, Stock Number, Color, Fuel Type, Transmission, etc.</CardDescription>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <CardTitle>Bulk CSV Upload</CardTitle>
+                        <CardDescription>Upload a CSV file or paste CSV data. Supports: VIN, Make, Model, Year, Price, Stock Number, Color, Fuel Type, Transmission, etc.</CardDescription>
+                    </div>
+                    <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => window.open('https://csvconverter.wuaze.com/?i=1', '_blank', 'noopener,noreferrer')}
+                        className="flex-shrink-0"
+                        data-testid="button-csv-converter"
+                    >
+                        <LinkIcon className="w-4 h-4 mr-2" />
+                        CSV Converter
+                    </Button>
+                </div>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
