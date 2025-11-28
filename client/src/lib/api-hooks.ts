@@ -76,7 +76,10 @@ async function createDealership(dealership: Omit<Dealership, 'id' | 'createdAt'>
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dealership),
   });
-  if (!response.ok) throw new Error('Failed to create dealership');
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || errorData.error || 'Failed to create dealership');
+  }
   return response.json();
 }
 
@@ -157,8 +160,8 @@ export function useCreateDealership() {
       queryClient.invalidateQueries({ queryKey: ['dealerships'] });
       toast({ title: "Success", description: "Dealership added successfully" });
     },
-    onError: () => {
-      toast({ title: "Error", description: "Failed to add dealership", variant: "destructive" });
+    onError: (error: Error) => {
+      toast({ title: "Error", description: error.message || "Failed to add dealership", variant: "destructive" });
     },
   });
 }

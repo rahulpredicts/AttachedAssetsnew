@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import Papa from "papaparse";
 import {
   Select,
   SelectContent,
@@ -259,28 +260,17 @@ export default function UploadPage() {
   };
 
   const parseCsvData = (csv: string): Array<Record<string, string>> => {
-    const lines = csv.trim().split('\n');
-    if (lines.length === 0) return [];
-
-    // Get headers from first line
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    const result = Papa.parse(csv, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: (header: string) => header.toLowerCase().trim(),
+    });
     
-    // Parse data rows
-    const rows: Array<Record<string, string>> = [];
-    for (let i = 1; i < lines.length; i++) {
-      const values = lines[i].split(',').map(v => v.trim());
-      const row: Record<string, string> = {};
-      
-      headers.forEach((header, idx) => {
-        row[header] = values[idx] || '';
-      });
-      
-      if (Object.values(row).some(v => v)) { // Only add if row has data
-        rows.push(row);
-      }
+    if (result.errors.length > 0) {
+      console.warn("CSV parsing warnings:", result.errors);
     }
     
-    return rows;
+    return result.data as Array<Record<string, string>>;
   };
 
   const handleCsvFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -324,7 +314,7 @@ export default function UploadPage() {
       // Map CSV rows to car data with flexible column name handling
       const carsToImport = csvRows.map(row => ({
         vin: (row.vin || row['17-digit vin'] || row['vin (17 digits)'] || "").trim(),
-        stockNumber: (row['stock number'] || row.stock || row['stock #'] || row.stocknumber || "").trim(),
+        stockNumber: (row.stock_number || row['stock_number'] || row['stock number'] || row.stock || row['stock #'] || row.stocknumber || "").trim(),
         condition: (row.condition || "used").trim(),
         make: (row.make || "").trim(),
         model: (row.model || "").trim(),
@@ -334,8 +324,11 @@ export default function UploadPage() {
         price: (row.price || row['selling price'] || row['list price'] || "0").toString().trim(),
         kilometers: (row.kilometers || row.mileage || row.km || row.odometer || "0").toString().trim(),
         transmission: (row.transmission || row.trans || "").trim(),
-        fuelType: (row['fuel type'] || row.fuel || row.fueltype || "").trim(),
-        bodyType: (row['body type'] || row.body || row.bodytype || "").trim(),
+        fuelType: (row.fuel_type || row['fuel_type'] || row['fuel type'] || row.fuel || row.fueltype || "").trim(),
+        bodyType: (row.body_type || row['body_type'] || row['body type'] || row.body || row.bodytype || "").trim(),
+        drivetrain: (row.drivetrain || "").trim(),
+        engineCylinders: (row.engine_cylinders || row['engine_cylinders'] || "").trim(),
+        engineDisplacement: (row.engine_displacement || row['engine_displacement'] || "").trim(),
         features: [],
         listingLink: (row.listing_link || row['listing_link'] || row['listing url'] || row.url || row.link || "").trim(),
         carfaxLink: (row.carfax_link || row['carfax_link'] || row['carfax link'] || row.carfax || "").trim(),
@@ -1660,9 +1653,9 @@ export default function UploadPage() {
                                             <td className="px-4 py-3 font-medium">{row.make || '-'}</td>
                                             <td className="px-4 py-3">{row.model || '-'}</td>
                                             <td className="px-4 py-3">{row.year || '-'}</td>
-                                            <td className="px-4 py-3 font-mono text-xs">{row.vin ? row.vin.substring(0, 8) + '...' : '-'}</td>
+                                            <td className="px-4 py-3 font-mono text-xs">{row.vin ? row.vin.substring(0, 11) + '...' : '-'}</td>
                                             <td className="px-4 py-3 font-medium text-green-600">${row.price || '0'}</td>
-                                            <td className="px-4 py-3">{row['stock number'] || row.stock || row['stock #'] || '-'}</td>
+                                            <td className="px-4 py-3">{row.stock_number || row['stock_number'] || row['stock number'] || row.stock || row['stock #'] || '-'}</td>
                                             <td className="px-4 py-3">{row.color || row.exterior || '-'}</td>
                                         </tr>
                                     ))}

@@ -18,6 +18,7 @@ export interface IStorage {
   // Dealership operations
   getAllDealerships(): Promise<Dealership[]>;
   getDealership(id: string): Promise<Dealership | undefined>;
+  getDealershipByName(name: string): Promise<Dealership | undefined>;
   createDealership(dealership: InsertDealership): Promise<Dealership>;
   updateDealership(id: string, dealership: UpdateDealership): Promise<Dealership | undefined>;
   deleteDealership(id: string): Promise<boolean>;
@@ -42,6 +43,11 @@ export class DatabaseStorage implements IStorage {
 
   async getDealership(id: string): Promise<Dealership | undefined> {
     const results = await db.select().from(schema.dealerships).where(eq(schema.dealerships.id, id));
+    return results[0];
+  }
+
+  async getDealershipByName(name: string): Promise<Dealership | undefined> {
+    const results = await db.select().from(schema.dealerships).where(ilike(schema.dealerships.name, name.trim()));
     return results[0];
   }
 

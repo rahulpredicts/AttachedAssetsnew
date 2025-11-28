@@ -32,6 +32,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/dealerships", async (req, res) => {
     try {
       const validated = insertDealershipSchema.parse(req.body);
+      
+      const existingDealership = await storage.getDealershipByName(validated.name);
+      
+      if (existingDealership) {
+        return res.status(409).json({ 
+          error: "Dealership already exists", 
+          message: `A dealership named "${existingDealership.name}" already exists. Please use a different name.` 
+        });
+      }
+      
       const dealership = await storage.createDealership(validated);
       res.status(201).json(dealership);
     } catch (error) {
