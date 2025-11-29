@@ -16,6 +16,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dealership car counts - must be before :id route
+  app.get("/api/dealerships/car-counts", async (req, res) => {
+    try {
+      const counts = await storage.getCarCountsByDealership();
+      res.json(counts);
+    } catch (error) {
+      console.error("Error fetching dealership car counts:", error);
+      res.status(500).json({ error: "Failed to fetch dealership car counts" });
+    }
+  });
+
   app.get("/api/dealerships/:id", async (req, res) => {
     try {
       const dealership = await storage.getDealership(req.params.id);

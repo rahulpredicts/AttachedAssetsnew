@@ -250,6 +250,20 @@ export function useCarCounts(dealershipId?: string) {
   });
 }
 
+async function fetchDealershipCarCounts(): Promise<Record<string, number>> {
+  const response = await fetch('/api/dealerships/car-counts');
+  if (!response.ok) throw new Error('Failed to fetch dealership car counts');
+  return response.json();
+}
+
+export function useDealershipCarCounts() {
+  return useQuery({
+    queryKey: ['dealership-car-counts'],
+    queryFn: fetchDealershipCarCounts,
+    staleTime: 60000,
+  });
+}
+
 export function useCarByVin(vin: string) {
   return useQuery({
     queryKey: ['car-vin', vin],
@@ -299,6 +313,7 @@ export function useDeleteDealership() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dealerships'] });
       queryClient.invalidateQueries({ queryKey: ['cars'] });
+      queryClient.invalidateQueries({ queryKey: ['dealership-car-counts'] });
       toast({ title: "Deleted", description: "Dealership removed" });
     },
     onError: () => {
@@ -317,6 +332,7 @@ export function useCreateCar() {
       queryClient.invalidateQueries({ queryKey: ['cars'] });
       queryClient.invalidateQueries({ queryKey: ['cars-paginated'] });
       queryClient.invalidateQueries({ queryKey: ['car-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['dealership-car-counts'] });
       toast({ title: "Success", description: "Car added to inventory" });
     },
     onError: () => {
@@ -335,6 +351,7 @@ export function useUpdateCar() {
       queryClient.invalidateQueries({ queryKey: ['cars'] });
       queryClient.invalidateQueries({ queryKey: ['cars-paginated'] });
       queryClient.invalidateQueries({ queryKey: ['car-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['dealership-car-counts'] });
       toast({ title: "Success", description: "Car updated" });
     },
     onError: () => {
@@ -353,6 +370,7 @@ export function useDeleteCar() {
       queryClient.invalidateQueries({ queryKey: ['cars'] });
       queryClient.invalidateQueries({ queryKey: ['cars-paginated'] });
       queryClient.invalidateQueries({ queryKey: ['car-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['dealership-car-counts'] });
       toast({ title: "Deleted", description: "Car removed from inventory" });
     },
     onError: () => {
@@ -374,6 +392,7 @@ export function useToggleSoldStatus() {
       queryClient.invalidateQueries({ queryKey: ['cars'] });
       queryClient.invalidateQueries({ queryKey: ['cars-paginated'] });
       queryClient.invalidateQueries({ queryKey: ['car-counts'] });
+      queryClient.invalidateQueries({ queryKey: ['dealership-car-counts'] });
       toast({ 
         title: updatedCar.status === 'sold' ? "Marked as Sold" : "Marked as Available", 
         description: `${updatedCar.year} ${updatedCar.make} ${updatedCar.model} is now ${updatedCar.status}.` 

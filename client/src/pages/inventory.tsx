@@ -66,6 +66,7 @@ import {
   useCars, 
   useCarsPaginated,
   useCarCounts,
+  useDealershipCarCounts,
   useCreateDealership,
   useUpdateDealership,
   useDeleteDealership,
@@ -187,6 +188,7 @@ export default function Inventory() {
   // Data fetching - all server-side via paginated endpoint
   const { data: dealerships = [], isLoading: dealershipsLoading } = useDealerships();
   const { data: carCounts } = useCarCounts(selectedDealership?.id);
+  const { data: dealershipCarCounts = {} } = useDealershipCarCounts();
   
   // Paginated data with server-side filtering
   const { 
@@ -1038,7 +1040,7 @@ export default function Inventory() {
 
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-100 font-normal">
-                        {allCars.filter(c => c.dealershipId === dealership.id).length} Cars
+                        {dealershipCarCounts[dealership.id] || 0} Cars
                     </Badge>
                   </div>
                 </div>

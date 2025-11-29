@@ -74,6 +74,7 @@ export interface IStorage {
   deleteCar(id: string): Promise<boolean>;
   searchCars(query: string): Promise<Car[]>;
   getCarsCount(dealershipId?: string, status?: string): Promise<{ total: number; available: number; sold: number; pending: number }>;
+  getCarCountsByDealership(): Promise<Record<string, number>>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -180,23 +181,19 @@ export class DatabaseStorage implements IStorage {
     }
     
     if (filters?.priceMin !== undefined) {
-      conditions.push(gte(schema.cars.price, filters.priceMin));
+      conditions.push(gte(sqlFn`CAST(${schema.cars.price} AS NUMERIC)`, filters.priceMin));
     }
     
     if (filters?.priceMax !== undefined) {
-      conditions.push(lte(schema.cars.price, filters.priceMax));
+      conditions.push(lte(sqlFn`CAST(${schema.cars.price} AS NUMERIC)`, filters.priceMax));
     }
     
     if (filters?.kmsMin !== undefined) {
-      conditions.push(gte(schema.cars.kms, filters.kmsMin));
+      conditions.push(gte(sqlFn`CAST(${schema.cars.kilometers} AS NUMERIC)`, filters.kmsMin));
     }
     
     if (filters?.kmsMax !== undefined) {
-      conditions.push(lte(schema.cars.kms, filters.kmsMax));
-    }
-    
-    if (filters?.province) {
-      conditions.push(ilike(schema.cars.province, `%${filters.province}%`));
+      conditions.push(lte(sqlFn`CAST(${schema.cars.kilometers} AS NUMERIC)`, filters.kmsMax));
     }
     
     if (filters?.transmission && filters.transmission.length > 0) {
@@ -328,6 +325,21 @@ export class DatabaseStorage implements IStorage {
         )
       )
       .orderBy(desc(schema.cars.createdAt));
+  }
+
+  async getCarCountsByDealership(): Promise<Record<string, number>> {
+    const results = await db.select({
+      dealershipId: schema.cars.dealershipId,
+      count: count()
+    })
+    .from(schema.cars)
+    .groupBy(schema.cars.dealershipId);
+    
+    const counts: Record<string, number> = {};
+    for (const row of results) {
+      counts[row.dealershipId] = row.count;
+    }
+    return counts;
   }
 }
 
