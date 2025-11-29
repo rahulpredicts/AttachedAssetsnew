@@ -14,7 +14,9 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Upload as UploadIcon, FileText, Image as ImageIcon, Plus, Loader2, CheckCircle2, AlertCircle, Link as LinkIcon, QrCode, CheckSquare, AlertTriangle, X } from "lucide-react";
+import { Upload as UploadIcon, FileText, Image as ImageIcon, Plus, Loader2, CheckCircle2, AlertCircle, Link as LinkIcon, QrCode, CheckSquare, AlertTriangle, X, Check, ChevronsUpDown, Search } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -91,6 +93,8 @@ export default function UploadPage() {
   const [csvData, setCsvData] = useState("");
   const [csvRows, setCsvRows] = useState<Array<Record<string, string>>>([]);
   const [selectedDealershipCsv, setSelectedDealershipCsv] = useState("");
+  const [csvDealershipOpen, setCsvDealershipOpen] = useState(false);
+  const [csvDealershipSearch, setCsvDealershipSearch] = useState("");
   const [isSavingCsv, setIsSavingCsv] = useState(false);
   const csvFileInputRef = useRef<HTMLInputElement>(null);
   
@@ -1566,16 +1570,71 @@ export default function UploadPage() {
             <CardContent className="space-y-6">
                 <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
                     <Label className="text-blue-900 mb-2 block font-semibold">Target Dealership *</Label>
-                    <Select value={selectedDealershipCsv} onValueChange={setSelectedDealershipCsv}>
-                        <SelectTrigger className="bg-white border-blue-200 h-11">
-                            <SelectValue placeholder="Choose a dealership" />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-[300px]">
-                            {dealerships.map(d => (
-                                <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    <Popover open={csvDealershipOpen} onOpenChange={setCsvDealershipOpen}>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={csvDealershipOpen}
+                                className="w-full justify-between bg-white border-blue-200 h-11 font-normal"
+                                data-testid="button-csv-dealership-select"
+                            >
+                                {selectedDealershipCsv
+                                    ? dealerships.find((d) => d.id === selectedDealershipCsv)?.name
+                                    : "Search and select a dealership..."}
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                            <Command>
+                                <CommandInput 
+                                    placeholder="Search dealerships..." 
+                                    value={csvDealershipSearch}
+                                    onValueChange={setCsvDealershipSearch}
+                                    data-testid="input-csv-dealership-search"
+                                />
+                                <CommandList>
+                                    <CommandEmpty>No dealership found.</CommandEmpty>
+                                    <CommandGroup>
+                                        {dealerships
+                                            .filter(d => 
+                                                d.name.toLowerCase().includes(csvDealershipSearch.toLowerCase()) ||
+                                                (d.location && d.location.toLowerCase().includes(csvDealershipSearch.toLowerCase())) ||
+                                                (d.province && d.province.toLowerCase().includes(csvDealershipSearch.toLowerCase()))
+                                            )
+                                            .map((d) => (
+                                                <CommandItem
+                                                    key={d.id}
+                                                    value={d.name}
+                                                    onSelect={() => {
+                                                        setSelectedDealershipCsv(d.id);
+                                                        setCsvDealershipOpen(false);
+                                                        setCsvDealershipSearch("");
+                                                    }}
+                                                    className="cursor-pointer"
+                                                    data-testid={`select-csv-dealership-${d.id}`}
+                                                >
+                                                    <Check
+                                                        className={cn(
+                                                            "mr-2 h-4 w-4",
+                                                            selectedDealershipCsv === d.id ? "opacity-100" : "opacity-0"
+                                                        )}
+                                                    />
+                                                    <div className="flex flex-col">
+                                                        <span>{d.name}</span>
+                                                        {d.location && (
+                                                            <span className="text-xs text-muted-foreground">
+                                                                {d.location}{d.province ? `, ${d.province}` : ''}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </CommandItem>
+                                            ))}
+                                    </CommandGroup>
+                                </CommandList>
+                            </Command>
+                        </PopoverContent>
+                    </Popover>
                 </div>
 
                 {/* File Input Section */}
