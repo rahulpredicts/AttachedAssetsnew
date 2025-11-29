@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-import { eq, desc, ilike, or, and } from "drizzle-orm";
+import { eq, desc, ilike, or, and, sql as sqlFn, count } from "drizzle-orm";
 import * as schema from "@shared/schema";
 import type { 
   Dealership, 
@@ -14,6 +14,19 @@ import type {
 const sql = neon(process.env.DATABASE_URL!);
 const db = drizzle(sql, { schema });
 
+export interface PaginationParams {
+  page: number;
+  pageSize: number;
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export interface IStorage {
   // Dealership operations
   getAllDealerships(): Promise<Dealership[]>;
@@ -25,6 +38,7 @@ export interface IStorage {
   
   // Car operations
   getAllCars(): Promise<Car[]>;
+  getCarsPaginated(params: PaginationParams, dealershipId?: string, search?: string, status?: string): Promise<PaginatedResult<Car>>;
   getCarsByDealership(dealershipId: string): Promise<Car[]>;
   getCar(id: string): Promise<Car | undefined>;
   getCarByVin(vin: string): Promise<Car | undefined>;
@@ -33,6 +47,7 @@ export interface IStorage {
   updateCar(id: string, car: UpdateCar): Promise<Car | undefined>;
   deleteCar(id: string): Promise<boolean>;
   searchCars(query: string): Promise<Car[]>;
+  getCarsCount(dealershipId?: string, status?: string): Promise<{ total: number; available: number; sold: number; pending: number }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -72,6 +87,92 @@ export class DatabaseStorage implements IStorage {
   // Car operations
   async getAllCars(): Promise<Car[]> {
     return await db.select().from(schema.cars).orderBy(desc(schema.cars.createdAt));
+  }
+
+  async getCarsPaginated(
+    params: PaginationParams, 
+    dealershipId?: string, 
+    search?: string, 
+    status?: string
+  ): Promise<PaginatedResult<Car>> {
+    const { page, pageSize } = params;
+    const offset = (page - 1) * pageSize;
+    
+    const conditions: any[] = [];
+    
+    if (dealershipId) {
+      conditions.push(eq(schema.cars.dealershipId, dealershipId));
+    }
+    
+    if (status && status !== 'all') {
+      conditions.push(eq(schema.cars.status, status));
+    }
+    
+    if (search) {
+      const searchTerm = `%${search}%`;
+      conditions.push(
+        or(
+          ilike(schema.cars.vin, searchTerm),
+          ilike(schema.cars.make, searchTerm),
+          ilike(schema.cars.model, searchTerm),
+          ilike(schema.cars.trim, searchTerm),
+          ilike(schema.cars.year, searchTerm),
+          ilike(schema.cars.color, searchTerm),
+          ilike(schema.cars.stockNumber, searchTerm)
+        )
+      );
+    }
+    
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+    
+    const [countResult, data] = await Promise.all([
+      db.select({ count: count() }).from(schema.cars).where(whereClause),
+      db.select().from(schema.cars)
+        .where(whereClause)
+        .orderBy(desc(schema.cars.createdAt))
+        .limit(pageSize)
+        .offset(offset)
+    ]);
+    
+    const total = countResult[0]?.count || 0;
+    
+    return {
+      data,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize)
+    };
+  }
+
+  async getCarsCount(dealershipId?: string, status?: string): Promise<{ total: number; available: number; sold: number; pending: number }> {
+    const dealershipCondition = dealershipId ? eq(schema.cars.dealershipId, dealershipId) : undefined;
+    
+    const [totalResult, availableResult, soldResult, pendingResult] = await Promise.all([
+      db.select({ count: count() }).from(schema.cars).where(dealershipCondition),
+      db.select({ count: count() }).from(schema.cars).where(
+        dealershipCondition 
+          ? and(dealershipCondition, eq(schema.cars.status, 'available'))
+          : eq(schema.cars.status, 'available')
+      ),
+      db.select({ count: count() }).from(schema.cars).where(
+        dealershipCondition 
+          ? and(dealershipCondition, eq(schema.cars.status, 'sold'))
+          : eq(schema.cars.status, 'sold')
+      ),
+      db.select({ count: count() }).from(schema.cars).where(
+        dealershipCondition 
+          ? and(dealershipCondition, eq(schema.cars.status, 'pending'))
+          : eq(schema.cars.status, 'pending')
+      )
+    ]);
+    
+    return {
+      total: totalResult[0]?.count || 0,
+      available: availableResult[0]?.count || 0,
+      sold: soldResult[0]?.count || 0,
+      pending: pendingResult[0]?.count || 0
+    };
   }
 
   async getCarsByDealership(dealershipId: string): Promise<Car[]> {

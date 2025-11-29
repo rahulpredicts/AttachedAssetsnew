@@ -77,7 +77,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Car routes
+  // Car routes - paginated endpoint (primary)
+  app.get("/api/cars/paginated", async (req, res) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const pageSize = Math.min(parseInt(req.query.pageSize as string) || 50, 100);
+      const dealershipId = req.query.dealershipId as string;
+      const search = req.query.search as string;
+      const status = req.query.status as string;
+      
+      const result = await storage.getCarsPaginated(
+        { page, pageSize },
+        dealershipId || undefined,
+        search || undefined,
+        status || undefined
+      );
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching cars (paginated):", error);
+      res.status(500).json({ error: "Failed to fetch cars" });
+    }
+  });
+
+  // Car counts endpoint for quick stats
+  app.get("/api/cars/counts", async (req, res) => {
+    try {
+      const dealershipId = req.query.dealershipId as string;
+      const counts = await storage.getCarsCount(dealershipId || undefined);
+      res.json(counts);
+    } catch (error) {
+      console.error("Error fetching car counts:", error);
+      res.status(500).json({ error: "Failed to fetch car counts" });
+    }
+  });
+
+  // Legacy endpoint - still available for backwards compatibility
   app.get("/api/cars", async (req, res) => {
     try {
       const dealershipId = req.query.dealershipId as string;

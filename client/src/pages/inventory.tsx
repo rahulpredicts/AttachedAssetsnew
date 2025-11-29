@@ -64,6 +64,8 @@ import { useLocation } from "wouter";
 import { 
   useDealerships, 
   useCars, 
+  useCarsPaginated,
+  useCarCounts,
   useCreateDealership,
   useUpdateDealership,
   useDeleteDealership,
@@ -106,15 +108,6 @@ const FEATURES_LIST = [
 ];
 
 export default function Inventory() {
-  const { data: dealerships = [], isLoading: dealershipsLoading } = useDealerships();
-  const { data: allCars = [], isLoading: carsLoading } = useCars();
-  const createDealershipMutation = useCreateDealership();
-  const updateDealershipMutation = useUpdateDealership();
-  const deleteDealershipMutation = useDeleteDealership();
-  const createCarMutation = useCreateCar();
-  const updateCarMutation = useUpdateCar();
-  const deleteCarMutation = useDeleteCar();
-  const toggleSoldStatusMutation = useToggleSoldStatus();
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
   
@@ -123,8 +116,14 @@ export default function Inventory() {
   const [editingDealership, setEditingDealership] = useState<Dealership | null>(null);
   const [editingCar, setEditingCar] = useState<Car | null>(null);
   
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(50);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  
   // Filters
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
   // Advanced Filters
@@ -145,6 +144,78 @@ export default function Inventory() {
   const [filterFuelType, setFilterFuelType] = useState<string[]>([]);
   const [filterBodyType, setFilterBodyType] = useState<string[]>([]);
   const [filterEngineCylinders, setFilterEngineCylinders] = useState<string[]>([]);
+  
+  // Check if any advanced filters are active (requires full data load)
+  const hasAdvancedFilters = useMemo(() => {
+    return filterMake !== "" || 
+           filterModel !== "" || 
+           filterVin !== "" || 
+           filterVinStart !== "" || 
+           filterColor !== "" || 
+           filterTrim !== "" || 
+           filterYearRange[0] > 1995 || filterYearRange[1] < 2025 ||
+           filterPriceRange[0] > 0 || filterPriceRange[1] < 200000 ||
+           filterKmsRange[0] > 0 || filterKmsRange[1] < 300000 ||
+           filterProvince !== "" ||
+           filterTransmission.length > 0 || 
+           filterDrivetrain.length > 0 || 
+           filterFuelType.length > 0 || 
+           filterBodyType.length > 0 || 
+           filterEngineCylinders.length > 0;
+  }, [filterMake, filterModel, filterVin, filterVinStart, filterColor, filterTrim, 
+      filterYearRange, filterPriceRange, filterKmsRange, filterProvince,
+      filterTransmission, filterDrivetrain, filterFuelType, filterBodyType, filterEngineCylinders]);
+  
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      setCurrentPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+  
+  // Data fetching - use legacy endpoint when advanced filters are active
+  const { data: dealerships = [], isLoading: dealershipsLoading } = useDealerships();
+  const { data: carCounts } = useCarCounts(selectedDealership?.id);
+  
+  // Paginated data (for when no advanced filters)
+  const { 
+    data: paginatedData, 
+    isLoading: paginatedLoading,
+    isFetching: paginatedFetching 
+  } = useCarsPaginated(
+    currentPage, 
+    pageSize, 
+    selectedDealership?.id, 
+    debouncedSearchTerm || undefined,
+    statusFilter !== "all" ? statusFilter : undefined
+  );
+  
+  // Full data (for when advanced filters are active)
+  const { 
+    data: fullData = [], 
+    isLoading: fullDataLoading,
+    isFetching: fullDataFetching 
+  } = useCars(
+    hasAdvancedFilters ? selectedDealership?.id : undefined, 
+    hasAdvancedFilters ? debouncedSearchTerm : undefined
+  );
+  
+  // Choose which data source to use
+  const allCars = hasAdvancedFilters ? fullData : (paginatedData?.data || []);
+  const totalCars = hasAdvancedFilters ? fullData.length : (paginatedData?.total || 0);
+  const totalPages = hasAdvancedFilters ? 1 : (paginatedData?.totalPages || 1);
+  const carsLoading = hasAdvancedFilters ? fullDataLoading : paginatedLoading;
+  const carsFetching = hasAdvancedFilters ? fullDataFetching : paginatedFetching;
+  
+  const createDealershipMutation = useCreateDealership();
+  const updateDealershipMutation = useUpdateDealership();
+  const deleteDealershipMutation = useDeleteDealership();
+  const createCarMutation = useCreateCar();
+  const updateCarMutation = useUpdateCar();
+  const deleteCarMutation = useDeleteCar();
+  const toggleSoldStatusMutation = useToggleSoldStatus();
 
   const [sortBy, setSortBy] = useState("addedDate");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -587,9 +658,15 @@ export default function Inventory() {
     setFilterFuelType([]);
     setFilterBodyType([]);
     setFilterEngineCylinders([]);
+    setCurrentPage(1);
   };
+  
+  // Reset pagination when dealership changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedDealership?.id]);
 
-  const totalInventory = allCars.length;
+  const totalInventory = carCounts?.total || totalCars;
   const filteredCars = getFilteredCars();
 
   return (
@@ -646,6 +723,48 @@ export default function Inventory() {
           </div>
         </div>
 
+        {/* Quick Stats */}
+        {carCounts && (
+          <div className="flex items-center gap-4 flex-wrap">
+            <Button
+              variant={statusFilter === "all" ? "default" : "outline"}
+              size="sm"
+              className="rounded-full"
+              onClick={() => { setStatusFilter("all"); setCurrentPage(1); }}
+              data-testid="filter-status-all"
+            >
+              All ({carCounts.total})
+            </Button>
+            <Button
+              variant={statusFilter === "available" ? "default" : "outline"}
+              size="sm"
+              className={cn("rounded-full", statusFilter === "available" ? "bg-green-600 hover:bg-green-700" : "text-green-600 border-green-200 hover:bg-green-50")}
+              onClick={() => { setStatusFilter("available"); setCurrentPage(1); }}
+              data-testid="filter-status-available"
+            >
+              Available ({carCounts.available})
+            </Button>
+            <Button
+              variant={statusFilter === "sold" ? "default" : "outline"}
+              size="sm"
+              className={cn("rounded-full", statusFilter === "sold" ? "bg-red-600 hover:bg-red-700" : "text-red-600 border-red-200 hover:bg-red-50")}
+              onClick={() => { setStatusFilter("sold"); setCurrentPage(1); }}
+              data-testid="filter-status-sold"
+            >
+              Sold ({carCounts.sold})
+            </Button>
+            <Button
+              variant={statusFilter === "pending" ? "default" : "outline"}
+              size="sm"
+              className={cn("rounded-full", statusFilter === "pending" ? "bg-yellow-600 hover:bg-yellow-700" : "text-yellow-600 border-yellow-200 hover:bg-yellow-50")}
+              onClick={() => { setStatusFilter("pending"); setCurrentPage(1); }}
+              data-testid="filter-status-pending"
+            >
+              Pending ({carCounts.pending})
+            </Button>
+          </div>
+        )}
+
         {/* Modern Search Bar */}
         <div className="relative max-w-2xl">
           <div className="relative group flex gap-2">
@@ -656,6 +775,7 @@ export default function Inventory() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-12 h-14 text-lg bg-white border-0 shadow-sm rounded-2xl focus-visible:ring-2 focus-visible:ring-primary/20 transition-all hover:shadow-md"
+                data-testid="input-search"
                 />
             </div>
             <div className="flex gap-2">
@@ -1001,8 +1121,16 @@ export default function Inventory() {
 
           {/* Main Content */}
           <div className="lg:col-span-9 space-y-2">
+                {/* Loading indicator */}
+                {carsFetching && (
+                  <div className="flex items-center justify-center py-4">
+                    <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                    <span className="ml-2 text-gray-500">Loading...</span>
+                  </div>
+                )}
+                
                 {filteredCars.map(car => (
-                    <Card key={car.id} className="hover:shadow-md transition-shadow bg-white border border-gray-200">
+                    <Card key={car.id} className="hover:shadow-md transition-shadow bg-white border border-gray-200" data-testid={`card-vehicle-${car.id}`}>
                         <CardContent className="p-3">
                             <div className="flex items-center gap-3">
                                 {/* Status Badges */}
@@ -1055,6 +1183,7 @@ export default function Inventory() {
                                                 : "bg-green-600 hover:bg-green-700 text-white"
                                         )}
                                         onClick={() => toggleSoldStatusMutation.mutate(car)}
+                                        data-testid={`button-toggle-status-${car.id}`}
                                     >
                                         {car.status === 'sold' ? 'Available' : 'Sold'}
                                     </Button>
@@ -1065,14 +1194,15 @@ export default function Inventory() {
                                             className="h-7 w-7 p-0 hover:bg-purple-50 hover:text-purple-600" 
                                             onClick={() => window.open(car.listingLink, '_blank')}
                                             title="View Listing"
+                                            data-testid={`button-view-listing-${car.id}`}
                                         >
                                             <ExternalLink className="w-3 h-3" />
                                         </Button>
                                     )}
-                                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-blue-50 hover:text-blue-600" onClick={() => { setEditingCar({ ...car, dealershipId: car.dealershipId }); }}>
+                                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-blue-50 hover:text-blue-600" onClick={() => { setEditingCar({ ...car, dealershipId: car.dealershipId }); }} data-testid={`button-edit-${car.id}`}>
                                         <Edit2 className="w-3 h-3" />
                                     </Button>
-                                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-red-50 hover:text-red-600" onClick={() => handleDeleteCar(car.id)}>
+                                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-red-50 hover:text-red-600" onClick={() => handleDeleteCar(car.id)} data-testid={`button-delete-${car.id}`}>
                                         <Trash2 className="w-3 h-3" />
                                     </Button>
                                 </div>
@@ -1080,6 +1210,65 @@ export default function Inventory() {
                         </CardContent>
                     </Card>
                 ))}
+                
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between py-4 px-2 mt-4 border-t border-gray-100">
+                    <div className="text-sm text-gray-500">
+                      Showing {((currentPage - 1) * pageSize) + 1} - {Math.min(currentPage * pageSize, totalCars)} of {totalCars} vehicles
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setCurrentPage(1)}
+                        disabled={currentPage === 1}
+                        data-testid="button-first-page"
+                      >
+                        First
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        data-testid="button-prev-page"
+                      >
+                        Previous
+                      </Button>
+                      <span className="px-3 py-1 text-sm font-medium">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        data-testid="button-next-page"
+                      >
+                        Next
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setCurrentPage(totalPages)}
+                        disabled={currentPage === totalPages}
+                        data-testid="button-last-page"
+                      >
+                        Last
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                
+                {/* No results message */}
+                {!carsLoading && filteredCars.length === 0 && (
+                  <div className="text-center py-12 text-gray-500">
+                    <CarIcon className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                    <p className="text-lg font-medium">No vehicles found</p>
+                    <p className="text-sm">Try adjusting your search or filters</p>
+                  </div>
+                )}
           </div>
         </div>
       </div>

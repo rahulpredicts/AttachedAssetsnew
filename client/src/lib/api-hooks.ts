@@ -1,5 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
+import { useCallback } from 'react';
 
 // Types based on database schema
 export interface Dealership {
@@ -41,10 +42,53 @@ export interface Car {
   createdAt?: string;
 }
 
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface CarCounts {
+  total: number;
+  available: number;
+  sold: number;
+  pending: number;
+}
+
 // API functions
 async function fetchDealerships(): Promise<Dealership[]> {
   const response = await fetch('/api/dealerships');
   if (!response.ok) throw new Error('Failed to fetch dealerships');
+  return response.json();
+}
+
+async function fetchCarsPaginated(
+  page: number = 1,
+  pageSize: number = 50,
+  dealershipId?: string,
+  search?: string,
+  status?: string
+): Promise<PaginatedResult<Car>> {
+  const params = new URLSearchParams();
+  params.append('page', page.toString());
+  params.append('pageSize', pageSize.toString());
+  if (dealershipId) params.append('dealershipId', dealershipId);
+  if (search) params.append('search', search);
+  if (status) params.append('status', status);
+  
+  const response = await fetch(`/api/cars/paginated?${params.toString()}`);
+  if (!response.ok) throw new Error('Failed to fetch cars');
+  return response.json();
+}
+
+async function fetchCarCounts(dealershipId?: string): Promise<CarCounts> {
+  const params = new URLSearchParams();
+  if (dealershipId) params.append('dealershipId', dealershipId);
+  
+  const response = await fetch(`/api/cars/counts?${params.toString()}`);
+  if (!response.ok) throw new Error('Failed to fetch car counts');
   return response.json();
 }
 
@@ -142,6 +186,29 @@ export function useCars(dealershipId?: string, search?: string) {
   });
 }
 
+export function useCarsPaginated(
+  page: number = 1,
+  pageSize: number = 50,
+  dealershipId?: string,
+  search?: string,
+  status?: string
+) {
+  return useQuery({
+    queryKey: ['cars-paginated', page, pageSize, dealershipId, search, status],
+    queryFn: () => fetchCarsPaginated(page, pageSize, dealershipId, search, status),
+    placeholderData: (previousData) => previousData,
+    staleTime: 30000,
+  });
+}
+
+export function useCarCounts(dealershipId?: string) {
+  return useQuery({
+    queryKey: ['car-counts', dealershipId],
+    queryFn: () => fetchCarCounts(dealershipId),
+    staleTime: 60000,
+  });
+}
+
 export function useCarByVin(vin: string) {
   return useQuery({
     queryKey: ['car-vin', vin],
@@ -207,6 +274,8 @@ export function useCreateCar() {
     mutationFn: createCar,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cars'] });
+      queryClient.invalidateQueries({ queryKey: ['cars-paginated'] });
+      queryClient.invalidateQueries({ queryKey: ['car-counts'] });
       toast({ title: "Success", description: "Car added to inventory" });
     },
     onError: () => {
@@ -223,6 +292,8 @@ export function useUpdateCar() {
     mutationFn: ({ id, data }: { id: string; data: Partial<Car> }) => updateCar(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cars'] });
+      queryClient.invalidateQueries({ queryKey: ['cars-paginated'] });
+      queryClient.invalidateQueries({ queryKey: ['car-counts'] });
       toast({ title: "Success", description: "Car updated" });
     },
     onError: () => {
@@ -239,6 +310,8 @@ export function useDeleteCar() {
     mutationFn: deleteCar,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cars'] });
+      queryClient.invalidateQueries({ queryKey: ['cars-paginated'] });
+      queryClient.invalidateQueries({ queryKey: ['car-counts'] });
       toast({ title: "Deleted", description: "Car removed from inventory" });
     },
     onError: () => {
@@ -258,6 +331,8 @@ export function useToggleSoldStatus() {
     },
     onSuccess: (updatedCar) => {
       queryClient.invalidateQueries({ queryKey: ['cars'] });
+      queryClient.invalidateQueries({ queryKey: ['cars-paginated'] });
+      queryClient.invalidateQueries({ queryKey: ['car-counts'] });
       toast({ 
         title: updatedCar.status === 'sold' ? "Marked as Sold" : "Marked as Available", 
         description: `${updatedCar.year} ${updatedCar.make} ${updatedCar.model} is now ${updatedCar.status}.` 
