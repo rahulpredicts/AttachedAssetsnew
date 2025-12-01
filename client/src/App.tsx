@@ -12,6 +12,11 @@ import AppraisalPage from "@/pages/appraisal";
 import LandingPage from "@/pages/landing";
 import AdminDashboard from "@/pages/admin-dashboard";
 import DataAnalystDashboard from "@/pages/data-analyst-dashboard";
+import DashboardPage from "@/pages/dashboard";
+import CanadianRetailPage from "@/pages/canadian-retail";
+import ExportPage from "@/pages/export";
+import ReferencePage from "@/pages/reference";
+import SettingsPage from "@/pages/settings";
 import { Loader2 } from "lucide-react";
 
 function Router() {
@@ -40,12 +45,16 @@ function Router() {
   return (
     <Layout>
       <Switch>
-        <Route path="/" component={isAdmin ? AdminDashboard : isDataAnalyst ? DataAnalystDashboard : Inventory} />
+        <Route path="/" component={isAdmin ? AdminDashboard : isDataAnalyst ? DataAnalystDashboard : DashboardPage} />
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/data-analyst" component={DataAnalystDashboard} />
         <Route path="/inventory" component={Inventory} />
         <Route path="/upload" component={UploadPage} />
         <Route path="/appraisal" component={AppraisalPage} />
+        <Route path="/canadian-retail" component={CanadianRetailPage} />
+        <Route path="/export" component={ExportPage} />
+        <Route path="/reference" component={ReferencePage} />
+        <Route path="/settings" component={SettingsPage} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
