@@ -146,6 +146,10 @@ export default function Inventory() {
   const [filterBodyType, setFilterBodyType] = useState<string[]>([]);
   const [filterEngineCylinders, setFilterEngineCylinders] = useState<string[]>([]);
   
+  // Sorting state - declare early since it's used in filterParams
+  const [sortBy, setSortBy] = useState("addedDate");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  
   // Build filter params for server-side filtering (with sorting across all data)
   const filterParams = useMemo(() => {
     const params: any = {};
@@ -211,9 +215,6 @@ export default function Inventory() {
   const updateCarMutation = useUpdateCar();
   const deleteCarMutation = useDeleteCar();
   const toggleSoldStatusMutation = useToggleSoldStatus();
-
-  const [sortBy, setSortBy] = useState("addedDate");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   
   // Generate dynamic filter options from inventory
   const availableModels = useMemo(() => {
