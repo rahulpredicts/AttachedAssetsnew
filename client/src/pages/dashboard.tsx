@@ -103,7 +103,7 @@ export default function DashboardPage() {
                 Make your inventory visible to wholesale buyers and dealers looking to purchase in bulk.
               </p>
               <Link href="/inventory">
-                <Button className="w-full bg-green-600 hover:bg-green-700">
+                <Button className="w-full bg-green-600 hover:bg-green-700" data-testid="button-list-wholesale">
                   Go to Inventory
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
@@ -124,7 +124,7 @@ export default function DashboardPage() {
                 Search for vehicles matching your inventory profile and expand your selection.
               </p>
               <Link href="/inventory">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700" data-testid="button-buy-more">
                   Browse Inventory
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
