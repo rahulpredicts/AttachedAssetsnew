@@ -61,7 +61,7 @@ function Router() {
         <Route path="/dealer-inventory" component={DealerInventoryPage} />
         <Route path="/upload" component={UploadPage} />
         <Route path="/appraisal" component={AppraisalPage} />
-        <Route path="/export">{() => <AdminOrAnalystRoute component={ExportPage} />}</Route>
+        <Route path="/export" component={ExportPage} />
         <Route path="/canadian-retail" component={CanadianRetailPage} />
         <Route path="/reference" component={ReferencePage} />
         <Route path="/settings" component={SettingsPage} />

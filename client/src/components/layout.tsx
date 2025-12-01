@@ -59,11 +59,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { href: "/reference", label: "Reference", icon: BookOpen },
   ];
 
-  // Dealer navigation - Inventory for buying/selling + Vehicle Appraisal tool (NO valuations, NO Export)
+  // Dealer navigation - Inventory for buying/selling + Vehicle Appraisal + Export Calculator
   const dealerNavItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dealer-inventory", label: "Your Inventory", icon: Package },
     { href: "/appraisal", label: "Vehicle Appraisal", icon: Calculator },
+    { href: "/export", label: "Export Calculator", icon: FileDown },
     { href: "/upload", label: "Add Vehicles", icon: PlusCircle },
     { href: "/canadian-retail", label: "Canadian Retail", icon: MapPin },
     { href: "/reference", label: "Reference", icon: BookOpen },
