@@ -146,7 +146,7 @@ export default function Inventory() {
   const [filterBodyType, setFilterBodyType] = useState<string[]>([]);
   const [filterEngineCylinders, setFilterEngineCylinders] = useState<string[]>([]);
   
-  // Build filter params for server-side filtering
+  // Build filter params for server-side filtering (with sorting across all data)
   const filterParams = useMemo(() => {
     const params: any = {};
     if (selectedDealership?.id) params.dealershipId = selectedDealership.id;
@@ -170,11 +170,13 @@ export default function Inventory() {
     if (filterFuelType.length > 0) params.fuelType = filterFuelType;
     if (filterBodyType.length > 0) params.bodyType = filterBodyType;
     if (filterEngineCylinders.length > 0) params.engineCylinders = filterEngineCylinders;
+    params.sortBy = sortBy;
+    params.sortOrder = sortOrder;
     return params;
   }, [selectedDealership?.id, debouncedSearchTerm, statusFilter, filterMake, filterModel, 
       filterVin, filterVinStart, filterColor, filterTrim, filterYearRange, filterPriceRange, 
       filterKmsRange, filterProvince, filterTransmission, filterDrivetrain, filterFuelType, 
-      filterBodyType, filterEngineCylinders]);
+      filterBodyType, filterEngineCylinders, sortBy, sortOrder]);
   
   // Debounce search term
   useEffect(() => {

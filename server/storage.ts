@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-import { eq, desc, ilike, or, and, sql as sqlFn, count, gte, lte, inArray, like } from "drizzle-orm";
+import { eq, desc, ilike, or, and, sql as sqlFn, count, gte, lte, inArray, like, asc } from "drizzle-orm";
 import * as schema from "@shared/schema";
 import type { 
   Dealership, 
@@ -260,11 +260,27 @@ export class DatabaseStorage implements IStorage {
     
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
     
+    // Map sortBy field to database column
+    const getSortColumn = (field: string) => {
+      const fieldMap: any = {
+        'price': schema.cars.price,
+        'year': schema.cars.year,
+        'kilometers': schema.cars.kilometers,
+        'addedDate': schema.cars.createdAt,
+        'make': schema.cars.make,
+        'model': schema.cars.model
+      };
+      return fieldMap[field] || schema.cars.createdAt;
+    };
+    
+    const sortColumn = filters?.sortBy ? getSortColumn(filters.sortBy) : schema.cars.createdAt;
+    const isAscending = filters?.sortOrder === 'asc';
+    
     const [countResult, data] = await Promise.all([
       db.select({ count: count() }).from(schema.cars).where(whereClause),
       db.select().from(schema.cars)
         .where(whereClause)
-        .orderBy(desc(schema.cars.createdAt))
+        .orderBy(isAscending ? asc(sortColumn) : desc(sortColumn))
         .limit(pageSize)
         .offset(offset)
     ]);

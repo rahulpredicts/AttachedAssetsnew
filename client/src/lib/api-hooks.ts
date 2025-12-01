@@ -79,6 +79,8 @@ export interface CarFilterParams {
   fuelType?: string[];
   bodyType?: string[];
   engineCylinders?: string[];
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }
 
 // API functions
@@ -119,6 +121,8 @@ async function fetchCarsPaginated(
     if (filters.fuelType?.length) params.append('fuelType', filters.fuelType.join(','));
     if (filters.bodyType?.length) params.append('bodyType', filters.bodyType.join(','));
     if (filters.engineCylinders?.length) params.append('engineCylinders', filters.engineCylinders.join(','));
+    if (filters.sortBy) params.append('sortBy', filters.sortBy);
+    if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
   }
   
   const response = await fetch(`/api/cars/paginated?${params.toString()}`);

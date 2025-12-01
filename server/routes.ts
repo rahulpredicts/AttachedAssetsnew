@@ -149,7 +149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const page = parseInt(req.query.page as string) || 1;
       const pageSize = Math.min(parseInt(req.query.pageSize as string) || 50, 100);
       
-      // Parse all filter parameters
+      // Parse all filter parameters (including sorting across all data)
       const filters = {
         dealershipId: req.query.dealershipId as string || undefined,
         search: req.query.search as string || undefined,
@@ -172,6 +172,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         fuelType: req.query.fuelType ? (req.query.fuelType as string).split(',').filter(Boolean) : undefined,
         bodyType: req.query.bodyType ? (req.query.bodyType as string).split(',').filter(Boolean) : undefined,
         engineCylinders: req.query.engineCylinders ? (req.query.engineCylinders as string).split(',').filter(Boolean) : undefined,
+        sortBy: req.query.sortBy as string || undefined,
+        sortOrder: (req.query.sortOrder as 'asc' | 'desc') || undefined,
       };
       
       const result = await storage.getCarsPaginated({ page, pageSize }, filters);
