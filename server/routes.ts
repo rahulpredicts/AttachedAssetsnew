@@ -147,7 +147,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/cars/paginated", async (req, res) => {
     try {
       const page = parseInt(req.query.page as string) || 1;
-      const pageSize = Math.min(parseInt(req.query.pageSize as string) || 50, 100);
+      const pageSize = Math.min(parseInt(req.query.pageSize as string) || 50, 10000);
       
       // Parse all filter parameters (including sorting across all data)
       const filters = {

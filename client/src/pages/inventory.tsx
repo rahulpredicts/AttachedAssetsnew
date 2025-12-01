@@ -119,7 +119,7 @@ export default function Inventory() {
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(50);
+  const [pageSize] = useState(10000); // Load all data on one page
   const [statusFilter, setStatusFilter] = useState<string>("all");
   
   // Filters
