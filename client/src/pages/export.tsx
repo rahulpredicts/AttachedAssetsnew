@@ -78,14 +78,14 @@ export default function ExportPage() {
           <p className="text-slate-400">Add vehicles by VIN and prepare export reports</p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Left: Vehicle Input */}
-          <div className="lg:col-span-2">
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* Left Column: Vehicle Management */}
+          <div className="space-y-6">
             {/* Add Vehicle Section */}
-            <Card className="bg-slate-800 border-slate-700 mb-6">
+            <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Plus className="w-5 h-5" />
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Plus className="w-5 h-5 text-blue-400" />
                   Add Vehicle for Export
                 </CardTitle>
                 <CardDescription>Enter VIN and odometer reading to add vehicles</CardDescription>
@@ -93,7 +93,7 @@ export default function ExportPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="vin" className="text-slate-300 block mb-2">VIN Number</Label>
+                    <Label htmlFor="vin" className="text-slate-300 block mb-2 font-semibold">VIN Number</Label>
                     <Input
                       id="vin"
                       placeholder="e.g., 5N1DL1FS5PC330227"
@@ -104,7 +104,7 @@ export default function ExportPage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="odometer" className="text-slate-300 block mb-2">Odometer (km)</Label>
+                    <Label htmlFor="odometer" className="text-slate-300 block mb-2 font-semibold">Odometer (km)</Label>
                     <Input
                       id="odometer"
                       placeholder="e.g., 45000"
@@ -116,10 +116,10 @@ export default function ExportPage() {
                   </div>
                   <Button
                     onClick={addVehicle}
-                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6"
                     data-testid="button-add-vehicle"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="w-5 h-5 mr-2" />
                     Add Vehicle
                   </Button>
                 </div>
@@ -129,8 +129,8 @@ export default function ExportPage() {
             {/* Vehicle Queue */}
             <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Car className="w-5 h-5" />
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Car className="w-5 h-5 text-slate-300" />
                   Export Queue ({vehicles.length})
                 </CardTitle>
                 <CardDescription>Vehicles ready for export</CardDescription>
@@ -143,16 +143,16 @@ export default function ExportPage() {
                     {vehicles.map((vehicle, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg border border-slate-600"
+                        className="flex items-center justify-between p-4 bg-slate-700/70 rounded-lg border border-slate-600"
                         data-testid={`row-vehicle-export-${idx}`}
                       >
                         <div className="flex-1">
-                          <p className="font-semibold text-white">{vehicle.name}</p>
+                          <p className="font-semibold text-white text-base">{vehicle.name}</p>
                           <p className="text-xs text-slate-400">VIN: {vehicle.vin} • Odometer: {vehicle.odometer} km</p>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 ml-4">
                           {vehicle.status === 'ready' && (
-                            <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">Ready</span>
+                            <span className="text-xs bg-green-500/30 text-green-300 px-3 py-1 rounded font-semibold">Ready</span>
                           )}
                           <button
                             onClick={() => removeVehicle(idx)}
@@ -170,13 +170,13 @@ export default function ExportPage() {
             </Card>
           </div>
 
-          {/* Right: Export Options */}
+          {/* Right Column: Export Options */}
           <div className="space-y-6">
             {/* Format Selection */}
             <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5" />
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <TrendingUp className="w-5 h-5 text-blue-400" />
                   Export Format
                 </CardTitle>
                 <CardDescription>Choose format</CardDescription>
@@ -191,36 +191,36 @@ export default function ExportPage() {
                     <button
                       key={format}
                       onClick={() => setSelectedFormat(format as any)}
-                      className={`w-full p-3 rounded-lg border transition-all text-left ${
+                      className={`w-full p-4 rounded-lg border-2 transition-all text-left font-semibold ${
                         selectedFormat === format
-                          ? 'border-blue-500 bg-blue-500/10'
-                          : 'border-slate-600 hover:border-slate-500'
+                          ? 'border-blue-500 bg-blue-600/20 text-white'
+                          : 'border-slate-600 bg-slate-700/50 text-slate-300 hover:border-slate-500'
                       }`}
                       data-testid={`button-format-${format}`}
                     >
-                      <p className="text-sm font-semibold">{icon} {label}</p>
+                      <p className="text-base">{icon} {label}</p>
                     </button>
                   ))}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Quick Stats */}
-            <Card className="bg-gradient-to-br from-blue-900/30 to-slate-800 border-blue-700/30">
+            {/* Export Summary */}
+            <Card className="bg-slate-800 border-slate-700">
               <CardHeader>
-                <CardTitle className="text-sm">Export Summary</CardTitle>
+                <CardTitle className="text-base font-semibold">Export Summary</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between items-center">
                     <span className="text-slate-400">Vehicles:</span>
-                    <span className="font-semibold">{vehicles.length}</span>
+                    <span className="font-semibold text-white">{vehicles.length}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <span className="text-slate-400">Format:</span>
-                    <span className="font-semibold">{selectedFormat.toUpperCase()}</span>
+                    <span className="font-semibold text-white">{selectedFormat.toUpperCase()}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <span className="text-slate-400">Status:</span>
                     <span className="text-green-400 font-semibold">Ready</span>
                   </div>
@@ -231,7 +231,7 @@ export default function ExportPage() {
             {/* Export Button */}
             <Button
               size="lg"
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-6"
               onClick={handleExport}
               data-testid="button-export-vehicles"
             >
