@@ -10,12 +10,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const { user, isAdmin } = useAuth();
 
   const navItems = [
-    { href: "/", label: "Inventory", icon: LayoutDashboard, adminOnly: false },
-    { href: "/upload", label: "Add Vehicles", icon: PlusCircle, adminOnly: false },
-    { href: "/appraisal", label: "Appraisal Tool", icon: Calculator, adminOnly: false },
+    ...(isAdmin 
+      ? [{ href: "/admin", label: "Admin Dashboard", icon: Shield, adminOnly: true }]
+      : [{ href: "/", label: "Inventory", icon: LayoutDashboard, adminOnly: false }]
+    ),
+    { href: "/inventory", label: "Inventory", icon: LayoutDashboard, adminOnly: false, hidden: isAdmin },
+    { href: "/upload", label: "Add Vehicles", icon: PlusCircle, adminOnly: false, hidden: isAdmin },
+    { href: "/appraisal", label: "Appraisal Tool", icon: Calculator, adminOnly: false, hidden: isAdmin },
   ];
 
-  const filteredNavItems = navItems.filter(item => !item.adminOnly || isAdmin);
+  const filteredNavItems = navItems.filter(item => !item.hidden);
 
   const handleLogout = () => {
     window.location.href = '/api/logout';

@@ -1,12 +1,14 @@
-# AutoManager - Dealership Management System
+# Carsellia - Vehicle Trading & Dealership Management Platform
 
 ## Overview
 
-AutoManager is a full-stack dealership management system built for Canadian car dealerships. The application provides comprehensive tools for managing vehicle inventory, dealership information, and vehicle appraisals. It features a React-based frontend with shadcn/ui components and an Express backend with PostgreSQL database storage.
+Carsellia is a comprehensive, production-ready vehicle trading and dealership management platform built for 100,000+ concurrent users. The application provides secure authentication with separate Admin and Dealer portals, comprehensive vehicle inventory management, and advanced appraisal tools. Built with React, Express, and PostgreSQL on Replit.
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
+- Preferred communication style: Simple, everyday language
+- Scale target: 100,000 concurrent users
+- Architecture: Dealer and Admin role-based separation with complete admin controls
 
 ## System Architecture
 
@@ -15,206 +17,196 @@ Preferred communication style: Simple, everyday language.
 **Frontend:**
 - React 18 with TypeScript
 - Vite as build tool and development server
-- Wouter for client-side routing
+- Wouter for client-side routing with role-based page access
 - TanStack Query (React Query) for server state management
-- Tailwind CSS with custom theme configuration
-- shadcn/ui component library (New York style variant)
+- Tailwind CSS v4 with slate/blue color scheme
+- shadcn/ui component library
 - Lucide React for iconography
+
+**Authentication:**
+- Replit Auth (OpenID Connect) with multi-provider support (Google, GitHub, Apple, Email/Password)
+- Session-based authentication with PostgreSQL session store
+- Role-based access control (Admin/Dealer)
+- Secure token refresh mechanism
 
 **Backend:**
 - Express.js server with TypeScript
 - ESM module system
 - Custom logging middleware for API requests
-- Hot module reloading in development via Vite middleware
+- Hot module reloading in development
+- Passport.js for OpenID Connect authentication
 
 **Database:**
 - PostgreSQL via Neon serverless driver
-- Drizzle ORM for type-safe database operations
-- Schema-first approach with automatic TypeScript type generation
-- Migration support through drizzle-kit
+- Drizzle ORM for type-safe operations
+- Session storage table for secure session management
+- User management table with role tracking
 
 ### Project Structure
 
-The codebase follows a monorepo-style structure with clear separation of concerns:
+```
+/client/src
+  /pages
+    - inventory.tsx (Vehicle listing with advanced filters)
+    - upload.tsx (Bulk CSV/URL/AI text import)
+    - appraisal.tsx (Vehicle valuation tool)
+    - landing.tsx (Public landing page)
+    - admin-dashboard.tsx (Admin user management)
+  /components
+    - layout.tsx (Role-based sidebar navigation)
+    - ui/* (shadcn/ui components)
+  /lib
+    - api-hooks.ts (Tanstack Query hooks)
+    - queryClient.ts (Query configuration)
+  /hooks
+    - useAuth.ts (Authentication state)
 
-- `/client` - Frontend React application
-  - `/src/pages` - Route components (inventory, upload, appraisal)
-  - `/src/components` - Reusable UI components
-  - `/src/lib` - Utilities, API hooks, and shared logic
-  - `/src/hooks` - Custom React hooks
-- `/server` - Backend Express application
-  - `routes.ts` - API endpoint definitions
-  - `storage.ts` - Database abstraction layer
-  - `vite.ts` - Development server setup
-- `/shared` - Code shared between client and server
-  - `schema.ts` - Drizzle database schema and Zod validation schemas
-- `/attached_assets` - Static data files (Canadian automotive database, trim data)
-- `/migrations` - Database migration files
+/server
+  - replitAuth.ts (Replit Auth setup)
+  - routes.ts (API endpoints with auth)
+  - storage.ts (Database operations)
+  - index.ts (Express app setup)
+
+/shared
+  - schema.ts (Drizzle schema + Zod validation)
+```
 
 ### Database Schema
 
-The application uses two primary tables:
+**Users Table (Authentication):**
+- id: UUID primary key
+- email: Unique email address
+- firstName, lastName: User profile
+- profileImageUrl: Avatar from auth provider
+- role: 'admin' or 'dealer'
+- createdAt, updatedAt: Timestamps
+
+**Sessions Table (Authentication):**
+- sid: Session ID
+- sess: Session data (JSONB)
+- expire: Session expiration timestamp
 
 **Dealerships Table:**
-- Stores dealership information (name, location, province, address, postal code, phone)
-- Auto-generated UUID primary keys
-- Timestamp tracking for creation date
+- id, name, location, province, address, postalCode, phone
+- createdAt timestamp
 
 **Cars Table:**
-- Comprehensive vehicle information including VIN, make, model, trim, year
-- Technical specifications (transmission, fuel type, body type, drivetrain, engine details)
-- Pricing and mileage data
-- Array field for vehicle features
-- Links to external resources (listing and Carfax)
+- Comprehensive vehicle data (VIN, make, model, trim, year, price, kilometers)
+- Technical specs (transmission, fuel type, drivetrain, engine details)
+- Features array for vehicle amenities
 - Status tracking (available, sold, pending)
-- Foreign key relationship to dealerships with cascade delete
-
-**Schema Design Decisions:**
-- Used Drizzle ORM over Prisma for its lightweight approach and SQL-like syntax
-- PostgreSQL chosen for robust relational data support and array fields
-- Zod schemas derived from Drizzle schemas for consistent validation
-- Separate insert and update schemas to handle optional fields correctly
+- Carfax/listing links
 
 ### API Architecture
 
-RESTful API design with the following endpoints:
+**Authentication Routes:**
+- `GET /api/login` - Initiate Replit Auth flow
+- `GET /api/callback` - OAuth callback (handled by Replit Auth)
+- `GET /api/logout` - Logout and session cleanup
+- `GET /api/auth/user` - Get current user (protected)
 
-**Dealerships:**
-- `GET /api/dealerships` - List all dealerships
-- `GET /api/dealerships/:id` - Get single dealership
-- `POST /api/dealerships` - Create dealership
-- `PATCH /api/dealerships/:id` - Update dealership
-- `DELETE /api/dealerships/:id` - Delete dealership
+**Admin Routes:**
+- `GET /api/admin/users` - List all users (admin only)
+- `PATCH /api/admin/users/:id/role` - Update user role (admin only)
 
-**Cars:**
-- `GET /api/cars` - List all cars (with optional dealership filter and search)
-- `GET /api/cars/:id` - Get single car
-- `GET /api/cars/vin/:vin` - Look up car by VIN
-- `POST /api/cars` - Create car
-- `PATCH /api/cars/:id` - Update car
-- `DELETE /api/cars/:id` - Delete car
-
-**Design Patterns:**
-- Repository pattern via `IStorage` interface in storage.ts
-- Input validation using Zod schemas
-- Consistent error handling with appropriate HTTP status codes
-- Request/response logging with truncation for readability
+**Dealership & Car Routes:**
+- Standard REST endpoints with pagination
+- Advanced filtering on server-side
+- Car counts by status and dealership
 
 ### Frontend Architecture
 
+**Authentication Flow:**
+- Landing page shown for unauthenticated users
+- Login button redirects to `/api/login` (Replit Auth handles OAuth)
+- After login, user redirected to role-specific dashboard
+- Admin users see: Admin Dashboard, User Management
+- Dealer users see: Inventory, Add Vehicles, Appraisal Tool
+
 **State Management:**
-- TanStack Query for server state with custom query keys
+- TanStack Query for server state and caching
+- useAuth hook for authentication state
 - Local component state for UI interactions
-- Custom hooks (`use-toast`, `use-mobile`) for cross-cutting concerns
-- No global state management library (Redux, Zustand) - relies on React Query cache
 
-**Routing:**
-- Wouter chosen over React Router for minimal bundle size
-- Three main routes: inventory (/), upload (/upload), appraisal (/appraisal)
-- Layout component wraps all routes with sidebar navigation
+**Role-Based Access Control:**
+- Admins: Full system access, user management, analytics
+- Dealers: Inventory, uploads, appraisals (own data only)
+- Routes protected via useAuth hook
 
-**Component Architecture:**
-- Extensive use of shadcn/ui components for consistent design
-- Custom business logic components in pages directory
-- Composition pattern for complex UIs
-- Form handling with controlled components
+### Performance Optimizations
 
-**Data Fetching Strategy:**
-- Custom hooks in `api-hooks.ts` wrap TanStack Query
-- Mutations include optimistic updates and cache invalidation
-- Error boundaries via toast notifications
-- Infinite stale time configured for stable data
+**Database:**
+- Server-side pagination (50-100 items per page)
+- Indexed queries on frequently searched fields
+- Connection pooling via Neon
+- Aggregated queries for counts
 
-### Build and Deployment
+**Frontend:**
+- Code splitting with Wouter lazy routing
+- Component memoization for heavy lists
+- Query result caching with Tanstack Query
+- Debounced search inputs
 
-**Development:**
-- Vite dev server on port 5000 for frontend
-- Express server with HMR support
-- TypeScript type checking without emission
-- Hot reload for both client and server code
+**Session Management:**
+- PostgreSQL session store (replaces memory store)
+- Session TTL: 7 days
+- Automatic token refresh
+- Secure HTTP-only cookies
 
-**Production:**
-- Vite builds frontend to `dist/public`
-- esbuild bundles server to `dist/index.js`
-- Single Node.js process serves both static assets and API
-- Environment variables for database connection
+### Branding & UI
 
-**Module Resolution:**
-- Path aliases configured (@/, @shared/, @assets/)
-- Consistent across TypeScript config and Vite config
-- ESM imports throughout the codebase
+**Color Scheme:**
+- Primary: Slate-900 (dark background)
+- Accent: Blue-600 (interactive elements)
+- Status: Green/Red/Yellow for states
 
-### Special Features
+**Components:**
+- Dark modern UI for Carsellia brand
+- Responsive design (mobile-first)
+- Footer with contact info (Ontario, Canada)
 
-**Canadian Automotive Data:**
-- Comprehensive trim database for Canadian market vehicles (1995-2025)
-- JSON and CSV formats provided in attached_assets
-- Infiniti-specific model data included
-- Used for validation and autocomplete in vehicle entry forms
+## Authentication & Security
 
-**VIN Decoding:**
-- Integration pattern for NHTSA VIN decoder (referenced in code)
-- Client-side trim validation for Canadian market
+**Replit Auth Features:**
+- No password storage (OAuth providers handle auth)
+- Automatic token rotation
+- Session security with secure cookies
+- Multi-provider support
 
-**Carfax Integration:**
-- Links to Carfax reports stored per vehicle
-- Status tracking (clean, claims, unavailable)
-
-**Responsive Design:**
-- Mobile-first Tailwind configuration
-- Custom breakpoint hook for conditional rendering
-- Sheet components for mobile navigation
+**Access Control:**
+- Middleware authentication on all protected routes
+- Role-based authorization checks
+- 403 Forbidden for unauthorized access
+- Automatic redirect to login on 401
 
 ## External Dependencies
 
-### Third-Party Services
+**Services:**
+- Replit Auth (OpenID Connect)
+- Neon PostgreSQL (DATABASE_URL env var)
+- Optional: ScrapingDog API for URL scraping
+- Optional: Claude API for AI text parsing
 
-**Database:**
-- Neon PostgreSQL serverless database
-- Connection via `@neondatabase/serverless` driver
-- Requires `DATABASE_URL` environment variable
+**NPM Packages:**
+- Replit Auth: openid-client, passport, express-session, connect-pg-simple
+- UI: @radix-ui/*, tailwindcss, lucide-react
+- Data: drizzle-orm, drizzle-zod, @tanstack/react-query, zod
+- Backend: express, passport
 
-**Development Tools:**
-- Replit-specific plugins for development environment
-  - Runtime error modal overlay
-  - Cartographer for code navigation
-  - Dev banner for replit environment
-- Only loaded in development mode when `REPL_ID` is present
+## Deployment & Environment
 
-### Key NPM Packages
+**Environment Variables:**
+- DATABASE_URL: PostgreSQL connection (Neon)
+- SESSION_SECRET: Session encryption key (required for security)
+- REPL_ID: Replit environment ID (auto-set by Replit)
+- Optional: SCRAPINGDOG_API_KEY, CLAUDE_API_KEY
 
-**UI Framework:**
-- @radix-ui/* - Headless UI primitives (20+ packages)
-- tailwindcss - Utility-first CSS framework
-- tw-animate-css - Animation utilities
-- class-variance-authority - Component variant management
-- lucide-react - Icon library
+**Development:**
+- Vite dev server on port 5000
+- Hot module reloading for client and server
+- TypeScript type checking
 
-**Data Management:**
-- drizzle-orm - Type-safe ORM
-- drizzle-zod - Zod schema generation from Drizzle schemas
-- @tanstack/react-query - Async state management
-- zod - Runtime type validation
-
-**Forms:**
-- react-hook-form - Form state management
-- @hookform/resolvers - Validation resolver integration
-
-**Backend:**
-- express - Web server framework
-- connect-pg-simple - PostgreSQL session store (available but not actively used)
-
-**Utilities:**
-- date-fns - Date manipulation
-- nanoid - ID generation
-- clsx / tailwind-merge - Class name utilities
-- cmdk - Command palette component
-
-### Build Tools
-
-- vite - Frontend build tool and dev server
-- @vitejs/plugin-react - React support for Vite
-- @tailwindcss/vite - Tailwind v4 integration
-- esbuild - Server bundling
-- tsx - TypeScript execution for development
-- drizzle-kit - Database migrations and schema management
+**Production:**
+- Single Node.js process
+- Frontend built to dist/public
+- Express serves both static assets and API
