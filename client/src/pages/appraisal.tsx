@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useCars, useDealerships, type Car, type Dealership } from "@/lib/api-hooks";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -59,6 +60,8 @@ export default function AppraisalPage() {
   const { data: dealerships = [] } = useDealerships();
   const { data: allCars = [] } = useCars();
   const { toast } = useToast();
+  const { isAdmin, isDataAnalyst } = useAuth();
+  const canSeeValuations = isAdmin || isDataAnalyst;
   const [formData, setFormData] = useState({
     vin: "",
     make: "",
@@ -638,7 +641,7 @@ export default function AppraisalPage() {
                         onClick={handleAppraise}
                         disabled={!formData.make || !formData.model}
                     >
-                        Calculate Value
+                        {canSeeValuations ? "Calculate Value" : "Find Comparables"}
                     </Button>
                 </CardContent>
             </Card>
@@ -648,34 +651,36 @@ export default function AppraisalPage() {
         <div className="lg:col-span-8 space-y-6">
             {appraisal ? (
                 <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-                    {/* Value Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Card className="border-blue-100 bg-blue-50/50">
-                            <CardContent className="p-6 text-center">
-                                <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 text-blue-600">
-                                    <DollarSign className="w-6 h-6" />
-                                </div>
-                                <div className="text-sm font-medium text-blue-600 uppercase tracking-wider mb-1">Estimated Retail</div>
-                                <div className="text-3xl font-bold text-gray-900">
-                                    ${Math.round(appraisal.retailLow).toLocaleString()} - ${Math.round(appraisal.retailHigh).toLocaleString()}
-                                </div>
-                                <p className="text-sm text-gray-500 mt-2">Market listing price</p>
-                            </CardContent>
-                        </Card>
+                    {/* Value Cards - Only visible to Admin/Data Analyst */}
+                    {canSeeValuations && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <Card className="border-blue-100 bg-blue-50/50">
+                                <CardContent className="p-6 text-center">
+                                    <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 text-blue-600">
+                                        <DollarSign className="w-6 h-6" />
+                                    </div>
+                                    <div className="text-sm font-medium text-blue-600 uppercase tracking-wider mb-1">Estimated Retail</div>
+                                    <div className="text-3xl font-bold text-gray-900">
+                                        ${Math.round(appraisal.retailLow).toLocaleString()} - ${Math.round(appraisal.retailHigh).toLocaleString()}
+                                    </div>
+                                    <p className="text-sm text-gray-500 mt-2">Market listing price</p>
+                                </CardContent>
+                            </Card>
 
-                        <Card className="border-green-100 bg-green-50/50">
-                            <CardContent className="p-6 text-center">
-                                <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3 text-green-600">
-                                    <TrendingUp className="w-6 h-6" />
-                                </div>
-                                <div className="text-sm font-medium text-green-600 uppercase tracking-wider mb-1">Estimated Trade-In</div>
-                                <div className="text-3xl font-bold text-gray-900">
-                                    ${Math.round(appraisal.tradeInLow).toLocaleString()} - ${Math.round(appraisal.tradeInHigh).toLocaleString()}
-                                </div>
-                                <p className="text-sm text-gray-500 mt-2">Acquisition cost</p>
-                            </CardContent>
-                        </Card>
-                    </div>
+                            <Card className="border-green-100 bg-green-50/50">
+                                <CardContent className="p-6 text-center">
+                                    <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3 text-green-600">
+                                        <TrendingUp className="w-6 h-6" />
+                                    </div>
+                                    <div className="text-sm font-medium text-green-600 uppercase tracking-wider mb-1">Estimated Trade-In</div>
+                                    <div className="text-3xl font-bold text-gray-900">
+                                        ${Math.round(appraisal.tradeInLow).toLocaleString()} - ${Math.round(appraisal.tradeInHigh).toLocaleString()}
+                                    </div>
+                                    <p className="text-sm text-gray-500 mt-2">Acquisition cost</p>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
 
                     {/* Comparable Vehicles */}
                     {showComparables && (
