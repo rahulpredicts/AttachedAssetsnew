@@ -36,9 +36,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
     window.location.href = '/api/logout';
   };
 
-  // Admin navigation - Full access to all features including Appraise and Export
+  // Admin navigation - Full access to all features including User Management
   const adminNavItems = [
     { href: "/admin", label: "Admin Dashboard", icon: Shield },
+    { href: "/user-management", label: "User Management", icon: Users },
     { href: "/inventory", label: "All Inventory", icon: Package },
     { href: "/appraisal", label: "Appraise", icon: Calculator },
     { href: "/export", label: "Export Calculator", icon: FileDown },
@@ -48,24 +49,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { href: "/settings", label: "Settings", icon: Settings },
   ];
 
-  // Data Analyst navigation - Access to inventory, appraise, export, and data tools
+  // Data Analyst navigation - Can upload, delete, publish cars; NO appraisal access
   const dataAnalystNavItems = [
     { href: "/data-analyst", label: "Data Analyst Hub", icon: Database },
     { href: "/inventory", label: "All Inventory", icon: Package },
-    { href: "/appraisal", label: "Appraise", icon: Calculator },
-    { href: "/export", label: "Export Calculator", icon: FileDown },
     { href: "/upload", label: "Add Vehicles", icon: PlusCircle },
     { href: "/canadian-retail", label: "Canadian Retail", icon: MapPin },
     { href: "/reference", label: "Reference", icon: BookOpen },
   ];
 
-  // Dealer navigation - Inventory for buying/selling + Vehicle Appraisal + Export Calculator
+  // Dealer navigation - Appraisal, inventory viewing, pricing, comparables; NO upload/delete
   const dealerNavItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/dealer-inventory", label: "Your Inventory", icon: Package },
     { href: "/appraisal", label: "Vehicle Appraisal", icon: Calculator },
     { href: "/export", label: "Export Calculator", icon: FileDown },
-    { href: "/upload", label: "Add Vehicles", icon: PlusCircle },
     { href: "/canadian-retail", label: "Canadian Retail", icon: MapPin },
     { href: "/reference", label: "Reference", icon: BookOpen },
     { href: "/settings", label: "Settings", icon: Settings },
