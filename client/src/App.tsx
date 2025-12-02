@@ -18,11 +18,52 @@ import CanadianRetailPage from "@/pages/canadian-retail";
 import ExportPage from "@/pages/export";
 import ReferencePage from "@/pages/reference";
 import SettingsPage from "@/pages/settings";
+import UserManagementPage from "@/pages/user-management";
 import { Loader2 } from "lucide-react";
 
+// Admin-only route guard
+function AdminRoute({ component: Component }: { component: React.ComponentType }) {
+  const { isAdmin } = useAuth();
+  if (!isAdmin) {
+    return <Redirect to="/" />;
+  }
+  return <Component />;
+}
+
+// Admin or Data Analyst route guard (for inventory access)
 function AdminOrAnalystRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAdmin, isDataAnalyst } = useAuth();
   if (!isAdmin && !isDataAnalyst) {
+    return <Redirect to="/" />;
+  }
+  return <Component />;
+}
+
+// Admin or Data Analyst route guard (for upload/delete access)
+function UploadRoute({ component: Component }: { component: React.ComponentType }) {
+  const { isAdmin, isDataAnalyst } = useAuth();
+  // Only Admin and Data Analyst can upload vehicles
+  if (!isAdmin && !isDataAnalyst) {
+    return <Redirect to="/" />;
+  }
+  return <Component />;
+}
+
+// Admin or Dealer route guard (for appraisal access)
+function AppraisalRoute({ component: Component }: { component: React.ComponentType }) {
+  const { isAdmin, isDealer } = useAuth();
+  // Only Admin and Dealer can access appraisal tools
+  if (!isAdmin && !isDealer) {
+    return <Redirect to="/" />;
+  }
+  return <Component />;
+}
+
+// Admin or Dealer route guard (for export access)
+function ExportRoute({ component: Component }: { component: React.ComponentType }) {
+  const { isAdmin, isDealer } = useAuth();
+  // Only Admin and Dealer can access export calculator
+  if (!isAdmin && !isDealer) {
     return <Redirect to="/" />;
   }
   return <Component />;
@@ -54,17 +95,34 @@ function Router() {
   return (
     <Layout>
       <Switch>
+        {/* Role-based dashboard routing */}
         <Route path="/" component={isAdmin ? AdminDashboard : isDataAnalyst ? DataAnalystDashboard : DashboardPage} />
-        <Route path="/admin" component={AdminDashboard} />
+        
+        {/* Admin-only routes */}
+        <Route path="/admin">{() => <AdminRoute component={AdminDashboard} />}</Route>
+        <Route path="/user-management">{() => <AdminRoute component={UserManagementPage} />}</Route>
+        
+        {/* Data Analyst routes */}
         <Route path="/data-analyst" component={DataAnalystDashboard} />
+        
+        {/* Inventory - Admin and Data Analyst can see all, Dealers see their own */}
         <Route path="/inventory">{() => <AdminOrAnalystRoute component={Inventory} />}</Route>
         <Route path="/dealer-inventory" component={DealerInventoryPage} />
-        <Route path="/upload" component={UploadPage} />
-        <Route path="/appraisal" component={AppraisalPage} />
-        <Route path="/export" component={ExportPage} />
+        
+        {/* Upload - Admin and Data Analyst only */}
+        <Route path="/upload">{() => <UploadRoute component={UploadPage} />}</Route>
+        
+        {/* Appraisal - Admin and Dealer only (Data Analyst cannot access) */}
+        <Route path="/appraisal">{() => <AppraisalRoute component={AppraisalPage} />}</Route>
+        
+        {/* Export Calculator - Admin and Dealer only */}
+        <Route path="/export">{() => <ExportRoute component={ExportPage} />}</Route>
+        
+        {/* Shared routes - all roles can access */}
         <Route path="/canadian-retail" component={CanadianRetailPage} />
         <Route path="/reference" component={ReferencePage} />
         <Route path="/settings" component={SettingsPage} />
+        
         <Route component={NotFound} />
       </Switch>
     </Layout>
