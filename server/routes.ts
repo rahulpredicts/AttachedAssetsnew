@@ -11,12 +11,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication
   await setupAuth(app);
 
+  // Helper function to sanitize user data - removes sensitive fields
+  const sanitizeUser = (user: any) => {
+    if (!user) return user;
+    const { passwordHash, passwordResetToken, passwordResetExpiry, ...safeUser } = user;
+    return safeUser;
+  };
+
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
-      res.json(user);
+      res.json(sanitizeUser(user));
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
@@ -32,7 +39,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Admin access required" });
       }
       const users = await storage.getAllUsers();
-      res.json(users);
+      // Sanitize all users to remove sensitive fields
+      res.json(users.map(sanitizeUser));
     } catch (error) {
       console.error("Error fetching users:", error);
       res.status(500).json({ message: "Failed to fetch users" });
@@ -55,7 +63,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
-      res.json(updatedUser);
+      res.json(sanitizeUser(updatedUser));
     } catch (error) {
       console.error("Error updating user role:", error);
       res.status(500).json({ message: "Failed to update user role" });
@@ -85,9 +93,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const newUser = await storage.createPasswordUser(validated, passwordHash);
       
-      // Don't return the password hash in the response
-      const { passwordHash: _, ...userWithoutPassword } = newUser;
-      res.status(201).json(userWithoutPassword);
+      res.status(201).json(sanitizeUser(newUser));
     } catch (error: any) {
       console.error("Error creating user:", error);
       if (error.name === 'ZodError') {
@@ -113,9 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      // Don't return the password hash in the response
-      const { passwordHash: _, ...userWithoutPassword } = updatedUser;
-      res.json(userWithoutPassword);
+      res.json(sanitizeUser(updatedUser));
     } catch (error: any) {
       console.error("Error updating user:", error);
       if (error.name === 'ZodError') {

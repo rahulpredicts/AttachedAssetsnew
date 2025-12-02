@@ -51,8 +51,9 @@ Carsellia is a comprehensive, production-ready vehicle trading and dealership ma
     - upload.tsx (Bulk CSV/URL/AI text import)
     - appraisal.tsx (Vehicle valuation tool)
     - landing.tsx (Public landing page)
-    - admin-dashboard.tsx (Admin user management)
+    - admin-dashboard.tsx (Admin dashboard overview)
     - data-analyst-dashboard.tsx (Bulk upload hub for data team)
+    - user-management.tsx (Admin user CRUD - create, roles, passwords)
   /components
     - layout.tsx (Role-based sidebar navigation)
     - ui/* (shadcn/ui components)
@@ -80,6 +81,11 @@ Carsellia is a comprehensive, production-ready vehicle trading and dealership ma
 - firstName, lastName: User profile
 - profileImageUrl: Avatar from auth provider
 - role: 'admin', 'dealer', or 'data_analyst'
+- passwordHash: For admin-created users (null for OAuth)
+- passwordResetToken, passwordResetExpiry: Password reset support
+- isActive: Account status ('true'/'false')
+- authType: 'oauth' or 'password'
+- lastLoginAt: Last login timestamp
 - createdAt, updatedAt: Timestamps
 
 **Sessions Table (Authentication):**
@@ -108,7 +114,11 @@ Carsellia is a comprehensive, production-ready vehicle trading and dealership ma
 
 **Admin Routes:**
 - `GET /api/admin/users` - List all users (admin only)
+- `POST /api/admin/users` - Create new user with password (admin only)
+- `PATCH /api/admin/users/:id` - Update user details (admin only)
 - `PATCH /api/admin/users/:id/role` - Update user role (admin only)
+- `POST /api/admin/users/:id/reset-password` - Reset user password (admin only)
+- `DELETE /api/admin/users/:id` - Delete user (admin only)
 
 **Dealership & Car Routes:**
 - Standard REST endpoints with pagination
@@ -130,11 +140,13 @@ Carsellia is a comprehensive, production-ready vehicle trading and dealership ma
 - useAuth hook for authentication state
 - Local component state for UI interactions
 
-**Role-Based Access Control:**
-- Admins: Full system access, user management, analytics
-- Dealers: Inventory, uploads, appraisals (own data only)
-- Data Analysts: Bulk vehicle uploads, specialized import tools
-- Routes protected via useAuth hook
+**Role-Based Access Control (Updated):**
+- **Admins**: Full system access, user management (create/delete/reset passwords), all features
+- **Dealers**: Vehicle appraisal, view inventory & pricing, comparables, export calculator (NO upload/delete access)
+- **Data Analysts**: Upload vehicles, delete vehicles, publish data (NO appraisal/export access)
+- Routes protected via role-specific guards in App.tsx
+- Server-side role verification on all admin endpoints
+- Sensitive fields (passwordHash, resetTokens) sanitized from API responses
 
 ### Performance Optimizations
 

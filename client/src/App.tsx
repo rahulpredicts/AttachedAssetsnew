@@ -102,8 +102,8 @@ function Router() {
         <Route path="/admin">{() => <AdminRoute component={AdminDashboard} />}</Route>
         <Route path="/user-management">{() => <AdminRoute component={UserManagementPage} />}</Route>
         
-        {/* Data Analyst routes */}
-        <Route path="/data-analyst" component={DataAnalystDashboard} />
+        {/* Data Analyst routes - only Admin and Data Analyst can access */}
+        <Route path="/data-analyst">{() => <AdminOrAnalystRoute component={DataAnalystDashboard} />}</Route>
         
         {/* Inventory - Admin and Data Analyst can see all, Dealers see their own */}
         <Route path="/inventory">{() => <AdminOrAnalystRoute component={Inventory} />}</Route>
