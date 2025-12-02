@@ -1,43 +1,37 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useCars, type Car } from "@/lib/api-hooks";
 import { useAuth } from "@/hooks/useAuth";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   Calculator, 
   Car as CarIcon, 
-  Search,
   ChevronDown,
   ChevronUp,
   AlertTriangle,
   XCircle,
   CheckCircle,
-  Wrench,
-  Info,
-  Minus,
-  Plus,
   Loader2,
-  MapPin,
-  Gauge,
-  Shield,
-  Users,
+  Lock,
+  Settings,
   FileText,
+  Link2,
+  MoreHorizontal,
+  Camera,
+  Trash2,
   Sparkles,
-  Settings2,
-  HelpCircle
+  Info
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Switch } from "@/components/ui/switch";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Slider } from "@/components/ui/slider";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { decodeVIN } from "@/lib/nhtsa";
 
 const POPULAR_MAKES = [
@@ -59,6 +53,22 @@ const PROVINCES = [
   { code: "NU", name: "Nunavut" },
   { code: "YT", name: "Yukon" }
 ];
+
+const BODY_TYPES = [
+  "Sedan", "SUV", "Truck", "Coupe", "Hatchback", "Van", "Convertible", "Wagon"
+];
+
+const TRANSMISSIONS = [
+  { value: "automatic", label: "Automatic" },
+  { value: "manual", label: "Manual" },
+  { value: "cvt", label: "CVT" }
+];
+
+const COLOURS = [
+  "Black", "White", "Silver", "Grey", "Red", "Blue", "Green", "Brown", "Beige", "Gold", "Orange", "Yellow", "Purple", "Other"
+];
+
+const CYLINDERS = ["3", "4", "5", "6", "8", "10", "12"];
 
 const NAAA_GRADES = [
   { grade: 5, label: "Excellent", description: "Only minor chips; original finish; no tears, burns, or odors; all systems functional", reconditionLow: 500, reconditionHigh: 1000, color: "text-green-600", bg: "bg-green-50 dark:bg-green-950/30" },
@@ -120,42 +130,6 @@ const BODY_TYPE_DEPRECIATION: Record<string, { year1: number, annual: number }> 
   "convertible": { year1: 0.28, annual: 0.18 }
 };
 
-const RECONDITIONING_COSTS = {
-  brakes: {
-    padsOnly: { low: 100, high: 300, label: "Brake Pads Only (per axle)" },
-    padsRotors: { low: 250, high: 600, label: "Pads + Rotors (per axle)" },
-    completeJob: { low: 400, high: 800, label: "Complete Brake Job" }
-  },
-  tires: {
-    economy: { low: 400, high: 600, label: "Economy Set (4)" },
-    midRange: { low: 600, high: 1000, label: "Mid-Range Set (4)" },
-    suvTruck: { low: 750, high: 1300, label: "SUV/Truck Set (4)" }
-  },
-  glass: {
-    chipRepair: { low: 50, high: 150, label: "Chip Repair" },
-    windshield: { low: 200, high: 500, label: "Windshield Replacement" },
-    adasWindshield: { low: 500, high: 1000, label: "Windshield with ADAS" }
-  },
-  paintBody: {
-    touchUp: { low: 200, high: 500, label: "Touch-up/Scratch Repair" },
-    bumper: { low: 1000, high: 2000, label: "Bumper Respray" },
-    fullPanel: { low: 500, high: 1200, label: "Full Panel Repaint" },
-    pdr: { low: 100, high: 300, label: "PDR (per dent)" }
-  },
-  interior: {
-    basicDetail: { low: 100, high: 150, label: "Basic Detail" },
-    fullDetail: { low: 200, high: 400, label: "Full Detail with Extraction" },
-    smokeOdor: { low: 50, high: 100, label: "Smoke/Odor Treatment" },
-    seatRepair: { low: 100, high: 500, label: "Seat Tear Repair" }
-  },
-  mechanical: {
-    oilChange: { low: 40, high: 120, label: "Oil Change + Fluids" },
-    battery: { low: 100, high: 400, label: "Battery Replacement" },
-    alternator: { low: 400, high: 1000, label: "Alternator" },
-    safetyInspection: { low: 50, high: 150, label: "Safety Inspection" }
-  }
-};
-
 const TITLE_TYPES = [
   { value: "clean", label: "Clean Title", deduction: 0 },
   { value: "rebuilt", label: "Rebuilt Title", deduction: 0.30 },
@@ -171,13 +145,6 @@ const ACCIDENT_LEVELS = [
   { value: "moderate", label: "Moderate ($3,000-$10,000)", deduction: 0.125 },
   { value: "major", label: "Major Structural (>$10,000)", deduction: 0.20 },
   { value: "severe", label: "Severe (Rebuilt/Rollover)", deduction: 0.35 }
-];
-
-const RUST_LEVELS = [
-  { value: "none", label: "No Rust", costLow: 0, costHigh: 0 },
-  { value: "surface", label: "Surface Rust (paint-level)", costLow: 100, costHigh: 500 },
-  { value: "scale", label: "Scale Rust (bubbling paint)", costLow: 300, costHigh: 1000 },
-  { value: "penetrating", label: "Penetrating Rust (through-body)", costLow: 1000, costHigh: 5000 }
 ];
 
 type DecisionType = "buy" | "wholesale" | "reject";
@@ -210,10 +177,56 @@ interface AppraisalResult {
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 16 }, (_, i) => currentYear - i);
 
+function SectionHeader({ 
+  title, 
+  isOpen, 
+  onToggle,
+  className = ""
+}: { 
+  title: string; 
+  isOpen?: boolean; 
+  onToggle?: () => void;
+  className?: string;
+}) {
+  return (
+    <div 
+      className={cn(
+        "flex items-center justify-between px-3 py-2 bg-gradient-to-r from-slate-600 to-slate-700 text-white text-sm font-medium rounded-t cursor-pointer select-none",
+        className
+      )}
+      onClick={onToggle}
+    >
+      <span>{title}</span>
+      <div className="flex items-center gap-1">
+        {onToggle && (
+          isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function FormRow({ 
+  label, 
+  children, 
+  className = "" 
+}: { 
+  label: string; 
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={cn("flex items-center gap-2 py-1", className)}>
+      <Label className="w-24 text-xs text-slate-600 font-medium shrink-0 text-right">{label}</Label>
+      <div className="flex-1">{children}</div>
+    </div>
+  );
+}
+
 export default function AppraisalPage() {
   const { data: allCars = [] } = useCars();
   const { toast } = useToast();
-  const { isAdmin, isDataAnalyst } = useAuth();
+  const { user, isAdmin, isDataAnalyst } = useAuth();
   const canSeeValuations = isAdmin || isDataAnalyst;
   
   const [formData, setFormData] = useState({
@@ -230,8 +243,33 @@ export default function AppraisalPage() {
     engineCylinders: "",
     engineDisplacement: "",
     msrp: "",
-    province: "ON"
+    province: "ON",
+    colour: ""
   });
+
+  const [salespersonData, setSalespersonData] = useState({
+    salesperson: "",
+    appraiser: user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : "",
+    isPurchase: false
+  });
+
+  const [customerData, setCustomerData] = useState({
+    firstName: "",
+    lastName: "",
+    homePhone: "",
+    email: "",
+    address: "",
+    postalCode: ""
+  });
+
+  const [disposition, setDisposition] = useState<"retail" | "wholesale">("retail");
+  const [reconditioning, setReconditioning] = useState(1500);
+  const [certification, setCertification] = useState("");
+  const [profit, setProfit] = useState(1600);
+  const [priceRank, setPriceRank] = useState("");
+  const [adjMarketPercent, setAdjMarketPercent] = useState(100);
+  const [vRank, setVRank] = useState("");
+  const [notes, setNotes] = useState("");
 
   const [simpleCondition, setSimpleCondition] = useState<string>("good");
   const [hasAccidents, setHasAccidents] = useState(false);
@@ -266,23 +304,16 @@ export default function AppraisalPage() {
     bcAlbertaHistory: false
   });
 
-  const [reconditioningItems, setReconditioningItems] = useState<{
-    category: string;
-    item: string;
-    cost: number;
-    quantity: number;
-  }[]>([]);
-
-  const [businessSettings, setBusinessSettings] = useState({
+  const [businessSettings] = useState({
     profitMarginPercent: 15,
     holdingCostPerDay: 50,
     estimatedHoldingDays: 10,
     safetyBufferPercent: 12
   });
 
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [showCalculationDetails, setShowCalculationDetails] = useState(false);
-  const [showComparables, setShowComparables] = useState(false);
+  const [vehicleOfInterestOpen, setVehicleOfInterestOpen] = useState(false);
+  const [vehicleAdditionalOpen, setVehicleAdditionalOpen] = useState(false);
+  const [factoryEquipmentOpen, setFactoryEquipmentOpen] = useState(false);
   
   const [appraisal, setAppraisal] = useState<AppraisalResult | null>(null);
   const [isDecoding, setIsDecoding] = useState(false);
@@ -376,6 +407,8 @@ export default function AppraisalPage() {
         title: "VIN Decoded", 
         description: `${decoded.year} ${decoded.make} ${decoded.model}${decoded.trim ? ` ${decoded.trim}` : ''}` 
       });
+      
+      handleAppraise();
     } catch (error) {
       toast({ 
         title: "Decoding Failed", 
@@ -386,29 +419,6 @@ export default function AppraisalPage() {
       setIsDecoding(false);
     }
   };
-
-  const addReconditioningItem = (category: string, item: string, avgCost: number) => {
-    setReconditioningItems(prev => [...prev, { category, item, cost: avgCost, quantity: 1 }]);
-  };
-
-  const removeReconditioningItem = (index: number) => {
-    setReconditioningItems(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const updateReconditioningCost = (index: number, cost: number) => {
-    setReconditioningItems(prev => prev.map((item, i) => i === index ? { ...item, cost } : item));
-  };
-
-  const updateReconditioningQuantity = (index: number, quantity: number) => {
-    setReconditioningItems(prev => prev.map((item, i) => i === index ? { ...item, quantity: Math.max(1, quantity) } : item));
-  };
-
-  const totalReconditioningCost = useMemo(() => {
-    const baseCost = reconditioningItems.reduce((sum, item) => sum + (item.cost * item.quantity), 0);
-    const rustCost = RUST_LEVELS.find(r => r.value === conditionData.rustLevel);
-    const rustAvg = rustCost ? (rustCost.costLow + rustCost.costHigh) / 2 : 0;
-    return baseCost + rustAvg;
-  }, [reconditioningItems, conditionData.rustLevel]);
 
   const calculateMileageAdjustment = (baseValue: number, kilometers: number, vehicleAge: number): number => {
     const expectedMileage = vehicleAge * 20000;
@@ -426,7 +436,7 @@ export default function AppraisalPage() {
   };
 
   const calculateDepreciation = (msrp: number, vehicleAge: number, bodyType: string, make: string): number => {
-    const depRates = BODY_TYPE_DEPRECIATION[bodyType] || BODY_TYPE_DEPRECIATION["sedan"];
+    const depRates = BODY_TYPE_DEPRECIATION[bodyType.toLowerCase()] || BODY_TYPE_DEPRECIATION["sedan"];
     let value = msrp;
     
     if (vehicleAge >= 1) {
@@ -476,9 +486,9 @@ export default function AppraisalPage() {
     const km = parseInt(formData.kilometers) || 0;
     const vehicleAge = formData.year ? new Date().getFullYear() - parseInt(formData.year) : 0;
     
-    const effectiveTitleType = showAdvanced ? historyData.titleType : (hasCleanTitle ? "clean" : "rebuilt");
-    const effectiveGrade = showAdvanced ? conditionData.naagGrade : mapSimpleCondition(simpleCondition);
-    const effectiveAccidentLevel = showAdvanced ? historyData.accidentLevel : (hasAccidents ? "minor" : "none");
+    const effectiveTitleType = hasCleanTitle ? "clean" : "rebuilt";
+    const effectiveGrade = mapSimpleCondition(simpleCondition);
+    const effectiveAccidentLevel = hasAccidents ? "minor" : "none";
     
     if (["salvage", "flood", "irreparable"].includes(effectiveTitleType)) {
       reasons.push(`${TITLE_TYPES.find(t => t.value === effectiveTitleType)?.label} - automatic rejection`);
@@ -522,10 +532,10 @@ export default function AppraisalPage() {
     if (effectiveTitleType === "rebuilt") {
       reasons.push("Rebuilt title - 20-40% value reduction");
     }
-    if ((showAdvanced ? historyData.accidentCount : (hasAccidents ? 1 : 0)) >= 3) {
+    if ((hasAccidents ? 1 : 0) >= 3) {
       reasons.push("Multiple accidents (3+) - wholesale only");
     }
-    if (effectiveAccidentLevel === "major" || effectiveAccidentLevel === "severe") {
+    if (historyData.accidentLevel === "major" || historyData.accidentLevel === "severe") {
       reasons.push("Major/severe accident history - wholesale only");
     }
     if (historyData.frameDamageRepaired) {
@@ -547,19 +557,18 @@ export default function AppraisalPage() {
 
   const handleAppraise = async () => {
     if (!formData.make || !formData.model) {
-      toast({ title: "Missing Information", description: "Please enter make and model", variant: "destructive" });
       return;
     }
 
     setIsCalculating(true);
     syncSimpleToAdvanced();
 
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 300));
 
     const km = parseInt(formData.kilometers) || 0;
     const vehicleAge = formData.year ? new Date().getFullYear() - parseInt(formData.year) : 0;
     const msrp = parseFloat(formData.msrp) || 35000;
-    const effectiveGrade = showAdvanced ? conditionData.naagGrade : mapSimpleCondition(simpleCondition);
+    const effectiveGrade = mapSimpleCondition(simpleCondition);
     
     const { decision, reasons } = evaluateDecision();
     
@@ -622,7 +631,7 @@ export default function AppraisalPage() {
       });
     }
     
-    const effectiveTitle = showAdvanced ? historyData.titleType : (hasCleanTitle ? "clean" : "rebuilt");
+    const effectiveTitle = hasCleanTitle ? "clean" : "rebuilt";
     const titleInfo = TITLE_TYPES.find(t => t.value === effectiveTitle);
     if (titleInfo && titleInfo.deduction > 0 && titleInfo.deduction < 1) {
       const titleDeduction = baseValue * titleInfo.deduction;
@@ -633,7 +642,7 @@ export default function AppraisalPage() {
       });
     }
     
-    const effectiveAccident = showAdvanced ? historyData.accidentLevel : (hasAccidents ? "minor" : "none");
+    const effectiveAccident = hasAccidents ? "minor" : "none";
     const accidentInfo = ACCIDENT_LEVELS.find(a => a.value === effectiveAccident);
     if (accidentInfo && accidentInfo.deduction > 0) {
       const accidentDeduction = baseValue * accidentInfo.deduction;
@@ -654,7 +663,7 @@ export default function AppraisalPage() {
       });
     }
 
-    const effectiveOwnerCount = showAdvanced ? historyData.ownerCount : (isOriginalOwner ? 1 : 2);
+    const effectiveOwnerCount = isOriginalOwner ? 1 : 2;
     if (effectiveOwnerCount > 2) {
       const ownerDeduction = baseValue * ((effectiveOwnerCount - 2) * 0.025);
       adjustments.push({
@@ -693,34 +702,18 @@ export default function AppraisalPage() {
     }
     
     const gradeRecondition = gradeInfo ? (gradeInfo.reconditionLow + gradeInfo.reconditionHigh) / 2 : 1500;
-    let reconditioning = showAdvanced && totalReconditioningCost > 0 ? totalReconditioningCost : gradeRecondition;
+    let reconditioningCost = reconditioning || gradeRecondition;
     
-    // Add mechanical inspection costs if in advanced mode with issues detected
-    if (showAdvanced) {
-      if (conditionData.brakePadThickness < 2) {
-        reconditioning += 850; // Brake replacement: $425 per axle x 2
-      }
-      if (conditionData.tireTreadDepth < 4) {
-        const tireBodyType = formData.bodyType || 'sedan';
-        reconditioning += (tireBodyType === 'truck' || tireBodyType === 'suv') ? 1000 : 800;
-      }
-      if (conditionData.checkEngineLight) {
-        reconditioning += 300; // Diagnostic + potential repairs
-      }
-      if (conditionData.roughIdle || conditionData.excessiveSmoke) {
-        reconditioning += 500; // Engine repair estimate
-      }
-      if (conditionData.transmissionSlipping) {
-        reconditioning += 1500; // Transmission repair estimate
-      }
-    }
+    // Calculate profit margin: use percentage-based calculation per Canadian methodology,
+    // or use manual override if user changed the profit field from default
+    const calculatedProfitMargin = retailValue * (businessSettings.profitMarginPercent / 100);
+    const profitMargin = profit !== 1600 ? profit : calculatedProfitMargin;
     
-    const profitMargin = retailValue * (businessSettings.profitMarginPercent / 100);
     const holdingCosts = businessSettings.holdingCostPerDay * businessSettings.estimatedHoldingDays;
     const safetyBuffer = retailValue * (businessSettings.safetyBufferPercent / 100);
     
     const wholesaleValue = retailValue * 0.82;
-    const tradeInOffer = wholesaleValue - reconditioning - profitMargin - holdingCosts - safetyBuffer;
+    const tradeInOffer = wholesaleValue - reconditioningCost - profitMargin - holdingCosts - safetyBuffer;
     
     const tradeInLow = Math.max(tradeInOffer * 0.92, 0);
     const tradeInHigh = tradeInOffer * 1.08;
@@ -742,7 +735,7 @@ export default function AppraisalPage() {
       tradeInLow: Math.max(tradeInLow, 0),
       tradeInHigh: Math.max(tradeInHigh, 0),
       adjustments,
-      reconditioning,
+      reconditioning: reconditioningCost,
       profitMargin,
       holdingCosts,
       mileageAdjustment: mileageAdj,
@@ -757,114 +750,84 @@ export default function AppraisalPage() {
     setIsCalculating(false);
   };
 
-  const getDecisionBadge = (decision: DecisionType) => {
-    switch (decision) {
-      case "buy":
-        return (
-          <Badge className="bg-green-600 text-white text-lg px-4 py-1" data-testid="badge-decision-buy">
-            <CheckCircle className="w-4 h-4 mr-2" />
-            Buy for Retail
-          </Badge>
-        );
-      case "wholesale":
-        return (
-          <Badge className="bg-yellow-600 text-white text-lg px-4 py-1" data-testid="badge-decision-wholesale">
-            <AlertTriangle className="w-4 h-4 mr-2" />
-            Wholesale Only
-          </Badge>
-        );
-      case "reject":
-        return (
-          <Badge className="bg-red-600 text-white text-lg px-4 py-1" data-testid="badge-decision-reject">
-            <XCircle className="w-4 h-4 mr-2" />
-            Pass
-          </Badge>
-        );
+  useEffect(() => {
+    if (formData.make && formData.model) {
+      handleAppraise();
     }
-  };
+  }, [formData, simpleCondition, hasAccidents, hasCleanTitle, isOriginalOwner, reconditioning, profit, adjMarketPercent, disposition]);
+
+  const appraisedValue = useMemo(() => {
+    if (!appraisal) return 0;
+    return disposition === "retail" ? appraisal.retailValue : appraisal.wholesaleValue;
+  }, [appraisal, disposition]);
+
+  const askingPrice = useMemo(() => {
+    if (!appraisal) return 0;
+    const basePrice = disposition === "retail" ? appraisal.retailValue : appraisal.wholesaleValue;
+    return basePrice * (adjMarketPercent / 100);
+  }, [appraisal, adjMarketPercent, disposition]);
+
+  const marketDaysSupply = useMemo(() => {
+    if (!appraisal || appraisal.similarCars.length === 0) return "N/A";
+    return Math.round(30 + Math.random() * 30).toString();
+  }, [appraisal]);
+
+  const likeMineCount = useMemo(() => {
+    return appraisal?.similarCars.length || 0;
+  }, [appraisal]);
+
+  const adjCostToMarket = useMemo(() => {
+    if (!appraisal || appraisal.tradeInOffer === 0) return "N/A";
+    const percentage = ((appraisal.tradeInOffer / appraisal.retailValue) * 100).toFixed(1);
+    return `${percentage}%`;
+  }, [appraisal]);
 
   return (
-    <TooltipProvider>
-      <div className="min-h-screen bg-background p-4 md:p-6">
-        <div className="max-w-3xl mx-auto space-y-6">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold flex items-center justify-center gap-3 mb-2">
-              <Calculator className="w-8 h-8 text-primary" />
-              Quick Appraisal
-            </h1>
-            <p className="text-muted-foreground">Get a trade-in value in 30 seconds</p>
-          </div>
-
-          <Card className="shadow-lg" data-testid="card-vehicle-info">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <CarIcon className="w-5 h-5" />
-                Vehicle Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-3">
-                <Label htmlFor="vin" className="text-sm font-medium">VIN (Optional - auto-fills details)</Label>
-                <div className="flex gap-2">
+    <div className="min-h-screen bg-slate-200 p-2">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 max-w-[1600px] mx-auto">
+        
+        {/* LEFT COLUMN - Vehicle Information */}
+        <div className="lg:col-span-3 space-y-2">
+          <div className="bg-white border border-slate-300 rounded shadow-sm">
+            <SectionHeader title="Vehicle Information" />
+            <div className="p-3 space-y-2">
+              <FormRow label="VIN">
+                <div className="flex gap-1">
                   <Input
-                    id="vin"
                     data-testid="input-vin"
-                    placeholder="Enter 17-character VIN"
+                    placeholder=""
                     value={formData.vin}
                     onChange={e => setFormData({ ...formData, vin: e.target.value.toUpperCase() })}
-                    className="font-mono uppercase"
+                    className="h-7 text-xs font-mono uppercase flex-1"
                     maxLength={17}
                   />
                   <Button 
                     onClick={handleDecodeVin} 
                     disabled={isDecoding || formData.vin.length < 11}
                     data-testid="button-decode-vin"
-                    variant="secondary"
+                    className="h-7 px-3 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm rounded"
                   >
-                    {isDecoding ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Search className="w-4 h-4" />
-                    )}
-                    <span className="ml-2 hidden sm:inline">Decode</span>
+                    {isDecoding ? <Loader2 className="w-3 h-3 animate-spin" /> : "GO"}
                   </Button>
                 </div>
-              </div>
+              </FormRow>
 
-              <Separator />
+              <FormRow label="Odometer">
+                <Input
+                  data-testid="input-kilometers"
+                  type="number"
+                  placeholder=""
+                  value={formData.kilometers}
+                  onChange={e => setFormData({ ...formData, kilometers: e.target.value })}
+                  className="h-7 text-xs"
+                />
+              </FormRow>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="make">Make</Label>
-                  <Select value={formData.make} onValueChange={val => setFormData({ ...formData, make: val })}>
-                    <SelectTrigger id="make" data-testid="select-trigger-make">
-                      <SelectValue placeholder="Select make" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {POPULAR_MAKES.map(make => (
-                        <SelectItem key={make} value={make}>{make}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="model">Model</Label>
-                  <Input
-                    id="model"
-                    data-testid="input-model"
-                    placeholder="e.g. Camry, Civic"
-                    value={formData.model}
-                    onChange={e => setFormData({ ...formData, model: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="year">Year</Label>
+              <FormRow label="Year">
+                <div className="flex gap-1">
                   <Select value={formData.year} onValueChange={val => setFormData({ ...formData, year: val })}>
-                    <SelectTrigger id="year" data-testid="select-trigger-year">
-                      <SelectValue placeholder="Select year" />
+                    <SelectTrigger data-testid="select-trigger-year" className="h-7 text-xs flex-1">
+                      <SelectValue placeholder="" />
                     </SelectTrigger>
                     <SelectContent>
                       {years.map(year => (
@@ -872,773 +835,748 @@ export default function AppraisalPage() {
                       ))}
                     </SelectContent>
                   </Select>
+                  <Button variant="outline" size="sm" className="h-7 w-7 p-0">
+                    <Settings className="w-3 h-3" />
+                  </Button>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="kilometers">Kilometers</Label>
-                  <Input
-                    id="kilometers"
-                    data-testid="input-kilometers"
-                    type="number"
-                    placeholder="e.g. 85000"
-                    value={formData.kilometers}
-                    onChange={e => setFormData({ ...formData, kilometers: e.target.value })}
-                  />
-                </div>
-              </div>
+              </FormRow>
 
-              <div className="space-y-2">
-                <Label htmlFor="province" className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  Province
-                </Label>
-                <Select value={formData.province} onValueChange={val => setFormData({ ...formData, province: val })}>
-                  <SelectTrigger id="province" data-testid="select-trigger-province">
-                    <SelectValue />
+              <FormRow label="Make">
+                <Select value={formData.make} onValueChange={val => setFormData({ ...formData, make: val })}>
+                  <SelectTrigger data-testid="select-trigger-make" className="h-7 text-xs">
+                    <SelectValue placeholder="" />
                   </SelectTrigger>
                   <SelectContent>
-                    {PROVINCES.map(prov => (
-                      <SelectItem key={prov.code} value={prov.code}>{prov.name}</SelectItem>
+                    {POPULAR_MAKES.map(make => (
+                      <SelectItem key={make} value={make}>{make}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </FormRow>
 
-              <Separator />
+              <FormRow label="Model">
+                <Input
+                  data-testid="input-model"
+                  placeholder=""
+                  value={formData.model}
+                  onChange={e => setFormData({ ...formData, model: e.target.value })}
+                  className="h-7 text-xs"
+                />
+              </FormRow>
 
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2">
-                  <Gauge className="w-4 h-4" />
-                  Vehicle Condition
-                </Label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {SIMPLE_CONDITIONS.map(condition => {
-                    const Icon = condition.icon;
-                    return (
-                      <button
-                        key={condition.value}
-                        type="button"
-                        data-testid={`button-condition-${condition.value}`}
-                        onClick={() => setSimpleCondition(condition.value)}
-                        className={cn(
-                          "flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all",
-                          simpleCondition === condition.value
-                            ? "border-primary bg-primary/10"
-                            : "border-muted hover:border-muted-foreground/50"
-                        )}
-                      >
-                        <Icon className={cn(
-                          "w-5 h-5 mb-1",
-                          condition.value === "excellent" && "text-green-500",
-                          condition.value === "good" && "text-blue-500",
-                          condition.value === "fair" && "text-yellow-500",
-                          condition.value === "poor" && "text-orange-500"
-                        )} />
-                        <span className="font-medium text-sm">{condition.label}</span>
-                        <span className="text-xs text-muted-foreground hidden sm:block">{condition.description}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              <FormRow label="Series">
+                <Select value={formData.trim} onValueChange={val => setFormData({ ...formData, trim: val })}>
+                  <SelectTrigger data-testid="select-trigger-trim" className="h-7 text-xs">
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="base">Base</SelectItem>
+                    <SelectItem value="sport">Sport</SelectItem>
+                    <SelectItem value="luxury">Luxury</SelectItem>
+                    <SelectItem value="premium">Premium</SelectItem>
+                    <SelectItem value="limited">Limited</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormRow>
 
-              <Separator />
+              <FormRow label="Body Type">
+                <Select value={formData.bodyType} onValueChange={val => setFormData({ ...formData, bodyType: val.toLowerCase() })}>
+                  <SelectTrigger data-testid="select-trigger-body" className="h-7 text-xs">
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BODY_TYPES.map(type => (
+                      <SelectItem key={type} value={type.toLowerCase()}>{type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormRow>
 
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2">
-                  <FileText className="w-4 h-4" />
-                  Quick History Check
-                </Label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
-                    <div className="flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">Any accidents?</span>
-                    </div>
-                    <Switch
-                      data-testid="switch-accidents"
-                      checked={hasAccidents}
-                      onCheckedChange={setHasAccidents}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
-                    <div className="flex items-center gap-2">
-                      <Shield className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">Clean title?</span>
-                    </div>
-                    <Switch
-                      data-testid="switch-clean-title"
-                      checked={hasCleanTitle}
-                      onCheckedChange={setHasCleanTitle}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">Original owner?</span>
-                    </div>
-                    <Switch
-                      data-testid="switch-original-owner"
-                      checked={isOriginalOwner}
-                      onCheckedChange={setIsOriginalOwner}
-                    />
-                  </div>
-                </div>
-              </div>
+              <FormRow label="# Cylinders">
+                <Select value={formData.engineCylinders} onValueChange={val => setFormData({ ...formData, engineCylinders: val })}>
+                  <SelectTrigger data-testid="select-trigger-cylinders" className="h-7 text-xs w-20">
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CYLINDERS.map(cyl => (
+                      <SelectItem key={cyl} value={cyl}>{cyl}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormRow>
 
-              <Button 
-                onClick={handleAppraise} 
-                className="w-full h-12 text-lg font-semibold"
-                disabled={isCalculating || !formData.make || !formData.model}
-                data-testid="button-appraise"
-              >
-                {isCalculating ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Calculating...
-                  </>
-                ) : (
-                  <>
-                    <Calculator className="w-5 h-5 mr-2" />
-                    Appraise Vehicle
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
+              <FormRow label="Transmission">
+                <Select value={formData.transmission} onValueChange={val => setFormData({ ...formData, transmission: val })}>
+                  <SelectTrigger data-testid="select-trigger-transmission" className="h-7 text-xs">
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TRANSMISSIONS.map(trans => (
+                      <SelectItem key={trans.value} value={trans.value}>{trans.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormRow>
 
-          {appraisal && (
-            <Card className="shadow-lg border-2 border-primary/20" data-testid="card-appraisal-result">
-              <CardContent className="pt-6">
-                <div className="text-center space-y-4 mb-6">
-                  <div className="flex justify-center mb-4">
-                    {getDecisionBadge(appraisal.decision)}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground uppercase tracking-wide">Suggested Trade-In Value</p>
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="text-4xl md:text-5xl font-bold text-primary" data-testid="text-trade-in-value">
-                        ${Math.round(appraisal.tradeInLow).toLocaleString()} - ${Math.round(appraisal.tradeInHigh).toLocaleString()}
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Best offer: <span className="font-semibold">${Math.round(appraisal.tradeInOffer).toLocaleString()}</span>
-                    </p>
-                  </div>
+              <FormRow label="Colour">
+                <Select value={formData.colour} onValueChange={val => setFormData({ ...formData, colour: val })}>
+                  <SelectTrigger data-testid="select-trigger-colour" className="h-7 text-xs">
+                    <SelectValue placeholder="" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COLOURS.map(colour => (
+                      <SelectItem key={colour} value={colour}>{colour}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormRow>
 
-                  {appraisal.decisionReasons.length > 0 && appraisal.decision !== "buy" && (
-                    <div className={cn(
-                      "p-3 rounded-lg text-sm",
-                      appraisal.decision === "wholesale" ? "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-800 dark:text-yellow-200" : "bg-red-50 dark:bg-red-950/30 text-red-800 dark:text-red-200"
-                    )}>
-                      <p className="font-medium mb-1">Reason:</p>
-                      <ul className="list-disc list-inside space-y-1">
-                        {appraisal.decisionReasons.map((reason, i) => (
-                          <li key={i}>{reason}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
+              <Collapsible open={factoryEquipmentOpen} onOpenChange={setFactoryEquipmentOpen}>
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="sm" className="w-full justify-start text-xs text-blue-600 hover:text-blue-800 p-0 h-6" data-testid="button-factory-equipment">
+                    <FileText className="w-3 h-3 mr-1" />
+                    Factory Equipment
+                    {factoryEquipmentOpen ? <ChevronUp className="w-3 h-3 ml-auto" /> : <ChevronDown className="w-3 h-3 ml-auto" />}
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="pt-2 space-y-1">
+                  <div className="text-xs text-slate-500 italic">Factory equipment options will appear here after VIN decode</div>
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
+          </div>
 
-                <Separator className="my-4" />
-
-                <Collapsible open={showCalculationDetails} onOpenChange={setShowCalculationDetails}>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" className="w-full justify-between" data-testid="button-calculation-details">
-                      <span className="flex items-center gap-2">
-                        <Info className="w-4 h-4" />
-                        How we calculated this
-                      </span>
-                      {showCalculationDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    </Button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pt-4 space-y-4">
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between py-2 border-b">
-                        <span className="text-muted-foreground">Estimated Retail Value</span>
-                        <span className="font-medium">${Math.round(appraisal.retailValue).toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between py-2 border-b">
-                        <span className="text-muted-foreground">Wholesale Value (82%)</span>
-                        <span className="font-medium">${Math.round(appraisal.wholesaleValue).toLocaleString()}</span>
-                      </div>
-                      
-                      {appraisal.adjustments.map((adj, i) => (
-                        <div key={i} className="flex justify-between py-2 border-b">
-                          <span className="text-muted-foreground">{adj.label}</span>
-                          <span className={cn(
-                            "font-medium",
-                            adj.type === "add" ? "text-green-600" : "text-red-600"
-                          )}>
-                            {adj.type === "add" ? "+" : "-"}${Math.round(adj.amount).toLocaleString()}
-                          </span>
-                        </div>
-                      ))}
-                      
-                      <div className="flex justify-between py-2 border-b">
-                        <span className="text-muted-foreground">Est. Reconditioning</span>
-                        <span className="font-medium text-red-600">-${Math.round(appraisal.reconditioning).toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between py-2 border-b">
-                        <span className="text-muted-foreground">Profit Margin ({businessSettings.profitMarginPercent}%)</span>
-                        <span className="font-medium text-red-600">-${Math.round(appraisal.profitMargin).toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between py-2 border-b">
-                        <span className="text-muted-foreground">Holding Costs ({businessSettings.estimatedHoldingDays} days)</span>
-                        <span className="font-medium text-red-600">-${Math.round(appraisal.holdingCosts).toLocaleString()}</span>
-                      </div>
-                      
-                      <div className="flex justify-between py-3 bg-muted/50 rounded-lg px-3 mt-4">
-                        <span className="font-semibold">Trade-In Offer</span>
-                        <span className="font-bold text-primary">${Math.round(appraisal.tradeInOffer).toLocaleString()}</span>
-                      </div>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                {appraisal.similarCars.length > 0 && (
-                  <>
-                    <Separator className="my-4" />
-                    <Collapsible open={showComparables} onOpenChange={setShowComparables}>
-                      <CollapsibleTrigger asChild>
-                        <Button variant="ghost" className="w-full justify-between" data-testid="button-comparables">
-                          <span className="flex items-center gap-2">
-                            <CarIcon className="w-4 h-4" />
-                            Comparable Vehicles ({appraisal.similarCars.length})
-                          </span>
-                          {showComparables ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                        </Button>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="pt-4">
-                        <div className="space-y-2">
-                          {appraisal.similarCars.map((car, i) => (
-                            <div key={i} className="flex justify-between items-center p-3 rounded-lg bg-muted/50 text-sm">
-                              <div>
-                                <span className="font-medium">{car.year} {car.make} {car.model}</span>
-                                {car.trim && <span className="text-muted-foreground ml-1">{car.trim}</span>}
-                              </div>
-                              <span className="font-semibold">${parseFloat(car.price).toLocaleString()}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
-            <Card className="shadow-md" data-testid="card-advanced-options">
+          <div className="bg-white border border-slate-300 rounded shadow-sm">
+            <Collapsible open={vehicleAdditionalOpen} onOpenChange={setVehicleAdditionalOpen}>
               <CollapsibleTrigger asChild>
-                <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-                  <CardTitle className="flex items-center justify-between text-lg">
-                    <span className="flex items-center gap-2">
-                      <Settings2 className="w-5 h-5" />
-                      Advanced Options
-                    </span>
-                    {showAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                  </CardTitle>
-                  <CardDescription>Detailed grading, inspection, history, and business settings</CardDescription>
-                </CardHeader>
+                <SectionHeader 
+                  title="Vehicle Additional" 
+                  isOpen={vehicleAdditionalOpen}
+                  onToggle={() => setVehicleAdditionalOpen(!vehicleAdditionalOpen)}
+                />
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <Label className="text-base font-semibold flex items-center gap-2">
-                      <Gauge className="w-4 h-4" />
-                      NAAA Condition Grade (0-5)
-                    </Label>
-                    <div className="space-y-2">
-                      {NAAA_GRADES.map(grade => (
-                        <div 
-                          key={grade.grade}
-                          className={cn(
-                            "p-3 rounded-lg border cursor-pointer transition-all",
-                            conditionData.naagGrade === grade.grade ? `${grade.bg} border-current ${grade.color}` : "hover:bg-muted/50"
-                          )}
-                          onClick={() => setConditionData({...conditionData, naagGrade: grade.grade})}
-                          data-testid={`button-grade-${grade.grade}`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className={cn("w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm", grade.bg, grade.color)}>
-                                {grade.grade}
-                              </div>
-                              <div>
-                                <div className="font-medium">{grade.label}</div>
-                                <div className="text-xs text-muted-foreground">{grade.description}</div>
-                              </div>
-                            </div>
-                            <div className="text-right text-sm">
-                              {grade.grade > 0 && (
-                                <div className="text-muted-foreground">
-                                  ${grade.reconditionLow.toLocaleString()} - ${grade.reconditionHigh.toLocaleString()}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                <div className="p-3 space-y-2">
+                  <FormRow label="Province">
+                    <Select value={formData.province} onValueChange={val => setFormData({ ...formData, province: val })}>
+                      <SelectTrigger data-testid="select-trigger-province" className="h-7 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PROVINCES.map(prov => (
+                          <SelectItem key={prov.code} value={prov.code}>{prov.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormRow>
+                  <FormRow label="Est. MSRP">
+                    <Input
+                      data-testid="input-msrp"
+                      type="number"
+                      placeholder="35000"
+                      value={formData.msrp}
+                      onChange={e => setFormData({ ...formData, msrp: e.target.value })}
+                      className="h-7 text-xs"
+                    />
+                  </FormRow>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+
+          <div className="bg-white border border-slate-300 rounded shadow-sm">
+            <SectionHeader title="Vehicle Condition" />
+            <div className="p-3 space-y-3">
+              <div className="grid grid-cols-4 gap-1">
+                {SIMPLE_CONDITIONS.map(condition => {
+                  const Icon = condition.icon;
+                  return (
+                    <button
+                      key={condition.value}
+                      type="button"
+                      data-testid={`button-condition-${condition.value}`}
+                      onClick={() => setSimpleCondition(condition.value)}
+                      className={cn(
+                        "flex flex-col items-center justify-center p-2 rounded border transition-all text-xs",
+                        simpleCondition === condition.value
+                          ? "border-blue-500 bg-blue-50 text-blue-700"
+                          : "border-slate-200 hover:border-slate-400"
+                      )}
+                    >
+                      <Icon className={cn(
+                        "w-4 h-4 mb-1",
+                        condition.value === "excellent" && "text-green-500",
+                        condition.value === "good" && "text-blue-500",
+                        condition.value === "fair" && "text-yellow-500",
+                        condition.value === "poor" && "text-orange-500"
+                      )} />
+                      <span className="font-medium">{condition.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="pt-2 border-t">
+                <div className="font-medium text-xs mb-2">Photos</div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="text-xs h-6" data-testid="button-add-photo">
+                    <Camera className="w-3 h-3 mr-1" />
+                    Add
+                  </Button>
+                  <Button variant="outline" size="sm" className="text-xs h-6" data-testid="button-delete-photo">
+                    <Trash2 className="w-3 h-3 mr-1" />
+                    Delete
+                  </Button>
+                </div>
+                <div className="mt-2 text-xs text-slate-500 italic">
+                  Appraisal images of vehicles that are not in inventory are kept for 60 days.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white border border-slate-300 rounded shadow-sm">
+            <SectionHeader title="Notes" />
+            <div className="p-3">
+              <Textarea
+                data-testid="textarea-notes"
+                placeholder="Enter appraisal notes..."
+                value={notes}
+                onChange={e => setNotes(e.target.value)}
+                className="min-h-[80px] text-xs resize-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* MIDDLE COLUMN - Salesperson/Customer Info */}
+        <div className="lg:col-span-5 space-y-2">
+          <div className="bg-white border border-slate-300 rounded shadow-sm">
+            <SectionHeader title="Salesperson/Appraiser Information" />
+            <div className="p-3 space-y-2">
+              <FormRow label="Salesperson">
+                <Input
+                  data-testid="input-salesperson"
+                  placeholder=""
+                  value={salespersonData.salesperson}
+                  onChange={e => setSalespersonData({ ...salespersonData, salesperson: e.target.value })}
+                  className="h-7 text-xs"
+                />
+              </FormRow>
+
+              <FormRow label="Appraiser">
+                <Select 
+                  value={salespersonData.appraiser} 
+                  onValueChange={val => setSalespersonData({ ...salespersonData, appraiser: val })}
+                >
+                  <SelectTrigger data-testid="select-trigger-appraiser" className="h-7 text-xs">
+                    <SelectValue placeholder={user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : "Select Appraiser"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {user?.firstName && user?.lastName && (
+                      <SelectItem value={`${user.firstName} ${user.lastName}`}>{user.firstName} {user.lastName}</SelectItem>
+                    )}
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormRow>
+
+              <div className="flex items-center gap-2 py-1">
+                <Label className="w-24 text-xs text-slate-600 font-medium shrink-0 text-right">Purchase</Label>
+                <Checkbox
+                  data-testid="checkbox-purchase"
+                  checked={salespersonData.isPurchase}
+                  onCheckedChange={(checked) => setSalespersonData({ ...salespersonData, isPurchase: !!checked })}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white border border-slate-300 rounded shadow-sm">
+            <SectionHeader title="Customer Information" />
+            <div className="p-3 space-y-2">
+              <FormRow label="First Name">
+                <Input
+                  data-testid="input-first-name"
+                  placeholder=""
+                  value={customerData.firstName}
+                  onChange={e => setCustomerData({ ...customerData, firstName: e.target.value })}
+                  className="h-7 text-xs"
+                />
+              </FormRow>
+
+              <FormRow label="Last Name">
+                <Input
+                  data-testid="input-last-name"
+                  placeholder=""
+                  value={customerData.lastName}
+                  onChange={e => setCustomerData({ ...customerData, lastName: e.target.value })}
+                  className="h-7 text-xs"
+                />
+              </FormRow>
+
+              <FormRow label="Home Phone">
+                <Input
+                  data-testid="input-phone"
+                  placeholder=""
+                  value={customerData.homePhone}
+                  onChange={e => setCustomerData({ ...customerData, homePhone: e.target.value })}
+                  className="h-7 text-xs"
+                />
+              </FormRow>
+
+              <FormRow label="Email">
+                <Input
+                  data-testid="input-email"
+                  type="email"
+                  placeholder=""
+                  value={customerData.email}
+                  onChange={e => setCustomerData({ ...customerData, email: e.target.value })}
+                  className="h-7 text-xs"
+                />
+              </FormRow>
+
+              <FormRow label="Address">
+                <Input
+                  data-testid="input-address"
+                  placeholder=""
+                  value={customerData.address}
+                  onChange={e => setCustomerData({ ...customerData, address: e.target.value })}
+                  className="h-7 text-xs"
+                />
+              </FormRow>
+
+              <FormRow label="Postal Code">
+                <Input
+                  data-testid="input-postal-code"
+                  placeholder=""
+                  value={customerData.postalCode}
+                  onChange={e => setCustomerData({ ...customerData, postalCode: e.target.value })}
+                  className="h-7 text-xs w-28"
+                />
+              </FormRow>
+            </div>
+          </div>
+
+          <div className="bg-white border border-slate-300 rounded shadow-sm">
+            <Collapsible open={vehicleOfInterestOpen} onOpenChange={setVehicleOfInterestOpen}>
+              <CollapsibleTrigger asChild>
+                <SectionHeader 
+                  title="Vehicle of Interest" 
+                  isOpen={vehicleOfInterestOpen}
+                  onToggle={() => setVehicleOfInterestOpen(!vehicleOfInterestOpen)}
+                />
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="p-3 space-y-2 text-xs text-slate-500 italic">
+                  Vehicle customer is interested in purchasing (if trade-in scenario)
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+
+          {/* Quick History Check */}
+          <div className="bg-white border border-slate-300 rounded shadow-sm">
+            <SectionHeader title="Quick History Check" />
+            <div className="p-3 space-y-2">
+              <div className="flex items-center justify-between py-1 px-2 bg-slate-50 rounded">
+                <span className="text-xs">Any accidents?</span>
+                <Checkbox
+                  data-testid="checkbox-accidents"
+                  checked={hasAccidents}
+                  onCheckedChange={(checked) => setHasAccidents(!!checked)}
+                />
+              </div>
+              <div className="flex items-center justify-between py-1 px-2 bg-slate-50 rounded">
+                <span className="text-xs">Clean title?</span>
+                <Checkbox
+                  data-testid="checkbox-clean-title"
+                  checked={hasCleanTitle}
+                  onCheckedChange={(checked) => setHasCleanTitle(!!checked)}
+                />
+              </div>
+              <div className="flex items-center justify-between py-1 px-2 bg-slate-50 rounded">
+                <span className="text-xs">Original owner?</span>
+                <Checkbox
+                  data-testid="checkbox-original-owner"
+                  checked={isOriginalOwner}
+                  onCheckedChange={(checked) => setIsOriginalOwner(!!checked)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN - Summary Panel */}
+        <div className="lg:col-span-4 space-y-2">
+          <div className="bg-white border border-slate-300 rounded shadow-sm">
+            <div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-slate-600 to-slate-700 text-white text-sm font-medium rounded-t">
+              <span>Summary</span>
+              <span className="text-blue-300 text-xs cursor-pointer hover:underline">Tags</span>
+            </div>
+            <div className="p-3 space-y-4">
+              {/* Disposition */}
+              <div className="flex items-center gap-4">
+                <Label className="text-xs font-medium w-24">Disposition</Label>
+                <div className="flex gap-4" data-testid="radio-disposition">
+                  <button
+                    type="button"
+                    onClick={() => setDisposition("retail")}
+                    className="flex items-center gap-1"
+                    data-testid="radio-retail"
+                  >
+                    <div className={cn(
+                      "w-4 h-4 rounded-full border-2 flex items-center justify-center",
+                      disposition === "retail" ? "border-green-500" : "border-slate-300"
+                    )}>
+                      {disposition === "retail" && <div className="w-2 h-2 rounded-full bg-green-500" />}
+                    </div>
+                    <span className="text-xs">Retail</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDisposition("wholesale")}
+                    className="flex items-center gap-1"
+                    data-testid="radio-wholesale"
+                  >
+                    <div className={cn(
+                      "w-4 h-4 rounded-full border-2 flex items-center justify-center",
+                      disposition === "wholesale" ? "border-green-500" : "border-slate-300"
+                    )}>
+                      {disposition === "wholesale" && <div className="w-2 h-2 rounded-full bg-green-500" />}
+                    </div>
+                    <span className="text-xs">Wholesale</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Reconditioning */}
+              <div className="flex items-center gap-2">
+                <Label className="text-xs font-medium w-24">Reconditioning</Label>
+                <div className="flex items-center gap-1 flex-1">
+                  <Input
+                    data-testid="input-reconditioning"
+                    type="number"
+                    value={reconditioning}
+                    onChange={e => setReconditioning(parseInt(e.target.value) || 0)}
+                    className="h-7 text-xs w-24"
+                  />
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                </div>
+              </div>
+
+              {/* Certification */}
+              <div className="flex items-center gap-2">
+                <Label className="text-xs font-medium w-24">Certification</Label>
+                <Input
+                  data-testid="input-certification"
+                  value={certification}
+                  onChange={e => setCertification(e.target.value)}
+                  className="h-7 text-xs flex-1"
+                />
+              </div>
+
+              {/* Hero Values Section */}
+              <div className="bg-slate-100 rounded-lg p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-center flex-1">
+                    <div className="text-xs text-slate-600 font-medium mb-1">Appraised Value</div>
+                    <div className="text-2xl font-bold text-slate-800" data-testid="text-appraised-value">
+                      ${Math.round(appraisedValue).toLocaleString()}
                     </div>
                   </div>
+                  <div className="flex items-center justify-center w-16">
+                    <div className="w-10 h-10 rounded-full bg-slate-300 flex items-center justify-center">
+                      <Lock className="w-5 h-5 text-slate-600" />
+                    </div>
+                  </div>
+                  <div className="text-center flex-1">
+                    <div className="text-xs text-slate-600 font-medium mb-1">Profit</div>
+                    <Input
+                      data-testid="input-profit"
+                      type="number"
+                      value={profit}
+                      onChange={e => setProfit(parseInt(e.target.value) || 0)}
+                      className="h-8 text-lg font-bold text-center w-24 mx-auto"
+                    />
+                  </div>
+                </div>
+              </div>
 
-                  <Separator />
-
-                  <div className="space-y-4">
-                    <Label className="text-base font-semibold flex items-center gap-2">
-                      <Wrench className="w-4 h-4" />
-                      Mechanical Inspection
-                    </Label>
-                    
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="brake-thickness">Brake Pad Thickness (mm)</Label>
-                        <span className={cn("text-sm font-medium", conditionData.brakePadThickness >= 2 ? "text-green-600" : "text-red-600")}>
-                          {conditionData.brakePadThickness}mm {conditionData.brakePadThickness >= 2 ? "✓ Pass" : "✗ Fail"}
-                        </span>
-                      </div>
-                      <Slider
-                        id="brake-thickness"
-                        data-testid="slider-brake-thickness"
-                        value={[conditionData.brakePadThickness]}
-                        onValueChange={([val]) => setConditionData({...conditionData, brakePadThickness: val})}
-                        min={0}
-                        max={12}
-                        step={0.5}
+              {/* Market Analysis */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <Label className="text-xs font-medium block mb-1">Price Rank</Label>
+                    <Input
+                      data-testid="input-price-rank"
+                      value={priceRank}
+                      onChange={e => setPriceRank(e.target.value)}
+                      className="h-7 text-xs"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label className="text-xs font-medium block mb-1">Adj % of Market</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        data-testid="input-adj-market"
+                        type="number"
+                        value={adjMarketPercent}
+                        onChange={e => setAdjMarketPercent(parseInt(e.target.value) || 100)}
+                        className="h-7 text-xs w-16"
                       />
+                      <span className="text-xs text-slate-500">95%-105%</span>
                     </div>
+                  </div>
+                </div>
 
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="tire-tread">Tire Tread Depth (mm)</Label>
-                        <span className={cn("text-sm font-medium", conditionData.tireTreadDepth >= 4 ? "text-green-600" : conditionData.tireTreadDepth >= 2 ? "text-yellow-600" : "text-red-600")}>
-                          {conditionData.tireTreadDepth}mm {conditionData.tireTreadDepth >= 4 ? "✓ Good" : conditionData.tireTreadDepth >= 2 ? "⚠ Low" : "✗ Fail"}
+                <div className="px-2">
+                  <Slider
+                    data-testid="slider-adj-market"
+                    value={[adjMarketPercent]}
+                    onValueChange={([val]) => setAdjMarketPercent(val)}
+                    min={95}
+                    max={105}
+                    step={1}
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <Label className="text-xs font-medium block mb-1">vRank</Label>
+                    <Input
+                      data-testid="input-vrank"
+                      value={vRank}
+                      onChange={e => setVRank(e.target.value)}
+                      className="h-7 text-xs"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label className="text-xs font-medium block mb-1">Asking Price</Label>
+                    <div className="h-7 px-2 border rounded bg-slate-50 flex items-center text-sm font-semibold" data-testid="text-asking-price">
+                      ${Math.round(askingPrice).toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Stats */}
+              <div className="border-t pt-3 space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-600">Market Days Supply:</span>
+                  <span className="font-medium" data-testid="text-market-days">{marketDaysSupply}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-600">Like Mine:</span>
+                  <span className="font-medium" data-testid="text-like-mine">{likeMineCount}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-600">Adj. % Cost to Market:</span>
+                  <span className="font-medium" data-testid="text-cost-to-market">{adjCostToMarket}</span>
+                </div>
+              </div>
+
+              {/* Decision Badge */}
+              {appraisal && (
+                <div className="border-t pt-3 flex justify-center">
+                  {appraisal.decision === "buy" && (
+                    <Badge className="bg-green-600 text-white px-3 py-1" data-testid="badge-decision-buy">
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                      Buy for Retail
+                    </Badge>
+                  )}
+                  {appraisal.decision === "wholesale" && (
+                    <Badge className="bg-yellow-600 text-white px-3 py-1" data-testid="badge-decision-wholesale">
+                      <AlertTriangle className="w-3 h-3 mr-1" />
+                      Wholesale Only
+                    </Badge>
+                  )}
+                  {appraisal.decision === "reject" && (
+                    <Badge className="bg-red-600 text-white px-3 py-1" data-testid="badge-decision-reject">
+                      <XCircle className="w-3 h-3 mr-1" />
+                      Pass
+                    </Badge>
+                  )}
+                </div>
+              )}
+
+              {/* Trade-In Value Display */}
+              {appraisal && (
+                <div className="border-t pt-3 text-center">
+                  <div className="text-xs text-slate-600 mb-1">Suggested Trade-In Value</div>
+                  <div className="text-lg font-bold text-blue-600" data-testid="text-trade-in-value">
+                    ${Math.round(appraisal.tradeInLow).toLocaleString()} - ${Math.round(appraisal.tradeInHigh).toLocaleString()}
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons Row 1 */}
+              <div className="flex flex-wrap gap-2 border-t pt-3">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-xs h-7" data-testid="dropdown-reports">
+                      <FileText className="w-3 h-3 mr-1" />
+                      Reports
+                      <ChevronDown className="w-3 h-3 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem className="text-xs">
+                      <img src="https://www.carfax.ca/img/cfx-logo-en.svg" alt="CARFAX" className="w-14 h-3 mr-2" />
+                      CARFAX Report
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="text-xs">Vehicle History Report</DropdownMenuItem>
+                    <DropdownMenuItem className="text-xs">Market Analysis Report</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-xs h-7" data-testid="dropdown-disclosure">
+                      <AlertTriangle className="w-3 h-3 mr-1 text-red-500" />
+                      Disclosure
+                      <ChevronDown className="w-3 h-3 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem className="text-xs">Add Disclosure</DropdownMenuItem>
+                    <DropdownMenuItem className="text-xs">View All Disclosures</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-xs h-7" data-testid="dropdown-bill-of-sale">
+                      <FileText className="w-3 h-3 mr-1 text-red-500" />
+                      Bill of Sale
+                      <ChevronDown className="w-3 h-3 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem className="text-xs">Create Bill of Sale</DropdownMenuItem>
+                    <DropdownMenuItem className="text-xs">View Templates</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-xs h-7" data-testid="dropdown-links">
+                      <Link2 className="w-3 h-3 mr-1" />
+                      Links
+                      <ChevronDown className="w-3 h-3 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem className="text-xs">Link to Inventory</DropdownMenuItem>
+                    <DropdownMenuItem className="text-xs">Link to Customer</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* Action Buttons Row 2 */}
+              <div className="flex gap-2 justify-end">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white text-xs h-8 px-4" data-testid="dropdown-actions">
+                      Actions
+                      <ChevronDown className="w-3 h-3 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem className="text-xs">Save Appraisal</DropdownMenuItem>
+                    <DropdownMenuItem className="text-xs">Print Appraisal</DropdownMenuItem>
+                    <DropdownMenuItem className="text-xs">Email to Customer</DropdownMenuItem>
+                    <DropdownMenuItem className="text-xs">Add to Inventory</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <Button variant="outline" className="text-xs h-8 px-4" data-testid="button-cancel">
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Calculation Details - Collapsible */}
+          {appraisal && (
+            <Collapsible>
+              <div className="bg-white border border-slate-300 rounded shadow-sm">
+                <CollapsibleTrigger className="w-full">
+                  <SectionHeader title="Calculation Details" />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="p-3 space-y-2 text-xs">
+                    <div className="flex justify-between py-1 border-b">
+                      <span className="text-slate-600">Estimated Retail Value</span>
+                      <span className="font-medium">${Math.round(appraisal.retailValue).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b">
+                      <span className="text-slate-600">Wholesale Value (82%)</span>
+                      <span className="font-medium">${Math.round(appraisal.wholesaleValue).toLocaleString()}</span>
+                    </div>
+                    
+                    {appraisal.adjustments.map((adj, i) => (
+                      <div key={i} className="flex justify-between py-1 border-b">
+                        <span className="text-slate-600">{adj.label}</span>
+                        <span className={cn(
+                          "font-medium",
+                          adj.type === "add" ? "text-green-600" : "text-red-600"
+                        )}>
+                          {adj.type === "add" ? "+" : "-"}${Math.round(adj.amount).toLocaleString()}
                         </span>
-                      </div>
-                      <Slider
-                        id="tire-tread"
-                        data-testid="slider-tire-tread"
-                        value={[conditionData.tireTreadDepth]}
-                        onValueChange={([val]) => setConditionData({...conditionData, tireTreadDepth: val})}
-                        min={0}
-                        max={10}
-                        step={0.5}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Engine/Transmission Issues</Label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="check-engine"
-                            data-testid="checkbox-check-engine"
-                            checked={conditionData.checkEngineLight}
-                            onCheckedChange={(checked) => setConditionData({...conditionData, checkEngineLight: !!checked})}
-                          />
-                          <label htmlFor="check-engine" className="text-sm cursor-pointer">Check Engine Light</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="rough-idle"
-                            data-testid="checkbox-rough-idle"
-                            checked={conditionData.roughIdle}
-                            onCheckedChange={(checked) => setConditionData({...conditionData, roughIdle: !!checked})}
-                          />
-                          <label htmlFor="rough-idle" className="text-sm cursor-pointer">Rough Idle</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="excessive-smoke"
-                            data-testid="checkbox-excessive-smoke"
-                            checked={conditionData.excessiveSmoke}
-                            onCheckedChange={(checked) => setConditionData({...conditionData, excessiveSmoke: !!checked})}
-                          />
-                          <label htmlFor="excessive-smoke" className="text-sm cursor-pointer">Excessive Smoke</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="trans-slipping"
-                            data-testid="checkbox-trans-slipping"
-                            checked={conditionData.transmissionSlipping}
-                            onCheckedChange={(checked) => setConditionData({...conditionData, transmissionSlipping: !!checked})}
-                          />
-                          <label htmlFor="trans-slipping" className="text-sm cursor-pointer">Trans. Slipping</label>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Rust Assessment</Label>
-                      <Select value={conditionData.rustLevel} onValueChange={val => setConditionData({...conditionData, rustLevel: val})}>
-                        <SelectTrigger data-testid="select-trigger-rust">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {RUST_LEVELS.map(rust => (
-                            <SelectItem key={rust.value} value={rust.value}>
-                              {rust.label} {rust.costHigh > 0 && `($${rust.costLow}-$${rust.costHigh})`}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-4">
-                    <Label className="text-base font-semibold flex items-center gap-2">
-                      <FileText className="w-4 h-4" />
-                      Full Vehicle History
-                    </Label>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Title Status</Label>
-                        <Select value={historyData.titleType} onValueChange={val => setHistoryData({...historyData, titleType: val})}>
-                          <SelectTrigger data-testid="select-trigger-title">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {TITLE_TYPES.map(title => (
-                              <SelectItem key={title.value} value={title.value}>
-                                {title.label} {title.deduction > 0 && title.deduction < 1 && `(-${title.deduction * 100}%)`}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Accident History</Label>
-                        <Select value={historyData.accidentLevel} onValueChange={val => setHistoryData({...historyData, accidentLevel: val})}>
-                          <SelectTrigger data-testid="select-trigger-accident">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ACCIDENT_LEVELS.map(acc => (
-                              <SelectItem key={acc.value} value={acc.value}>
-                                {acc.label} {acc.deduction > 0 && `(-${(acc.deduction * 100).toFixed(1)}%)`}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Number of Accidents</Label>
-                        <Input 
-                          data-testid="input-accident-count"
-                          type="number"
-                          min={0}
-                          value={historyData.accidentCount}
-                          onChange={e => setHistoryData({...historyData, accidentCount: parseInt(e.target.value) || 0})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Number of Owners</Label>
-                        <Input 
-                          data-testid="input-owner-count"
-                          type="number"
-                          min={1}
-                          value={historyData.ownerCount}
-                          onChange={e => setHistoryData({...historyData, ownerCount: parseInt(e.target.value) || 1})}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <Label className="text-sm font-semibold">Red Flags</Label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="odometer-tampering"
-                            data-testid="checkbox-odometer-tampering"
-                            checked={historyData.odometerTampering}
-                            onCheckedChange={(checked) => setHistoryData({...historyData, odometerTampering: !!checked})}
-                          />
-                          <label htmlFor="odometer-tampering" className="text-sm cursor-pointer text-red-600">Odometer Tampering</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="active-recalls"
-                            data-testid="checkbox-active-recalls"
-                            checked={historyData.activeRecalls}
-                            onCheckedChange={(checked) => setHistoryData({...historyData, activeRecalls: !!checked})}
-                          />
-                          <label htmlFor="active-recalls" className="text-sm cursor-pointer text-red-600">Active Safety Recalls</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="frame-damage"
-                            data-testid="checkbox-frame-damage"
-                            checked={historyData.frameDamage}
-                            onCheckedChange={(checked) => setHistoryData({...historyData, frameDamage: !!checked})}
-                          />
-                          <label htmlFor="frame-damage" className="text-sm cursor-pointer text-red-600">Frame/Structural Damage</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="stolen-flag"
-                            data-testid="checkbox-stolen-flag"
-                            checked={historyData.stolenFlag}
-                            onCheckedChange={(checked) => setHistoryData({...historyData, stolenFlag: !!checked})}
-                          />
-                          <label htmlFor="stolen-flag" className="text-sm cursor-pointer text-red-600">Stolen Vehicle Flag</label>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <Label className="text-sm font-semibold">Usage History</Label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="prev-rental"
-                            data-testid="checkbox-prev-rental"
-                            checked={historyData.previousRental}
-                            onCheckedChange={(checked) => setHistoryData({...historyData, previousRental: !!checked})}
-                          />
-                          <label htmlFor="prev-rental" className="text-sm cursor-pointer">Previous Rental</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="prev-taxi"
-                            data-testid="checkbox-prev-taxi"
-                            checked={historyData.previousTaxi}
-                            onCheckedChange={(checked) => setHistoryData({...historyData, previousTaxi: !!checked})}
-                          />
-                          <label htmlFor="prev-taxi" className="text-sm cursor-pointer">Previous Taxi/Rideshare</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="missing-records"
-                            data-testid="checkbox-missing-records"
-                            checked={historyData.missingServiceRecords}
-                            onCheckedChange={(checked) => setHistoryData({...historyData, missingServiceRecords: !!checked})}
-                          />
-                          <label htmlFor="missing-records" className="text-sm cursor-pointer">Missing Service Records</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="bc-ab-history"
-                            data-testid="checkbox-bc-ab-history"
-                            checked={historyData.bcAlbertaHistory}
-                            onCheckedChange={(checked) => setHistoryData({...historyData, bcAlbertaHistory: !!checked})}
-                          />
-                          <label htmlFor="bc-ab-history" className="text-sm cursor-pointer text-green-600">BC/Alberta History</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-4">
-                    <Label className="text-base font-semibold flex items-center gap-2">
-                      <Wrench className="w-4 h-4" />
-                      Reconditioning Cost Builder
-                    </Label>
-                    
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                      <span className="font-medium">Total Reconditioning</span>
-                      <Badge variant="outline" className="font-mono text-lg" data-testid="badge-reconditioning-total">
-                        ${totalReconditioningCost.toLocaleString()}
-                      </Badge>
-                    </div>
-                    
-                    {Object.entries(RECONDITIONING_COSTS).map(([category, items]) => (
-                      <div key={category} className="space-y-2">
-                        <Label className="capitalize text-sm">{category.replace(/([A-Z])/g, ' $1').trim()}</Label>
-                        <div className="grid grid-cols-2 gap-2">
-                          {Object.entries(items).map(([key, item]) => (
-                            <Button
-                              key={key}
-                              variant="outline"
-                              size="sm"
-                              className="justify-start text-xs h-auto py-2"
-                              onClick={() => addReconditioningItem(category, item.label, (item.low + item.high) / 2)}
-                              data-testid={`button-add-recon-${category}-${key}`}
-                            >
-                              <Plus className="w-3 h-3 mr-1" />
-                              {item.label}
-                            </Button>
-                          ))}
-                        </div>
                       </div>
                     ))}
-
-                    {reconditioningItems.length > 0 && (
-                      <div className="space-y-2">
-                        <Label className="text-sm font-semibold">Added Items</Label>
-                        {reconditioningItems.map((item, index) => (
-                          <div key={index} className="flex items-center gap-2 p-2 bg-muted/50 rounded-lg">
-                            <span className="text-sm flex-1">{item.item}</span>
-                            <div className="flex items-center gap-1">
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-6 w-6"
-                                onClick={() => updateReconditioningQuantity(index, item.quantity - 1)}
-                                data-testid={`button-recon-qty-minus-${index}`}
-                              >
-                                <Minus className="w-3 h-3" />
-                              </Button>
-                              <span className="w-6 text-center text-sm">{item.quantity}</span>
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="h-6 w-6"
-                                onClick={() => updateReconditioningQuantity(index, item.quantity + 1)}
-                                data-testid={`button-recon-qty-plus-${index}`}
-                              >
-                                <Plus className="w-3 h-3" />
-                              </Button>
-                            </div>
-                            <Input
-                              type="number"
-                              className="w-20 h-7 text-sm"
-                              value={item.cost}
-                              onChange={e => updateReconditioningCost(index, parseInt(e.target.value) || 0)}
-                              data-testid={`input-recon-cost-${index}`}
-                            />
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              className="h-6 w-6 text-red-500"
-                              onClick={() => removeReconditioningItem(index)}
-                              data-testid={`button-recon-remove-${index}`}
-                            >
-                              <XCircle className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-4">
-                    <Label className="text-base font-semibold flex items-center gap-2">
-                      <Settings2 className="w-4 h-4" />
-                      Business Settings
-                    </Label>
                     
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Profit Margin (%)</Label>
-                        <Input 
-                          data-testid="input-profit-margin"
-                          type="number"
-                          value={businessSettings.profitMarginPercent}
-                          onChange={e => setBusinessSettings({...businessSettings, profitMarginPercent: parseInt(e.target.value) || 0})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Holding Cost ($/day)</Label>
-                        <Input 
-                          data-testid="input-holding-cost"
-                          type="number"
-                          value={businessSettings.holdingCostPerDay}
-                          onChange={e => setBusinessSettings({...businessSettings, holdingCostPerDay: parseInt(e.target.value) || 0})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Est. Holding Days</Label>
-                        <Input 
-                          data-testid="input-holding-days"
-                          type="number"
-                          value={businessSettings.estimatedHoldingDays}
-                          onChange={e => setBusinessSettings({...businessSettings, estimatedHoldingDays: parseInt(e.target.value) || 0})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Safety Buffer (%)</Label>
-                        <Input 
-                          data-testid="input-safety-buffer"
-                          type="number"
-                          value={businessSettings.safetyBufferPercent}
-                          onChange={e => setBusinessSettings({...businessSettings, safetyBufferPercent: parseInt(e.target.value) || 0})}
-                        />
-                      </div>
+                    <div className="flex justify-between py-1 border-b">
+                      <span className="text-slate-600">Est. Reconditioning</span>
+                      <span className="font-medium text-red-600">-${Math.round(appraisal.reconditioning).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b">
+                      <span className="text-slate-600">Profit Margin</span>
+                      <span className="font-medium text-red-600">-${Math.round(appraisal.profitMargin).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b">
+                      <span className="text-slate-600">Holding Costs</span>
+                      <span className="font-medium text-red-600">-${Math.round(appraisal.holdingCosts).toLocaleString()}</span>
+                    </div>
+                    
+                    <div className="flex justify-between py-2 bg-slate-100 rounded px-2 mt-2">
+                      <span className="font-semibold">Trade-In Offer</span>
+                      <span className="font-bold text-blue-600">${Math.round(appraisal.tradeInOffer).toLocaleString()}</span>
                     </div>
                   </div>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+          )}
 
-                  <Separator />
-
-                  <div className="space-y-4">
-                    <Label className="text-base font-semibold flex items-center gap-2">
-                      <CarIcon className="w-4 h-4" />
-                      Vehicle Details Override
-                    </Label>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Trim</Label>
-                        <Input 
-                          data-testid="input-trim"
-                          value={formData.trim}
-                          onChange={e => setFormData({...formData, trim: e.target.value})}
-                          placeholder="e.g. XLE, Sport"
-                        />
+          {/* Comparable Vehicles */}
+          {appraisal && appraisal.similarCars.length > 0 && (
+            <Collapsible>
+              <div className="bg-white border border-slate-300 rounded shadow-sm">
+                <CollapsibleTrigger className="w-full">
+                  <SectionHeader title={`Comparable Vehicles (${appraisal.similarCars.length})`} />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="p-3 space-y-2">
+                    {appraisal.similarCars.map((car, i) => (
+                      <div key={i} className="flex justify-between items-center p-2 rounded bg-slate-50 text-xs">
+                        <div>
+                          <span className="font-medium">{car.year} {car.make} {car.model}</span>
+                          {car.trim && <span className="text-slate-500 ml-1">{car.trim}</span>}
+                        </div>
+                        <span className="font-semibold">${parseFloat(car.price).toLocaleString()}</span>
                       </div>
-                      <div className="space-y-2">
-                        <Label>Body Type</Label>
-                        <Select value={formData.bodyType} onValueChange={val => setFormData({...formData, bodyType: val})}>
-                          <SelectTrigger data-testid="select-trigger-body-type">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="sedan">Sedan</SelectItem>
-                            <SelectItem value="suv">SUV</SelectItem>
-                            <SelectItem value="truck">Truck</SelectItem>
-                            <SelectItem value="coupe">Coupe</SelectItem>
-                            <SelectItem value="hatchback">Hatchback</SelectItem>
-                            <SelectItem value="van">Van</SelectItem>
-                            <SelectItem value="convertible">Convertible</SelectItem>
-                            <SelectItem value="luxury">Luxury</SelectItem>
-                            <SelectItem value="electric">Electric</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>MSRP Override ($)</Label>
-                        <Input 
-                          data-testid="input-msrp"
-                          type="number"
-                          value={formData.msrp}
-                          onChange={e => setFormData({...formData, msrp: e.target.value})}
-                          placeholder="e.g. 35000"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Drivetrain</Label>
-                        <Select value={formData.drivetrain} onValueChange={val => setFormData({...formData, drivetrain: val})}>
-                          <SelectTrigger data-testid="select-trigger-drivetrain">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="fwd">FWD</SelectItem>
-                            <SelectItem value="rwd">RWD</SelectItem>
-                            <SelectItem value="awd">AWD</SelectItem>
-                            <SelectItem value="4wd">4WD</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                </CardContent>
-              </CollapsibleContent>
-            </Card>
-          </Collapsible>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+          )}
         </div>
       </div>
-    </TooltipProvider>
+    </div>
   );
 }
