@@ -46,6 +46,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { href: "/appraisal", label: "Appraise", icon: Calculator },
     { href: "/export", label: "Export Calculator", icon: FileDown },
     { href: "/transport", label: "Transport Calculator", icon: Truck },
+    { href: "/transport-dashboard", label: "Transport Operations", icon: ClipboardList },
+    { href: "/transport-orders", label: "Transport Orders", icon: Package },
     { href: "/upload", label: "Add Vehicles", icon: PlusCircle },
     { href: "/canadian-retail", label: "Canadian Retail", icon: MapPin },
     { href: "/reference", label: "Reference", icon: BookOpen },
