@@ -10,7 +10,9 @@ import type {
   InsertCar,
   UpdateCar,
   User,
-  UpsertUser
+  UpsertUser,
+  CreateUserInput,
+  UpdateUserInput
 } from "@shared/schema";
 
 const sql = neon(process.env.DATABASE_URL!);
@@ -56,10 +58,17 @@ export interface PaginatedResult<T> {
 }
 
 export interface IStorage {
-  // User operations - Required for Replit Auth
+  // User operations - Required for Replit Auth and admin user management
   getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  createPasswordUser(userData: CreateUserInput, passwordHash: string): Promise<User>;
   updateUserRole(id: string, role: string): Promise<User | undefined>;
+  updateUser(id: string, data: UpdateUserInput): Promise<User | undefined>;
+  updateUserPassword(id: string, passwordHash: string): Promise<User | undefined>;
+  setPasswordResetToken(id: string, token: string, expiry: Date): Promise<User | undefined>;
+  clearPasswordResetToken(id: string): Promise<User | undefined>;
+  deleteUser(id: string): Promise<boolean>;
   getAllUsers(): Promise<User[]>;
 
   // Dealership operations
@@ -86,9 +95,14 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  // User operations - Required for Replit Auth
+  // User operations - Required for Replit Auth and admin user management
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(schema.users).where(eq(schema.users.id, id));
+    return user;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(schema.users).where(eq(schema.users.email, email));
     return user;
   }
 
@@ -107,6 +121,22 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async createPasswordUser(userData: CreateUserInput, passwordHash: string): Promise<User> {
+    const [user] = await db
+      .insert(schema.users)
+      .values({
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        role: userData.role,
+        passwordHash,
+        authType: 'password',
+        isActive: 'true',
+      })
+      .returning();
+    return user;
+  }
+
   async updateUserRole(id: string, role: string): Promise<User | undefined> {
     const [user] = await db
       .update(schema.users)
@@ -114,6 +144,60 @@ export class DatabaseStorage implements IStorage {
       .where(eq(schema.users.id, id))
       .returning();
     return user;
+  }
+
+  async updateUser(id: string, data: UpdateUserInput): Promise<User | undefined> {
+    const [user] = await db
+      .update(schema.users)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(schema.users.id, id))
+      .returning();
+    return user;
+  }
+
+  async updateUserPassword(id: string, passwordHash: string): Promise<User | undefined> {
+    const [user] = await db
+      .update(schema.users)
+      .set({ 
+        passwordHash, 
+        passwordResetToken: null, 
+        passwordResetExpiry: null,
+        updatedAt: new Date() 
+      })
+      .where(eq(schema.users.id, id))
+      .returning();
+    return user;
+  }
+
+  async setPasswordResetToken(id: string, token: string, expiry: Date): Promise<User | undefined> {
+    const [user] = await db
+      .update(schema.users)
+      .set({ 
+        passwordResetToken: token, 
+        passwordResetExpiry: expiry,
+        updatedAt: new Date() 
+      })
+      .where(eq(schema.users.id, id))
+      .returning();
+    return user;
+  }
+
+  async clearPasswordResetToken(id: string): Promise<User | undefined> {
+    const [user] = await db
+      .update(schema.users)
+      .set({ 
+        passwordResetToken: null, 
+        passwordResetExpiry: null,
+        updatedAt: new Date() 
+      })
+      .where(eq(schema.users.id, id))
+      .returning();
+    return user;
+  }
+
+  async deleteUser(id: string): Promise<boolean> {
+    const results = await db.delete(schema.users).where(eq(schema.users.id, id)).returning();
+    return results.length > 0;
   }
 
   async getAllUsers(): Promise<User[]> {
