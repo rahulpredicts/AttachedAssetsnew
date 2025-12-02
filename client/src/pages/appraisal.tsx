@@ -1194,10 +1194,9 @@ export default function AppraisalPage() {
                   </div>
                 </GlowCard>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <StatCard label="Reconditioning" value={`$${Math.round(appraisal.reconditioning).toLocaleString()}`} icon={Settings2} color="amber" />
                   <StatCard label="Profit Target" value={`$${Math.round(appraisal.profitMargin).toLocaleString()}`} icon={TrendingUp} color="green" />
-                  <StatCard label="Holding Costs" value={`$${Math.round(appraisal.holdingCosts).toLocaleString()}`} icon={Clock} color="violet" />
                   <StatCard label="Market Comps" value={appraisal.similarCars.length.toString()} icon={BarChart3} color="blue" />
                 </div>
 
