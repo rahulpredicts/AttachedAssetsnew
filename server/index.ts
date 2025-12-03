@@ -4,8 +4,8 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
-// SIMPLE ROOT ROUTE (for Railway health check)
-app.get("/", (req, res) => {
+// SIMPLE ROOT ROUTE (for Render / Railway health check)
+app.get("/", (_req, res) => {
   res.send("Backend is working 🚀");
 });
 
@@ -27,7 +27,7 @@ app.use(
 
 app.use(express.urlencoded({ limit: "50mb", extended: false }));
 
-// LOGGER
+// LOGGER MIDDLEWARE
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -41,12 +41,39 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
+
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
+
       if (logLine.length > 80) {
-  logLine = logLine.slice(0, 80) + "...";
+        logLine = logLine.slice(0, 80) + "...";
       }
 
+      console.log(logLine);
+    }
+  });
+
+  next();
+});
+
+// REGISTER API ROUTES
+registerRoutes(app);
+
+// VITE & STATIC HANDLING
+if (process.env.NODE_ENV === "production") {
+  serveStatic(app);
+} else {
+  setupVite(app);
+}
+
+// START SERVER
+const PORT = Number(process.env.PORT) || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
+
+export default app;
