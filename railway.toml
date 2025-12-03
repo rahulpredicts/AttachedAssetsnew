@@ -1,5 +1,8 @@
+# railway.toml
+
 [build]
-builder = "nixpacks"
+builder = "node"
+buildCommand = "npm install && npm run build"
 
 [deploy]
-start = "node dist/index.js"
+startCommand = "npm start"
