@@ -6,9 +6,8 @@ import { type Server } from "http";
 import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 
-// ----------------------
-// Logging Utility
-// ----------------------
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
 const viteLogger = createLogger();
 
 export function log(message: string, source = "express") {
@@ -16,85 +15,52 @@ export function log(message: string, source = "express") {
     hour: "numeric",
     minute: "2-digit",
     second: "2-digit",
-    hour12: true,
+    hour12: true
   });
 
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
-// ----------------------
-// DEV MODE (Vite Middleware)
-// ----------------------
 export async function setupVite(app: Express, server: Server) {
-  const serverOptions = {
-    middlewareMode: true,
-    hmr: { server },
-    allowedHosts: true as const,
-  };
-
   const vite = await createViteServer({
     ...viteConfig,
     configFile: false,
-    customLogger: {
-      ...viteLogger,
-      error: (msg, options) => {
-        viteLogger.error(msg, options);
-        process.exit(1);
-      },
-    },
-    server: serverOptions,
-    appType: "custom",
+    server: {
+      middlewareMode: true,
+      hmr: { server }
+    }
   });
 
-  // Vite handles all frontend requests in dev
   app.use(vite.middlewares);
 
   app.use("*", async (req, res, next) => {
-    const url = req.originalUrl;
-
     try {
-      const clientTemplate = path.resolve(
-        import.meta.dirname,
-        "..",
-        "client",
-        "index.html"
-      );
+      const templatePath = path.resolve(__dirname, "../client/index.html");
+      let template = await fs.promises.readFile(templatePath, "utf-8");
 
-      let template = await fs.promises.readFile(clientTemplate, "utf-8");
-
-      // Force reload React entry file so HMR works properly
       template = template.replace(
         `src="/src/main.tsx"`,
         `src="/src/main.tsx?v=${nanoid()}"`
       );
 
-      const page = await vite.transformIndexHtml(url, template);
-
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      const html = await vite.transformIndexHtml(req.originalUrl, template);
+      res.status(200).set({ "Content-Type": "text/html" }).end(html);
     } catch (e) {
-      vite.ssrFixStacktrace(e as Error);
+      vite.ssrFixStacktrace(e);
       next(e);
     }
   });
 }
 
-// ----------------------
-// PROD MODE (Static Files)
-// ----------------------
 export function serveStatic(app: Express) {
   const distPath = path.resolve(process.cwd(), "dist");
 
-  // Ensure the build exists
   if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}. Did you run "npm run build"?`
-    );
+    throw new Error(`Could not find client build at ${distPath}`);
   }
 
-  // Serve all static files (JS, CSS, images)
   app.use(express.static(distPath));
 
-  // SPA fallback: serve index.html for all non-file routes
   app.get("*", (_req, res) => {
     res.sendFile(path.join(distPath, "index.html"));
   });
