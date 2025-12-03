@@ -48,5 +48,5 @@ app.use((req, res, next) => {
       }
       if (logLine.length > 80) {
   logLine = logLine.slice(0, 80) + "...";
-}
+      }
 
